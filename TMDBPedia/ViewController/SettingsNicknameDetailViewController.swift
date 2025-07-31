@@ -11,7 +11,8 @@ import Then
 
 final class SettingsNicknameDetailViewController: UIViewController {
     private let nicknameTextField = UITextField()
-    private var stringHandler: ((String) -> ())?
+    private var lastResult: Result<String, NicknameError>?
+    private var nicknameHandler: ((Result<String, NicknameError>) -> ())?
     
     private let underlineView = UIView()
     private let statusLabel = UILabel()
@@ -26,11 +27,16 @@ final class SettingsNicknameDetailViewController: UIViewController {
         nicknameTextField.becomeFirstResponder()
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        if isAvailableNickname(nicknameTextField) {
-            stringHandler?(nicknameTextField.text!)
-        }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        passValidateNicknameResult()
+    }
+}
+
+// MARK: Open
+extension SettingsNicknameDetailViewController {
+    public func bindStringHandler(handler: @escaping (Result<String, NicknameError>) -> Void) {
+        nicknameHandler = handler
     }
 }
 
@@ -82,36 +88,54 @@ private extension SettingsNicknameDetailViewController {
     }
 }
 
-// MARK: Open
-extension SettingsNicknameDetailViewController {
-    public func bindStringHandler(handler: @escaping (String) -> Void) {
-        stringHandler = handler
-    }
-}
-
 // MARK: TextField
-private extension SettingsNicknameDetailViewController {
+extension SettingsNicknameDetailViewController {
     private func configureTextField() {
-        nicknameTextField.addTarget(self, action: #selector(isAvailableNickname), for: .editingChanged)
+        nicknameTextField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
     }
     
-    @objc private func isAvailableNickname(_ sender: UITextField) -> Bool {
-        guard let text = sender.text else { return false }
+    @objc private func textFieldEditingChanged(_ sender: UITextField) {
+        handleNickname(text: sender.text)
+    }
+    
+    private func handleNickname(text: String?)  {
+        let result = validateNickname(text: text)
+        lastResult = result
+        
+        switch result {
+        case .success:
+            updateStatusLabel(text: "사용할 수 있는 닉네임이에요")
+        case .failure(let error):
+            updateStatusLabel(text: error.kind.description)
+        }
+    }
+    
+    private func validateNickname(text: String?) -> Result<String, NicknameError> {
+        guard let text else {
+            return .failure(NicknameError(text: nil, kind: .textIsNil))
+        }
         guard 2..<10 ~= text.count else {
-            statusLabel.text = "2글자 이상 10글자 미만으로 설정해주세요"
-            return false
+            return .failure(NicknameError(text: text, kind: .invalidRange))
         }
         guard text.allSatisfy(\.isLetter) else {
             if text.contains(where: \.isNumber) {
-                statusLabel.text = "닉네임에 숫자는 포함할 수 없어요"
+                return .failure(NicknameError(text: text, kind: .containsNumber))
             }
             else {
-                statusLabel.text = "닉네임에 @, #, $, % 는 포함할 수 없어요"
+                return .failure(NicknameError(text: text, kind: .containsSpecialSymbol))
             }
-            return false
         }
         
-        statusLabel.text = "사용할 수 있는 닉네임이에요"
-        return true
+        return .success(text)
+    }
+    
+    private func updateStatusLabel(text: String) {
+        statusLabel.text = text
+    }
+    
+    private func passValidateNicknameResult() {
+        if let lastResult {
+            nicknameHandler?(lastResult)
+        }
     }
 }
