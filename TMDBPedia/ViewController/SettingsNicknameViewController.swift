@@ -9,11 +9,11 @@ import UIKit
 import SnapKit
 import Then
 
-class SettingsNicknameViewController: UIViewController {
-    let nicknameLabel = UILabel()
-    let editButton = UIButton()
-    let underlineView = UIView()
-    let doneButton = UIButton()
+final class SettingsNicknameViewController: UIViewController {
+    private let nicknameLabel = UILabel()
+    private let editButton = UIButton()
+    private let underlineView = UIView()
+    private let doneButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,18 +22,18 @@ class SettingsNicknameViewController: UIViewController {
 }
 
 // MARK: Configure
-extension SettingsNicknameViewController {
-    func configure() {
+private extension SettingsNicknameViewController {
+    private func configure() {
         configureSubview()
         configureLayout()
         configureView()
     }
     
-    func configureSubview() {
+    private func configureSubview() {
         view.addSubviews(nicknameLabel, editButton, underlineView, doneButton)
     }
     
-    func configureLayout() {
+    private func configureLayout() {
         nicknameLabel.snp.makeConstraints {
             $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
             $0.width.equalToSuperview().multipliedBy(0.7)
@@ -60,7 +60,7 @@ extension SettingsNicknameViewController {
         }
     }
     
-    func configureView() {
+    private func configureView() {
         navigationItem.do {
             $0.title = "닉네임 설정"
             $0.backButtonTitle = ""
@@ -89,7 +89,7 @@ extension SettingsNicknameViewController {
         }
     }
     
-    @objc func editButtonClicked() {
+    @objc private func editButtonClicked() {
         navigationController?.pushViewController(SettingsNicknameDetailViewController(), animated: true)
     }
 }

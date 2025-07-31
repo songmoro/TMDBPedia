@@ -9,11 +9,11 @@ import UIKit
 import SnapKit
 import Then
 
-class OnboardingViewController: UIViewController {
-    let splashImageView = UIImageView()
-    let titleLabel = UILabel()
-    let descriptionLabel = UILabel()
-    let startButton = UIButton()
+final class OnboardingViewController: UIViewController {
+    private let splashImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let startButton = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,18 +22,18 @@ class OnboardingViewController: UIViewController {
 }
 
 // MARK: Configure
-extension OnboardingViewController {
-    func configure() {
+private extension OnboardingViewController {
+    private func configure() {
         configureSubview()
         configureLayout()
         configureView()
     }
     
-    func configureSubview() {
+    private func configureSubview() {
         view.addSubviews(splashImageView, titleLabel, descriptionLabel, startButton)
     }
     
-    func configureLayout() {
+    private func configureLayout() {
         splashImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalToSuperview().multipliedBy(0.8)
@@ -57,7 +57,7 @@ extension OnboardingViewController {
         }
     }
     
-    func configureView() {
+    private func configureView() {
         view.backgroundColor = .Background
         
         navigationItem.backButtonTitle = ""
@@ -85,7 +85,7 @@ extension OnboardingViewController {
         }
     }
     
-    @objc func startButtonClicked() {
+    @objc private func startButtonClicked() {
         navigationController?.pushViewController(SettingsNicknameViewController(), animated: true)
     }
 }

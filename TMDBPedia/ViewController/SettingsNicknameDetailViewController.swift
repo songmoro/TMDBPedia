@@ -9,10 +9,10 @@ import UIKit
 import SnapKit
 import Then
 
-class SettingsNicknameDetailViewController: UIViewController {
-    let nicknameTextField = UITextField()
-    let underlineView = UIView()
-    let statusLabel = UILabel()
+final class SettingsNicknameDetailViewController: UIViewController {
+    private let nicknameTextField = UITextField()
+    private let underlineView = UIView()
+    private let statusLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,18 +26,18 @@ class SettingsNicknameDetailViewController: UIViewController {
 }
 
 // MARK: Configure
-extension SettingsNicknameDetailViewController {
-    func configure() {
+private extension SettingsNicknameDetailViewController {
+    private func configure() {
         configureSubview()
         configureLayout()
         configureView()
     }
     
-    func configureSubview() {
+    private func configureSubview() {
         view.addSubviews(nicknameTextField, underlineView, statusLabel)
     }
     
-    func configureLayout() {
+    private func configureLayout() {
         nicknameTextField.snp.makeConstraints {
             $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
             $0.width.equalToSuperview().multipliedBy(0.7)
@@ -56,7 +56,7 @@ extension SettingsNicknameDetailViewController {
         }
     }
     
-    func configureView() {
+    private func configureView() {
         navigationItem.title = "닉네임 설정"
         
         view.backgroundColor = .Background
