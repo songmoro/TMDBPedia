@@ -74,8 +74,10 @@ class OnboardingViewController: UIViewController {
         }
         
         startButton.do {
-            $0.setTitle("시작하기", for: .normal)
-            $0.configuration = .roundBordered()
+            var configuration = UIButton.Configuration.roundBordered()
+            configuration.title = "시작하기"
+            $0.configuration = configuration
+            
             $0.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
         }
     }
