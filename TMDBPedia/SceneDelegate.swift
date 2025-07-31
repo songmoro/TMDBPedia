@@ -16,7 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.overrideUserInterfaceStyle = .dark
         
         let tabBarController = UITabBarController()
-        tabBarController.setViewControllers([OnboardingViewController()], animated: true)
+        let onboardingViewController = UINavigationController(rootViewController: OnboardingViewController())
+        tabBarController.setViewControllers([onboardingViewController], animated: true)
         
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()

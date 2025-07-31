@@ -53,6 +53,8 @@ class OnboardingViewController: UIViewController {
     }
     
     func configureView() {
+        view.backgroundColor = .systemBackground
+        
         splashImageView.image = UIImage(named: "splash")
         
         titleLabel.text = "Onboarding"
@@ -65,6 +67,6 @@ class OnboardingViewController: UIViewController {
     }
     
     @objc func startButtonClicked() {
-        print(#function)
+        navigationController?.pushViewController(SettingsNicknameViewController(), animated: true)
     }
 }
