@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Then
 
 class SettingsNicknameDetailViewController: UIViewController {
     let nicknameTextField = UITextField()
@@ -16,6 +17,11 @@ class SettingsNicknameDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        nicknameTextField.becomeFirstResponder()
     }
     
     func configure() {
@@ -30,12 +36,14 @@ class SettingsNicknameDetailViewController: UIViewController {
     
     func configureLayout() {
         nicknameTextField.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview(\.safeAreaLayoutGuide).inset(16)
-            $0.top.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
+            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
+            $0.width.equalToSuperview().multipliedBy(0.7)
+            $0.height.equalTo(48)
         }
         
         underlineView.snp.makeConstraints {
-            $0.horizontalEdges.bottom.equalTo(nicknameTextField)
+            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.bottom.equalTo(nicknameTextField)
             $0.height.equalTo(1)
         }
         
@@ -54,6 +62,10 @@ class SettingsNicknameDetailViewController: UIViewController {
         
         nicknameTextField.placeholder = "닉네임을 입력해주세요."
         
-        statusLabel.text = "2글자 이상 10글자 미만으로 설정해주세요"
+        statusLabel.do {
+            $0.text = "2글자 이상 10글자 미만으로 설정해주세요"
+            $0.font = .systemFont(ofSize: 14)
+            $0.textColor = .Tint
+        }
     }
 }

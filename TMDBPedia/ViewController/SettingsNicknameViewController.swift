@@ -39,7 +39,7 @@ class SettingsNicknameViewController: UIViewController {
         
         editButton.snp.makeConstraints {
             $0.leading.equalTo(nicknameLabel.snp.trailing)
-            $0.trailing.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(12)
             $0.height.centerY.equalTo(nicknameLabel)
         }
         
