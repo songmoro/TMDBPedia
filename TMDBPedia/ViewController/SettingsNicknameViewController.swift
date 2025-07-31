@@ -53,14 +53,14 @@ class SettingsNicknameViewController: UIViewController {
     
     func configureView() {
         navigationItem.title = "닉네임 설정"
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .Background
         
         nicknameLabel.text = "고래밥 99개"
         
         editButton.setTitle("편집", for: .normal)
         editButton.configuration = .roundBordered()
         
-        underlineView.backgroundColor = .white
+        underlineView.backgroundColor = .Label
         
         doneButton.setTitle("완료", for: .normal)
         doneButton.configuration = .roundBordered()

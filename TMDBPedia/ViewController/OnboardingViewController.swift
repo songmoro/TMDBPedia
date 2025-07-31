@@ -53,7 +53,8 @@ class OnboardingViewController: UIViewController {
     }
     
     func configureView() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .Background
+        navigationItem.backButtonTitle = ""
         
         splashImageView.image = UIImage(named: "splash")
         
