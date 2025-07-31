@@ -35,7 +35,7 @@ final class SettingsNicknameDetailViewController: UIViewController {
 
 // MARK: Open
 extension SettingsNicknameDetailViewController {
-    public func bindStringHandler(handler: @escaping (Result<String, NicknameError>) -> Void) {
+    public func bindNicknameHandler(handler: @escaping (Result<String, NicknameError>) -> Void) {
         nicknameHandler = handler
     }
 }

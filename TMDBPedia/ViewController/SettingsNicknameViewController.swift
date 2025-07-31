@@ -89,7 +89,7 @@ private extension SettingsNicknameViewController {
     
     @objc private func editButtonClicked() {
         let vc = SettingsNicknameDetailViewController().then {
-            $0.bindStringHandler { [weak self] result in
+            $0.bindNicknameHandler { [weak self] result in
                 switch result {
                 case .success(let nickname):
                     self?.nicknameLabel.text = nickname
