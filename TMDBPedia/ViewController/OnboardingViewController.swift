@@ -46,7 +46,7 @@ class OnboardingViewController: UIViewController {
         }
         
         startButton.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().offset(12)
+            $0.horizontalEdges.equalToSuperview().inset(12)
             $0.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(20)
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
         }
@@ -54,9 +54,13 @@ class OnboardingViewController: UIViewController {
     
     func configureView() {
         splashImageView.image = UIImage(named: "splash")
+        
         titleLabel.text = "Onboarding"
+        
         descriptionLabel.text = "당신만의 영화 세상, TMDBPedia를 시작해보세요."
+        
         startButton.setTitle("시작하기", for: .normal)
+        startButton.configuration = .roundBordered()
         startButton.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
     }
     
