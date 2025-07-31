@@ -18,11 +18,6 @@ class SettingsNicknameDetailViewController: UIViewController {
         configure()
     }
     
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(animated)
-//        nicknameTextField.becomeFirstResponder()
-    }
-    
     func configure() {
         configureSubview()
         configureLayout()
