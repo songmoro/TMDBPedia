@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Then
 
 class OnboardingViewController: UIViewController {
     let splashImageView = UIImageView()
@@ -37,7 +38,7 @@ class OnboardingViewController: UIViewController {
         
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().multipliedBy(1.2)
+            $0.centerY.equalToSuperview().multipliedBy(1.3)
         }
         
         descriptionLabel.snp.makeConstraints {
@@ -46,25 +47,37 @@ class OnboardingViewController: UIViewController {
         }
         
         startButton.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(12)
             $0.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(20)
+            $0.horizontalEdges.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
+            $0.height.equalTo(48)
         }
     }
     
     func configureView() {
         view.backgroundColor = .Background
+        
         navigationItem.backButtonTitle = ""
         
         splashImageView.image = UIImage(named: "splash")
         
-        titleLabel.text = "Onboarding"
+        titleLabel.do {
+            $0.text = "Onboarding"
+            $0.font = UIFont(descriptor: UIFontDescriptor().withSymbolicTraits([.traitBold, .traitItalic])!, size: 34)
+        }
         
-        descriptionLabel.text = "당신만의 영화 세상, TMDBPedia를 시작해보세요."
+        descriptionLabel.do {
+            $0.text = "당신만의 영화 세상,\nTMDBPedia를 시작해보세요."
+            $0.font = .systemFont(ofSize: 17, weight: .light)
+            $0.textAlignment = .center
+            $0.numberOfLines = 2
+        }
         
-        startButton.setTitle("시작하기", for: .normal)
-        startButton.configuration = .roundBordered()
-        startButton.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
+        startButton.do {
+            $0.setTitle("시작하기", for: .normal)
+            $0.configuration = .roundBordered()
+            $0.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
+        }
     }
     
     @objc func startButtonClicked() {
