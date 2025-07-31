@@ -11,6 +11,8 @@ import Then
 
 final class SettingsNicknameDetailViewController: UIViewController {
     private let nicknameTextField = UITextField()
+    private var stringHandler: ((String) -> ())?
+    
     private let underlineView = UIView()
     private let statusLabel = UILabel()
     
@@ -23,6 +25,13 @@ final class SettingsNicknameDetailViewController: UIViewController {
         super.viewDidAppear(animated)
         nicknameTextField.becomeFirstResponder()
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if isAvailableNickname(nicknameTextField) {
+            stringHandler?(nicknameTextField.text!)
+        }
+    }
 }
 
 // MARK: Configure
@@ -31,6 +40,7 @@ private extension SettingsNicknameDetailViewController {
         configureSubview()
         configureLayout()
         configureView()
+        configureTextField()
     }
     
     private func configureSubview() {
@@ -66,9 +76,42 @@ private extension SettingsNicknameDetailViewController {
         nicknameTextField.placeholder = "닉네임을 입력해주세요."
         
         statusLabel.do {
-            $0.text = "2글자 이상 10글자 미만으로 설정해주세요"
             $0.font = .systemFont(ofSize: 14)
             $0.textColor = .Tint
         }
+    }
+}
+
+// MARK: Open
+extension SettingsNicknameDetailViewController {
+    public func bindStringHandler(handler: @escaping (String) -> Void) {
+        stringHandler = handler
+    }
+}
+
+// MARK: TextField
+private extension SettingsNicknameDetailViewController {
+    private func configureTextField() {
+        nicknameTextField.addTarget(self, action: #selector(isAvailableNickname), for: .editingChanged)
+    }
+    
+    @objc private func isAvailableNickname(_ sender: UITextField) -> Bool {
+        guard let text = sender.text else { return false }
+        guard 2..<10 ~= text.count else {
+            statusLabel.text = "2글자 이상 10글자 미만으로 설정해주세요"
+            return false
+        }
+        guard text.allSatisfy(\.isLetter) else {
+            if text.contains(where: \.isNumber) {
+                statusLabel.text = "닉네임에 숫자는 포함할 수 없어요"
+            }
+            else {
+                statusLabel.text = "닉네임에 @, #, $, % 는 포함할 수 없어요"
+            }
+            return false
+        }
+        
+        statusLabel.text = "사용할 수 있는 닉네임이에요"
+        return true
     }
 }

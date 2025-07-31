@@ -68,8 +68,6 @@ private extension SettingsNicknameViewController {
         
         view.backgroundColor = .Background
         
-        nicknameLabel.text = "고래밥 99개"
-        
         editButton.do {
             var configuration = UIButton.Configuration.roundBordered()
             configuration.title = "편집"
@@ -90,6 +88,12 @@ private extension SettingsNicknameViewController {
     }
     
     @objc private func editButtonClicked() {
-        navigationController?.pushViewController(SettingsNicknameDetailViewController(), animated: true)
+        let vc = SettingsNicknameDetailViewController().then {
+            $0.bindStringHandler { [weak self] in
+                self?.nicknameLabel.text = $0
+            }
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
