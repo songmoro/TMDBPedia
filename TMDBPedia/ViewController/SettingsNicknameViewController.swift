@@ -32,7 +32,7 @@ class SettingsNicknameViewController: UIViewController {
     func configureLayout() {
         nicknameLabel.snp.makeConstraints {
             $0.horizontalEdges.equalToSuperview().inset(12)
-            $0.top.equalToSuperview(\.safeAreaLayoutGuide)
+            $0.top.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
         }
         
         editButton.snp.makeConstraints {
@@ -53,16 +53,23 @@ class SettingsNicknameViewController: UIViewController {
     
     func configureView() {
         navigationItem.title = "닉네임 설정"
+        navigationItem.backButtonTitle = ""
+        
         view.backgroundColor = .Background
         
         nicknameLabel.text = "고래밥 99개"
         
         editButton.setTitle("편집", for: .normal)
         editButton.configuration = .roundBordered()
+        editButton.addTarget(self, action: #selector(editButtonClicked), for: .touchUpInside)
         
         underlineView.backgroundColor = .Label
         
         doneButton.setTitle("완료", for: .normal)
         doneButton.configuration = .roundBordered()
+    }
+    
+    @objc func editButtonClicked() {
+        navigationController?.pushViewController(SettingsNicknameDetailViewController(), animated: true)
     }
 }
