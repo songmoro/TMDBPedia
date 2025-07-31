@@ -19,7 +19,10 @@ class OnboardingViewController: UIViewController {
         super.viewDidLoad()
         configure()
     }
-    
+}
+
+// MARK: Configure
+extension OnboardingViewController {
     func configure() {
         configureSubview()
         configureLayout()

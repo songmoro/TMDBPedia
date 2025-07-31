@@ -19,7 +19,10 @@ class SettingsNicknameViewController: UIViewController {
         super.viewDidLoad()
         configure()
     }
-    
+}
+
+// MARK: Configure
+extension SettingsNicknameViewController {
     func configure() {
         configureSubview()
         configureLayout()

@@ -23,7 +23,10 @@ class SettingsNicknameDetailViewController: UIViewController {
         super.viewDidAppear(animated)
         nicknameTextField.becomeFirstResponder()
     }
-    
+}
+
+// MARK: Configure
+extension SettingsNicknameDetailViewController {
     func configure() {
         configureSubview()
         configureLayout()
