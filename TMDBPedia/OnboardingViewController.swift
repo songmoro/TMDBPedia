@@ -26,10 +26,7 @@ class OnboardingViewController: UIViewController {
     }
     
     func configureSubview() {
-        view.addSubview(splashImageView)
-        view.addSubview(titleLabel)
-        view.addSubview(descriptionLabel)
-        view.addSubview(startButton)
+        view.addSubviews(splashImageView, titleLabel, descriptionLabel, startButton)
     }
     
     func configureLayout() {
