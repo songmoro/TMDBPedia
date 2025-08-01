@@ -117,13 +117,11 @@ extension SettingsNicknameDetailViewController {
         guard 2..<10 ~= text.count else {
             return .failure(NicknameError(text: text, kind: .invalidRange))
         }
-        guard text.allSatisfy(\.isLetter) else {
-            if text.contains(where: \.isNumber) {
-                return .failure(NicknameError(text: text, kind: .containsNumber))
-            }
-            else {
-                return .failure(NicknameError(text: text, kind: .containsSpecialSymbol))
-            }
+        guard !text.contains(where: \.isNumber) else {
+            return .failure(NicknameError(text: text, kind: .containsNumber))
+        }
+        guard !text.contains(where: isLimitedSymbol) else {
+            return .failure(NicknameError(text: text, kind: .containsSpecialSymbol))
         }
         
         return .success(text)
@@ -137,5 +135,9 @@ extension SettingsNicknameDetailViewController {
         if let lastResult {
             nicknameHandler?(lastResult)
         }
+    }
+    
+    private func isLimitedSymbol(_ character: Character) -> Bool {
+        return "@#$%".contains(character)
     }
 }
