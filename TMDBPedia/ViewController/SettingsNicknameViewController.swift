@@ -114,7 +114,7 @@ private extension SettingsNicknameViewController {
         uiView.do {
             $0.addSubview(label)
             $0.backgroundColor = .Label
-            $0.layer.cornerRadius = 8
+            $0.layer.cornerRadius = CGFloatConstant.defaultRadius
         }
         
         label.do {
