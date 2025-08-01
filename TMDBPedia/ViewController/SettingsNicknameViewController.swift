@@ -88,17 +88,53 @@ private extension SettingsNicknameViewController {
     }
     
     @objc private func editButtonClicked() {
-        let vc = SettingsNicknameDetailViewController().then {
-            $0.bindNicknameHandler { [weak self] result in
-                switch result {
-                case .success(let nickname):
-                    self?.nicknameLabel.text = nickname
-                case .failure(let error):
-                    print(error)
-                }
+        let handler: (Result<String, NicknameError>) -> Void = { [weak self] result in
+            switch result {
+            case .success(let nickname):
+                self?.nicknameLabel.text = nickname
+            case .failure(let error):
+                self?.showToast(error.kind.description)
+                print(error)
             }
         }
         
+        let vc = SettingsNicknameDetailViewController().then {
+            $0.bindNicknameHandler(handler: handler)
+        }
+        
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func showToast(_ message: String) {
+        let uiView = UIView()
+        let label = UILabel()
+        
+        view.addSubview(uiView)
+        
+        uiView.do {
+            $0.addSubview(label)
+            $0.backgroundColor = .Label
+            $0.layer.cornerRadius = 8
+        }
+        
+        label.do {
+            $0.text = message
+            $0.textColor = .Background
+        }
+        
+        uiView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview(\.safeAreaLayoutGuide).inset(32)
+            $0.height.equalTo(label).multipliedBy(1.5)
+            $0.width.equalTo(label).multipliedBy(1.2)
+        }
+        
+        label.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            uiView.removeFromSuperview()
+        }
     }
 }
