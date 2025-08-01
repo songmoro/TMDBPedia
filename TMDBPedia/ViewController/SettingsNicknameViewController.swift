@@ -86,11 +86,16 @@ private extension SettingsNicknameViewController {
             $0.configuration = configuration
             
             $0.isEnabled = false
+            $0.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         }
     }
     
     @objc private func editButtonClicked() {
         pushSettingsNicknameDetailViewController()
+    }
+    
+    @objc private func doneButtonClicked() {
+        completeSettingsNickname()
     }
 }
 
@@ -111,16 +116,30 @@ private extension SettingsNicknameViewController {
             updateNicknameLabel(nickname)
             updateDoneButton(to: true)
         case .failure(let error):
+            updateNicknameLabel(error.text)
             showToast(error.kind.description)
         }
     }
     
-    private func updateNicknameLabel(_ text: String) {
+    private func updateNicknameLabel(_ text: String?) {
         nicknameLabel.text = text
     }
     
     private func updateDoneButton(to status: Bool = false) {
         doneButton.isEnabled = status
+    }
+    
+    private func completeSettingsNickname() {
+        saveNickname(nicknameLabel.text)
+        replaceRootViewController()
+    }
+    
+    private func replaceRootViewController() {
+        navigationController?.setViewControllers([MovieViewController()], animated: true)
+    }
+    
+    private func saveNickname(_ text: String?) {
+        UserDefaults.standard.set(text, forKey: "nickname")
     }
     
     private func showToast(_ message: String) {
