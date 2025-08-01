@@ -35,6 +35,10 @@ final class SettingsNicknameDetailViewController: UIViewController {
 
 // MARK: Open
 extension SettingsNicknameDetailViewController {
+    public func inputNickname(_ text: String?) {
+        nicknameTextField.text = text
+    }
+    
     public func bindNicknameHandler(handler: @escaping (Result<String, NicknameError>) -> Void) {
         nicknameHandler = handler
     }

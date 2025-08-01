@@ -84,25 +84,36 @@ private extension SettingsNicknameViewController {
             var configuration = UIButton.Configuration.roundBordered()
             configuration.title = "완료"
             $0.configuration = configuration
+            
+            $0.isEnabled = false
         }
     }
     
     @objc private func editButtonClicked() {
-        let handler: (Result<String, NicknameError>) -> Void = { [weak self] result in
-            switch result {
-            case .success(let nickname):
-                self?.nicknameLabel.text = nickname
-            case .failure(let error):
-                self?.showToast(error.kind.description)
-                print(error)
-            }
-        }
-        
         let vc = SettingsNicknameDetailViewController().then {
-            $0.bindNicknameHandler(handler: handler)
+            $0.inputNickname(nicknameLabel.text)
+            $0.bindNicknameHandler(handler: handleNicknameHandler)
         }
         
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func handleNicknameHandler(_ result: (Result<String, NicknameError>)) {
+        switch result {
+        case .success(let nickname):
+            updateNicknameLabel(nickname)
+            updateDoneButton(to: true)
+        case .failure(let error):
+            showToast(error.kind.description)
+        }
+    }
+    
+    private func updateNicknameLabel(_ text: String) {
+        nicknameLabel.text = text
+    }
+    
+    private func updateDoneButton(to status: Bool = false) {
+        doneButton.isEnabled = status
     }
     
     private func showToast(_ message: String) {
