@@ -15,19 +15,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.overrideUserInterfaceStyle = .dark
         
-        let navigationController = UINavigationController()
+        let tabBarController = UITabBarController()
         
         if UserDefaults.standard.string(forKey: "nickname") == nil {
-            navigationController.setViewControllers([OnboardingViewController()], animated: true)
+            let onboardingViewController = UINavigationController(rootViewController: OnboardingViewController())
+            
+            tabBarController.tabBar.isHidden = true
+            tabBarController.setViewControllers([onboardingViewController], animated: true)
         }
         else {
-            let tabBarController = UITabBarController()
-            tabBarController.setViewControllers([MovieViewController()], animated: true)
-            
-            navigationController.setViewControllers([tabBarController], animated: true)
+            tabBarController.replaceViewControllerAndVisibleTabbar()
         }
         
-        window?.rootViewController = navigationController
+        window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
     }
 }

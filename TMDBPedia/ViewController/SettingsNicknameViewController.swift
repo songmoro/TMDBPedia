@@ -135,7 +135,7 @@ private extension SettingsNicknameViewController {
     }
     
     private func replaceRootViewController() {
-        navigationController?.setViewControllers([MovieViewController()], animated: true)
+        tabBarController?.replaceViewControllerAndVisibleTabbar()
     }
     
     private func saveNickname(_ text: String?) {
