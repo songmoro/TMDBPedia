@@ -57,6 +57,7 @@ struct Constant {
     // MARK: Font Size
     static let bodySize = 14.0
     static let titleSize = 17.0
+    static let headerSize = 20.0
     static let largeTitleSize = 34.0
     //:-
 }
