@@ -90,6 +90,13 @@ private extension SettingsNicknameViewController {
     }
     
     @objc private func editButtonClicked() {
+        pushSettingsNicknameDetailViewController()
+    }
+}
+
+// MARK: Nickname
+private extension SettingsNicknameViewController {
+    private func pushSettingsNicknameDetailViewController() {
         let vc = SettingsNicknameDetailViewController().then {
             $0.inputNickname(nicknameLabel.text)
             $0.bindNicknameHandler(handler: handleNicknameHandler)
