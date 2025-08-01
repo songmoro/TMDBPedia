@@ -46,14 +46,14 @@ private extension OnboardingViewController {
         
         descriptionLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom).offset(IntConstant.offsetFromHorizon)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(Constant.offsetFromHorizon)
         }
         
         startButton.snp.makeConstraints {
-            $0.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(IntConstant.offsetFromRelated)
-            $0.horizontalEdges.equalToSuperview().inset(IntConstant.offsetFromHorizon)
+            $0.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(Constant.offsetFromRelated)
+            $0.horizontalEdges.equalToSuperview().inset(Constant.offsetFromHorizon)
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
-            $0.height.equalTo(IntConstant.textFieldHeight)
+            $0.height.equalTo(Constant.textFieldHeight)
         }
     }
     
@@ -66,12 +66,12 @@ private extension OnboardingViewController {
         
         titleLabel.do {
             $0.text = "Onboarding"
-            $0.font = UIFont(descriptor: UIFontDescriptor().withSymbolicTraits([.traitBold, .traitItalic])!, size: 34)
+            $0.font = UIFont(descriptor: UIFontDescriptor().withSymbolicTraits([.traitBold, .traitItalic])!, size: Constant.largeTitleSize)
         }
         
         descriptionLabel.do {
             $0.text = "당신만의 영화 세상,\nTMDBPedia를 시작해보세요."
-            $0.font = .systemFont(ofSize: 17, weight: .light)
+            $0.font = .systemFont(ofSize: Constant.titleSize, weight: .light)
             $0.textAlignment = .center
             $0.numberOfLines = 2
         }

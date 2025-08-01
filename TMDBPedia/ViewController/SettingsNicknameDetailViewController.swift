@@ -55,19 +55,19 @@ private extension SettingsNicknameDetailViewController {
     
     private func configureLayout() {
         nicknameTextField.snp.makeConstraints {
-            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(IntConstant.offsetFromVertical)
+            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(Constant.offsetFromVertical)
             $0.width.equalToSuperview().multipliedBy(0.7)
-            $0.height.equalTo(IntConstant.textFieldHeight)
+            $0.height.equalTo(Constant.textFieldHeight)
         }
         
         underlineView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(IntConstant.semiOffsetFromHorizon)
+            $0.horizontalEdges.equalToSuperview().inset(Constant.semiOffsetFromHorizon)
             $0.bottom.equalTo(nicknameTextField)
             $0.height.equalTo(1)
         }
         
         statusLabel.snp.makeConstraints {
-            $0.top.equalTo(nicknameTextField.snp.bottom).offset(IntConstant.semiOffsetFromHorizon)
+            $0.top.equalTo(nicknameTextField.snp.bottom).offset(Constant.semiOffsetFromHorizon)
             $0.horizontalEdges.equalTo(nicknameTextField)
         }
     }
@@ -82,7 +82,7 @@ private extension SettingsNicknameDetailViewController {
         nicknameTextField.placeholder = "닉네임을 입력해주세요."
         
         statusLabel.do {
-            $0.font = .systemFont(ofSize: 14)
+            $0.font = .systemFont(ofSize: Constant.bodySize)
             $0.textColor = .Tint
         }
     }
