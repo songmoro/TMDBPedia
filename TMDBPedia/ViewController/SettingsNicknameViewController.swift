@@ -35,28 +35,28 @@ private extension SettingsNicknameViewController {
     
     private func configureLayout() {
         nicknameLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
+            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(IntConstant.offsetFromVertical)
             $0.width.equalToSuperview().multipliedBy(0.7)
-            $0.height.equalTo(48)
+            $0.height.equalTo(IntConstant.textFieldHeight)
         }
         
         editButton.snp.makeConstraints {
             $0.leading.equalTo(nicknameLabel.snp.trailing)
-            $0.trailing.equalToSuperview().inset(12)
+            $0.trailing.equalToSuperview().inset(IntConstant.offsetFromHorizon)
             $0.height.centerY.equalTo(nicknameLabel)
         }
         
         underlineView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview().offset(IntConstant.semiOffsetFromHorizon)
             $0.trailing.equalTo(editButton.snp.leading).multipliedBy(1.1)
             $0.bottom.equalTo(nicknameLabel)
             $0.height.equalTo(1)
         }
         
         doneButton.snp.makeConstraints {
-            $0.top.equalTo(nicknameLabel.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(12)
-            $0.height.equalTo(48)
+            $0.top.equalTo(nicknameLabel.snp.bottom).offset(IntConstant.offsetFromRelated)
+            $0.horizontalEdges.equalToSuperview().inset(IntConstant.offsetFromHorizon)
+            $0.height.equalTo(IntConstant.textFieldHeight)
         }
     }
     
@@ -124,7 +124,7 @@ private extension SettingsNicknameViewController {
         
         uiView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview(\.safeAreaLayoutGuide).inset(32)
+            $0.bottom.equalToSuperview(\.safeAreaLayoutGuide).inset(IntConstant.offsetFromVertical)
             $0.height.equalTo(label).multipliedBy(1.5)
             $0.width.equalTo(label).multipliedBy(1.2)
         }

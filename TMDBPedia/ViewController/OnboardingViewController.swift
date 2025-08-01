@@ -46,14 +46,14 @@ private extension OnboardingViewController {
         
         descriptionLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(IntConstant.offsetFromHorizon)
         }
         
         startButton.snp.makeConstraints {
-            $0.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(20)
-            $0.horizontalEdges.equalToSuperview().inset(12)
+            $0.top.greaterThanOrEqualTo(descriptionLabel.snp.bottom).offset(IntConstant.offsetFromRelated)
+            $0.horizontalEdges.equalToSuperview().inset(IntConstant.offsetFromHorizon)
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
-            $0.height.equalTo(48)
+            $0.height.equalTo(IntConstant.textFieldHeight)
         }
     }
     

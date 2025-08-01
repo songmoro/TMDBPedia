@@ -55,19 +55,19 @@ private extension SettingsNicknameDetailViewController {
     
     private func configureLayout() {
         nicknameTextField.snp.makeConstraints {
-            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(30)
+            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(IntConstant.offsetFromVertical)
             $0.width.equalToSuperview().multipliedBy(0.7)
-            $0.height.equalTo(48)
+            $0.height.equalTo(IntConstant.textFieldHeight)
         }
         
         underlineView.snp.makeConstraints {
-            $0.horizontalEdges.equalToSuperview().inset(16)
+            $0.horizontalEdges.equalToSuperview().inset(IntConstant.semiOffsetFromHorizon)
             $0.bottom.equalTo(nicknameTextField)
             $0.height.equalTo(1)
         }
         
         statusLabel.snp.makeConstraints {
-            $0.top.equalTo(nicknameTextField.snp.bottom).offset(16)
+            $0.top.equalTo(nicknameTextField.snp.bottom).offset(IntConstant.semiOffsetFromHorizon)
             $0.horizontalEdges.equalTo(nicknameTextField)
         }
     }
