@@ -10,22 +10,6 @@ import Alamofire
 import SnapKit
 import Then
 
-// MARK: -CreditsResponse-
-struct CreditsResponse: Decodable {
-    let cast: [CreditsItem]
-    
-    init(cast: [CreditsItem] = []) {
-        self.cast = cast
-    }
-}
-// MARK: -CreditsItem-
-struct CreditsItem: Decodable {
-    let profile_path: String?
-    let name: String
-    let character: String
-}
-// MARK: -
-
 // MARK: -MovieDetailViewController-
 final class MovieDetailViewController: UIViewController {
     private var tableView = UITableView()
