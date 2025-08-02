@@ -6,12 +6,30 @@
 //
 
 import UIKit
+import Alamofire
 import SnapKit
 import Then
+
+struct SearchMovieResponse: Decodable {
+    let results: [SearchMovieItem]
+    
+    init(results: [SearchMovieItem] = []) {
+        self.results = results
+    }
+}
+
+struct SearchMovieItem: Decodable {
+    let poster_path: String
+    let title: String
+    let release_date: String
+    let genre_ids: [Int]
+}
 
 final class MovieSearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
+    
+    private var movieInfo = SearchMovieResponse()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,6 +75,42 @@ private extension MovieSearchViewController {
     
     private func configureNavigation() {
         navigationItem.title = "영화 검색"
+    }
+}
+
+private extension MovieSearchViewController {
+    private func callSearchMovieAPI(_ text: String) {
+        let url = URL(string: APIURL.searchMovieURL)!
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [
+          URLQueryItem(name: "query", value: text),
+          URLQueryItem(name: "language", value: "ko-KR")
+        ]
+        
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+          "accept": "application/json",
+          "Authorization": "Bearer \(APIKey.tmdbToken)"
+        ]
+
+        AF.request(request)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: SearchMovieResponse.self) {
+                switch $0.result {
+                case .success(let searhMovieResponse):
+                    self.handleSuccess(searhMovieResponse)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+    
+    private func handleSuccess(_ response: SearchMovieResponse) {
+        print(response)
     }
 }
 
