@@ -30,6 +30,7 @@ private extension MovieSearchViewController {
         configureView()
         configureNavigation()
         configureTableView()
+        configureSearchBar()
     }
     
     private func configureSubview() {
@@ -61,6 +62,22 @@ private extension MovieSearchViewController {
     
     private func configureNavigation() {
         navigationItem.title = "영화 검색"
+    }
+}
+// MARK: -SearchBar-
+extension MovieSearchViewController: UITextFieldDelegate {
+    private func configureSearchBar() {
+        searchBar.searchTextField.delegate = self
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        handleSearchTextFieldReturn(textField)
+        return true
+    }
+    
+    private func handleSearchTextFieldReturn(_ textField: UITextField) {
+        let text = textField.text!
+        callSearchMovieAPI(text)
     }
 }
 // MARK: -Networking-
