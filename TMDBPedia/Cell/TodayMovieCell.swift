@@ -23,7 +23,9 @@ final class TodayMovieCell: UITableViewCell, IsIdentifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+}
+
+extension TodayMovieCell {
     public func input(_ items: [TodayMovieItem]) {
         handleInput(items)
     }
@@ -32,7 +34,9 @@ final class TodayMovieCell: UITableViewCell, IsIdentifiable {
         movieInfoItems = items
         collectionView.reloadData()
     }
-    
+}
+
+private extension TodayMovieCell {
     private func configure() {
         configureSubview()
         configureLayout()
@@ -107,7 +111,9 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+}
+
+extension TodayMovieContentCell {
     public func input(_ item: TodayMovieItem) {
         handleInput(item)
     }
@@ -119,7 +125,9 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
         titleLabel.text = item.title
         plotLabel.text = item.overview
     }
-    
+}
+
+private extension TodayMovieContentCell {
     private func configure() {
         configureSubview()
         configureLayout()
@@ -147,7 +155,7 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
         }
         
         plotLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(Constant.offsetFromTop)
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.lessThanOrEqualToSuperview()
         }
@@ -158,12 +166,17 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
             $0.kf.indicatorType = .activity
         }
         
+        titleLabel.do {
+            $0.font = .systemFont(ofSize: Constant.titleSize, weight: .bold)
+        }
+        
         likeButton.do {
             $0.setImage(UIImage(systemName: "heart"), for: .normal)
             $0.setImage(UIImage(systemName: "heart.fill"), for: .selected)
         }
         
         plotLabel.do {
+            $0.font = .systemFont(ofSize: Constant.bodySize, weight: .light)
             $0.numberOfLines = 3
         }
     }

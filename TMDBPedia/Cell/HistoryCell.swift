@@ -21,7 +21,9 @@ final class HistoryCell: UITableViewCell, IsIdentifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+}
+
+private extension HistoryCell {
     private func configure() {
         configureSubview()
         configureLayout()
@@ -75,8 +77,8 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
 
 // MARK: -HistoryContentCell-
 final class HistoryContentCell: UICollectionViewCell, IsIdentifiable {
-    let keywordLabel = UILabel()
-    let deleteButton = UIButton()
+    private let keywordLabel = UILabel()
+    private let deleteButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -86,7 +88,9 @@ final class HistoryContentCell: UICollectionViewCell, IsIdentifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+}
+
+private extension HistoryContentCell {
     private func configure() {
         configureSubview()
         configureLayout()
