@@ -10,10 +10,12 @@
 		F8E32BE62E3B4AB600880BEC /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F8E32BE52E3B4AB600880BEC /* SnapKit */; };
 		F8E32BE92E3B4ABD00880BEC /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = F8E32BE82E3B4ABD00880BEC /* Then */; };
 		F8E32BEC2E3B4AC900880BEC /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F8E32BEB2E3B4AC900880BEC /* Alamofire */; };
+		F8E32CCF2E3DC9F900880BEC /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = F8E32CCE2E3DC9F900880BEC /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F8E32BCC2E3B49A300880BEC /* TMDBPedia.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMDBPedia.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8E32CCE2E3DC9F900880BEC /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -54,6 +56,7 @@
 		F8E32BC32E3B49A300880BEC = {
 			isa = PBXGroup;
 			children = (
+				F8E32CCE2E3DC9F900880BEC /* .gitignore */,
 				F8E32BCE2E3B49A300880BEC /* TMDBPedia */,
 				F8E32BCD2E3B49A300880BEC /* Products */,
 			);
@@ -139,6 +142,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8E32CCF2E3DC9F900880BEC /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

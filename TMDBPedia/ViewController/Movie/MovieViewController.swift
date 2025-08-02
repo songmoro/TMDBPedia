@@ -7,7 +7,23 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 import Then
+
+
+struct TodayMovieResponse: Decodable {
+    let results: [TodayMovieItem]
+    
+    init(results: [TodayMovieItem] = []) {
+        self.results = results
+    }
+}
+
+struct TodayMovieItem: Decodable {
+    let title: String
+    let poster_path: String
+    let overview: String
+}
 
 final class MovieViewController: UIViewController {
     private let headerView = UIView()
@@ -18,13 +34,17 @@ final class MovieViewController: UIViewController {
     
     private let tableView = UITableView()
     
+    private var movieInfo = TodayMovieResponse()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        
+        callTodayMovie()
     }
 }
 
-// MARK: Configure
+// MARK: -Configure-
 private extension MovieViewController {
     private func configure() {
         configureSubview()
@@ -112,8 +132,20 @@ private extension MovieViewController {
         }
     }
 }
+// MARK: -
 
-// MARK: TableView
+// MARK: -Network-
+private extension MovieViewController{
+    private func callTodayMovie() {
+//        AF.request(request)
+//            .responseString {
+//                print($0)
+//            }
+    }
+}
+// MARK: -
+
+// MARK: -TableView-
 extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     private func configureTableView() {
         tableView.do {
