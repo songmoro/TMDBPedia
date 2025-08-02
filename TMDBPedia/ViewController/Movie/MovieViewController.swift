@@ -10,21 +10,7 @@ import SnapKit
 import Alamofire
 import Then
 
-
-struct TodayMovieResponse: Decodable {
-    let results: [TodayMovieItem]
-    
-    init(results: [TodayMovieItem] = []) {
-        self.results = results
-    }
-}
-
-struct TodayMovieItem: Decodable {
-    let title: String
-    let poster_path: String
-    let overview: String
-}
-
+// MARK: -MovieViewController-
 final class MovieViewController: UIViewController {
     private let headerView = UIView()
     private let nicknameLabel = UILabel()
@@ -43,7 +29,6 @@ final class MovieViewController: UIViewController {
         callTodayMovieAPI()
     }
 }
-
 // MARK: -Configure-
 private extension MovieViewController {
     private func configure() {
@@ -144,8 +129,6 @@ private extension MovieViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
 }
-// MARK: -
-
 // MARK: -Network-
 private extension MovieViewController{
     private func callTodayMovieAPI() {
@@ -179,8 +162,6 @@ private extension MovieViewController{
         tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
     }
 }
-// MARK: -
-
 // MARK: -TableView-
 extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     private func configureTableView() {
@@ -243,3 +224,4 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         return headerLabel
     }
 }
+// MARK: -

@@ -10,21 +10,7 @@ import Alamofire
 import SnapKit
 import Then
 
-struct SearchMovieResponse: Decodable {
-    let results: [SearchMovieItem]
-    
-    init(results: [SearchMovieItem] = []) {
-        self.results = results
-    }
-}
-
-struct SearchMovieItem: Decodable {
-    let poster_path: String
-    let title: String
-    let release_date: String
-    let genre_ids: [Int]
-}
-
+// MARK: -MovieSearchViewController-
 final class MovieSearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
@@ -36,7 +22,7 @@ final class MovieSearchViewController: UIViewController {
         configure()
     }
 }
-
+// MARK: -Configure-
 private extension MovieSearchViewController {
     private func configure() {
         configureSubview()
@@ -77,7 +63,7 @@ private extension MovieSearchViewController {
         navigationItem.title = "영화 검색"
     }
 }
-
+// MARK: -Networking-
 private extension MovieSearchViewController {
     private func callSearchMovieAPI(_ text: String) {
         let url = URL(string: APIURL.searchMovieURL)!
@@ -113,7 +99,7 @@ private extension MovieSearchViewController {
         print(response)
     }
 }
-
+// MARK: -TableView-
 extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource {
     private func configureTableView() {
         tableView.delegate = self
@@ -130,3 +116,4 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
         return cell
     }
 }
+// MARK: -
