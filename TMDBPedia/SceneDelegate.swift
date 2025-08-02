@@ -15,6 +15,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.overrideUserInterfaceStyle = .dark
         
+        window?.rootViewController = SplashViewController()
+        window?.makeKeyAndVisible()
+        
         let tabBarController = UITabBarController()
         
         if UserDefaults.standard.string(forKey: "nickname") == nil {
@@ -27,7 +30,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             tabBarController.replaceViewControllerAndVisibleTabbar()
         }
         
-        window?.rootViewController = tabBarController
-        window?.makeKeyAndVisible()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.window?.rootViewController = tabBarController
+        }
     }
 }
