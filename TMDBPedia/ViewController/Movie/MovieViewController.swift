@@ -128,8 +128,20 @@ private extension MovieViewController {
     private func configureNavigation() {
         navigationItem.do {
             $0.title = "TMDBPedia"
-            $0.setRightBarButton(UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: nil), animated: true)
+            $0.backButtonTitle = ""
+            
+            let rightBarButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
+            $0.setRightBarButton(rightBarButton, animated: true)
         }
+    }
+    
+    @objc private func searchButtonTapped() {
+        pushSearchViewController()
+    }
+    
+    private func pushSearchViewController() {
+        let vc = MovieSearchViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 // MARK: -
