@@ -160,8 +160,8 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = MovieDetailViewController()
-        let row = movieInfo.results[indexPath.row]
-        vc.input(row.id)
+        let item = movieInfo.results[indexPath.row]
+        vc.input(item)
         
         navigationController?.pushViewController(vc, animated: true)
     }
