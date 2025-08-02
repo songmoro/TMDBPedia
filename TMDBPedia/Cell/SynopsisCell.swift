@@ -11,7 +11,7 @@ import Then
 
 // MARK: -SynopsisCell-
 final class SynopsisCell: UITableViewCell, IsIdentifiable {
-    let synopsisLabel = UILabel()
+    private let synopsisLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,11 +21,15 @@ final class SynopsisCell: UITableViewCell, IsIdentifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+}
+// MARK: -Open-
+extension SynopsisCell {
     public func input(item: String) {
         synopsisLabel.text = item
     }
-    
+}
+// MARK: -Configure-
+private extension SynopsisCell {
     private func configure() {
         configureSubview()
         configureLayout()
