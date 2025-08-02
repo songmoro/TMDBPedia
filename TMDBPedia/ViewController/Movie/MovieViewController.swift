@@ -40,7 +40,7 @@ final class MovieViewController: UIViewController {
         super.viewDidLoad()
         configure()
         
-        callTodayMovie()
+        callTodayMovieAPI()
     }
 }
 
@@ -136,11 +136,35 @@ private extension MovieViewController {
 
 // MARK: -Network-
 private extension MovieViewController{
-    private func callTodayMovie() {
-//        AF.request(request)
-//            .responseString {
-//                print($0)
-//            }
+    private func callTodayMovieAPI() {
+        let url = URL(string: APIURL.todayMovieURL)!
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let queryItems: [URLQueryItem] = [URLQueryItem(name: "language", value: "ko-KR")]
+        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(APIKey.tmdbToken)"
+        ]
+        
+        AF.request(request)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: TodayMovieResponse.self) {
+                switch $0.result {
+                case .success(let todayMovieResponse):
+                    self.handleSuccess(todayMovieResponse)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+    
+    private func handleSuccess(_ response: TodayMovieResponse) {
+        movieInfo = response
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
     }
 }
 // MARK: -
@@ -168,15 +192,19 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: UITableViewCell
+        
         if indexPath.section == 0 {
 //            let cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath)
-            let cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
-            return cell
+            cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
         }
         else {
-            let cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath)
-            return cell
+            cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
+                $0.input(movieInfo.results)
+            }
         }
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

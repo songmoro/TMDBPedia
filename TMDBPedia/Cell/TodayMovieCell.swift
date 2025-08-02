@@ -11,6 +11,7 @@ import Then
 
 // MARK: -MovieCell-
 final class TodayMovieCell: UITableViewCell, IsIdentifiable {
+    private var movieInfoItems = [TodayMovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -20,6 +21,15 @@ final class TodayMovieCell: UITableViewCell, IsIdentifiable {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func input(_ items: [TodayMovieItem]) {
+        handleInput(items)
+    }
+    
+    private func handleInput(_ items: [TodayMovieItem]) {
+        movieInfoItems = items
+        collectionView.reloadData()
     }
     
     private func configure() {
@@ -63,7 +73,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return movieInfoItems.count
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -73,6 +83,9 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(TodayMovieContentCell.self, for: indexPath)
         
+        let item = movieInfoItems[indexPath.item]
+        cell.input(item)
+        
         return cell
     }
 }
@@ -80,10 +93,10 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
 
 // MARK: -ContentCell-
 final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
-    let posterImageView = UIImageView()
-    let titleLabel = UILabel()
-    let likeButton = UIButton()
-    let plotLabel = UILabel()
+    private let posterImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let likeButton = UIButton()
+    private let plotLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -92,6 +105,15 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func input(_ item: TodayMovieItem) {
+        handleInput(item)
+    }
+    
+    private func handleInput(_ item: TodayMovieItem) {
+        titleLabel.text = item.title
+        plotLabel.text = item.overview
     }
     
     private func configure() {
