@@ -14,6 +14,7 @@ import Then
 final class MovieSearchViewController: UIViewController {
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
+    private let emptyLabel = UILabel()
     
     private var movieInfo = SearchMovieResponse()
     
@@ -34,7 +35,7 @@ private extension MovieSearchViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(searchBar, tableView)
+        view.addSubviews(searchBar, tableView, emptyLabel)
     }
     
     private func configureLayout() {
@@ -49,6 +50,10 @@ private extension MovieSearchViewController {
             $0.horizontalEdges.equalToSuperview().inset(Constant.offsetFromHorizon)
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
         }
+        
+        emptyLabel.snp.makeConstraints {
+            $0.center.equalToSuperview(\.safeAreaLayoutGuide)
+        }
     }
     
     private func configureView() {
@@ -57,6 +62,11 @@ private extension MovieSearchViewController {
         searchBar.do {
             $0.searchTextField.leftView?.tintColor = .Label
             $0.searchBarStyle = .minimal
+        }
+        
+        emptyLabel.do {
+            $0.text = "원하는 검색결과를 찾지 못했습니다"
+            $0.isHidden = true
         }
     }
     
@@ -77,12 +87,22 @@ extension MovieSearchViewController: UITextFieldDelegate {
     
     private func handleSearchTextFieldReturn(_ textField: UITextField) {
         let text = textField.text!
-        callSearchMovieAPI(text)
+        callSearchMovieAPI(text) {
+            if $0.results.isEmpty {
+                self.emptyLabel.isHidden = false
+                self.tableView.isHidden = true
+            }
+            else {
+                self.emptyLabel.isHidden = true
+                self.tableView.isHidden = false
+                self.handleSuccess($0)
+            }
+        }
     }
 }
 // MARK: -Networking-
 private extension MovieSearchViewController {
-    private func callSearchMovieAPI(_ text: String) {
+    private func callSearchMovieAPI(_ text: String, handler: @escaping (SearchMovieResponse) -> Void) {
         let url = URL(string: APIURL.searchMovieURL)!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
@@ -105,7 +125,7 @@ private extension MovieSearchViewController {
             .responseDecodable(of: SearchMovieResponse.self) {
                 switch $0.result {
                 case .success(let searhMovieResponse):
-                    self.handleSuccess(searhMovieResponse)
+                    handler(searhMovieResponse)
                 case .failure(let error):
                     print(error)
                 }
