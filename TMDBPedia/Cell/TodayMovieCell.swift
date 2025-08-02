@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 import Then
 
 // MARK: -MovieCell-
@@ -112,6 +113,9 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
     }
     
     private func handleInput(_ item: TodayMovieItem) {
+        if let url = URL(string: APIURL.todayMoviePosterURL + item.poster_path) {
+            posterImageView.kf.setImage(with: url)
+        }
         titleLabel.text = item.title
         plotLabel.text = item.overview
     }
@@ -150,10 +154,8 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
     }
     
     private func configureView() {
-        posterImageView.backgroundColor = .red
-        
-        titleLabel.do {
-            $0.text = "기생충"
+        posterImageView.do {
+            $0.kf.indicatorType = .activity
         }
         
         likeButton.do {
@@ -162,12 +164,6 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
         }
         
         plotLabel.do {
-            if Bool.random() {
-                $0.text = "이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵이러쿵저러쿵요러쿵"
-            }
-            else {
-                $0.text = "이러쿵"
-            }
             $0.numberOfLines = 3
         }
     }
