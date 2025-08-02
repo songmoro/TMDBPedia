@@ -7,14 +7,61 @@
 
 import UIKit
 import Alamofire
+import Kingfisher
 import SnapKit
 import Then
+
+enum MovieGenre: Int {
+    case adventure     = 12 // 모험
+    case fantasy       = 14 // 판타지
+    case animation     = 16 // 애니메이션
+    case drama         = 18 // 드라마
+    case horror        = 27 // 공포
+    case action        = 28 // 액션
+    case comedy        = 35 // 코미디
+    case historical    = 36 // 역사
+    case western       = 37 // 서부
+    case thriller      = 53 // 스릴러
+    case crime         = 80 // 범죄
+    case documentary   = 99 // 다큐멘터리
+    case sf            = 878 // SF
+    case mystery       = 9648 // 미스터리
+    case musical       = 10402 // 음악
+    case romance       = 10749 // 로맨스
+    case family        = 10751 // 가족
+    case war           = 10752 // 전쟁
+    case tv            = 10770 // TV 영화
+    
+    var text: String {
+        switch self {
+        case .adventure: "모험"
+        case .fantasy: "판타지"
+        case .animation: "애니메이션"
+        case .drama: "드라마"
+        case .horror: "공포"
+        case .action: "액션"
+        case .comedy: "코미디"
+        case .historical: "역사"
+        case .western: "서부"
+        case .thriller: "스릴러"
+        case .crime: "범죄"
+        case .documentary: "다큐멘터리"
+        case .sf: "SF"
+        case .mystery: "미스터리"
+        case .musical: "음악"
+        case .romance: "로맨스"
+        case .family: "가족"
+        case .war: "전쟁"
+        case .tv: "TV 영화"
+        }
+    }
+}
 
 final class SearchMovieCell: UITableViewCell, IsIdentifiable {
     let posterImageView = UIImageView()
     let titleLabel = UILabel()
     let dateLabel = UILabel()
-//    let genreLables = [UILabel]()
+    let genreStackView = UIStackView()
     let likeButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -26,6 +73,38 @@ final class SearchMovieCell: UITableViewCell, IsIdentifiable {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public func input(_ item: SearchMovieItem) {
+        handleInput(item)
+    }
+    
+    private func handleInput(_ item: SearchMovieItem) {
+        if let url = URL(string: APIURL.todayMoviePosterURL + item.poster_path) {
+            posterImageView.kf.setImage(with: url)
+        }
+        
+        titleLabel.text = item.title
+        dateLabel.text = item.release_date
+        
+        for genreId in item.genre_ids {
+            let label = UILabel().then {
+                if let genre = MovieGenre(rawValue: genreId) {
+                    $0.text = genre.text
+                }
+                $0.textColor = .Label
+            }
+            
+            genreStackView.addArrangedSubview(label)
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        genreStackView.subviews.forEach {
+            $0.removeFromSuperview()
+        }
+    }
+    
     private func configure() {
         configureSubview()
         configureLayout()
@@ -33,7 +112,7 @@ final class SearchMovieCell: UITableViewCell, IsIdentifiable {
     }
     
     private func configureSubview() {
-        contentView.addSubviews(posterImageView, titleLabel, dateLabel, likeButton)
+        contentView.addSubviews(posterImageView, titleLabel, dateLabel, genreStackView, likeButton)
     }
     
     private func configureLayout() {
@@ -53,6 +132,12 @@ final class SearchMovieCell: UITableViewCell, IsIdentifiable {
             $0.leading.equalTo(posterImageView.snp.trailing).offset(Constant.offsetFromHorizon)
         }
         
+        genreStackView.snp.makeConstraints {
+            $0.leading.equalTo(posterImageView.snp.trailing).offset(Constant.offsetFromHorizon)
+            $0.bottom.equalToSuperview().inset(Constant.offsetFromHorizon)
+            $0.trailing.lessThanOrEqualTo(likeButton.snp.leading).inset(Constant.offsetFromHorizon)
+        }
+        
         likeButton.snp.makeConstraints {
             $0.trailing.bottom.equalToSuperview().inset(Constant.offsetFromHorizon)
         }
@@ -60,17 +145,18 @@ final class SearchMovieCell: UITableViewCell, IsIdentifiable {
     
     private func configureView() {
         posterImageView.do {
+            $0.kf.indicatorType = .activity
             $0.backgroundColor = .Fill
             $0.layer.cornerRadius = Constant.defaultRadius
         }
         
         titleLabel.do {
-            $0.text = Bool.random() ? "세상에서 가장 긴 영화 제목이 만약에 존재한다면 두 줄로 보일 수 있겠지" : "영화 제목"
             $0.numberOfLines = 2
         }
         
-        dateLabel.do {
-            $0.text = "2024. 04. 25"
+        genreStackView.do {
+            $0.axis = .horizontal
+            $0.spacing = CGFloat(Constant.offsetFromTop)
         }
         
         likeButton.do {
@@ -186,6 +272,9 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(SearchMovieCell.self, for: indexPath)
+        
+        let item = movieInfo.results[indexPath.row]
+        cell.input(item)
         
         return cell
     }
