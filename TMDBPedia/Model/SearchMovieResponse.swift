@@ -14,6 +14,7 @@ struct SearchMovieResponse: Decodable {
 }
 
 struct SearchMovieItem: Decodable {
+    let id: Int
     let poster_path: String
     let title: String
     let release_date: String

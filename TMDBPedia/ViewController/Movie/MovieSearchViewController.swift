@@ -157,5 +157,13 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = MovieDetailViewController()
+        let row = movieInfo.results[indexPath.row]
+        vc.input(row.id)
+        
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
 // MARK: -
