@@ -25,6 +25,7 @@ private extension MovieSearchViewController {
         configureLayout()
         configureView()
         configureNavigation()
+        configureTableView()
     }
     
     private func configureSubview() {
@@ -56,5 +57,22 @@ private extension MovieSearchViewController {
     
     private func configureNavigation() {
         navigationItem.title = "영화 검색"
+    }
+}
+
+extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource {
+    private func configureTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        
+        return cell
     }
 }
