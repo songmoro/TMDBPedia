@@ -121,8 +121,9 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             $0.dataSource = self
             $0.separatorStyle = .none
             $0.isScrollEnabled = false
-            $0.register(TodayMovieCell.self)
+            $0.register(EmptyHistoryCell.self)
             $0.register(HistoryCell.self)
+            $0.register(TodayMovieCell.self)
         }
     }
     
@@ -136,7 +137,8 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath)
+//            let cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath)
+            let cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
             return cell
         }
         else {
