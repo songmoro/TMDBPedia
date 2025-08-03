@@ -14,7 +14,7 @@ import Then
 final class MovieDetailViewController: UIViewController {
     private var tableView = UITableView()
     private var id: Int?
-    private var synopsis: String?
+    private var synopsis: (String, Bool) = ("", false)
     private var imagesInfo = ImagesResponse()
     private var creditsInfo = CreditsResponse()
     
@@ -88,7 +88,7 @@ extension MovieDetailViewController {
     }
     
     private func updateSynopsis(text: String) {
-        synopsis = text
+        synopsis.0 = text
         tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
     }
     
@@ -162,6 +162,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
             
             let button = UIButton().then {
                 $0.setTitle("More", for: .normal)
+                $0.addTarget(self, action: #selector(toggleSynopsis), for: .touchUpInside)
             }
             
             uiView.addSubviews(headerLabel, button)
@@ -186,6 +187,11 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
         }
     }
     
+    @objc private func toggleSynopsis() {
+        synopsis.1.toggle()
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+    }
+    
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if section == 0 {
             return 0
@@ -205,9 +211,9 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
             }
         }
         else if indexPath.section == 1 {
-            let item = synopsis ?? ""
+            let item = synopsis
             cell = tableView.dequeueReusableCell(SynopsisCell.self, for: indexPath).then {
-                $0.input(item: item)
+                $0.input(item: synopsis)
             }
         }
         else {

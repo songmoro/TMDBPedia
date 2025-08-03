@@ -24,8 +24,9 @@ final class SynopsisCell: UITableViewCell, IsIdentifiable {
 }
 // MARK: -Open-
 extension SynopsisCell {
-    public func input(item: String) {
-        synopsisLabel.text = item
+    public func input(item: (String, Bool)) {
+        synopsisLabel.text = item.0
+        synopsisLabel.numberOfLines = item.1 ? 0 : 3
     }
 }
 // MARK: -Configure-
