@@ -85,7 +85,7 @@ extension MovieDetailViewController {
                 switch $0.result {
                 case .success(let imagesResponse):
                     self.imagesInfo = imagesResponse
-                    self.tableView.reloadData()
+                    self.tableView.reloadSections([0], with: .automatic)
                 case .failure(let error):
                     print(error)
                 }
@@ -94,7 +94,7 @@ extension MovieDetailViewController {
     
     private func updateSynopsis(text: String) {
         synopsis.0 = text
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+        tableView.reloadSections([1], with: .automatic)
     }
     
     private func callCreditsAPI(_ id: Int) {
@@ -119,7 +119,7 @@ extension MovieDetailViewController {
                 switch $0.result {
                 case .success(let creditsResponse):
                     self.creditsInfo = creditsResponse
-                    self.tableView.reloadData()
+                    self.tableView.reloadSections([2], with: .automatic)
                 case .failure(let error):
                     print(error)
                 }
@@ -195,7 +195,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     
     @objc private func toggleSynopsis() {
         synopsis.1.toggle()
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+        tableView.reloadSections([1], with: .automatic)
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -204,6 +204,31 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
         }
         else {
             return UITableView.automaticDimension
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if section == 0 {
+            
+            let footerLabel = UILabel().then {
+                $0.text = "Cast"
+                $0.font = .systemFont(ofSize: Constant.titleSize)
+                $0.textAlignment = .center
+            }
+            
+            return footerLabel
+        }
+        else {
+            return UIView(frame: .zero)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return UITableView.automaticDimension
+        }
+        else {
+            return 0
         }
     }
     
@@ -219,7 +244,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
         else if indexPath.section == 1 {
             let item = synopsis
             cell = tableView.dequeueReusableCell(SynopsisCell.self, for: indexPath).then {
-                $0.input(item: synopsis)
+                $0.input(item: item)
             }
         }
         else {

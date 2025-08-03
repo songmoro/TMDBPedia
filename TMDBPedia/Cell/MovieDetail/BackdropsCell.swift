@@ -12,7 +12,6 @@ import Then
 // MARK: -BackdropsCell-
 final class BackdropsCell: UITableViewCell, IsIdentifiable {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-    private let informationLabel = UILabel()
     private var backdrops = [BackdropsItem]()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -36,32 +35,23 @@ private extension BackdropsCell {
     private func configure() {
         configureSubview()
         configureLayout()
-        configureView()
         configureCollectionView()
     }
     
     private func configureSubview() {
-        contentView.addSubviews(collectionView, informationLabel)
+        contentView.addSubview(collectionView)
     }
     
     private func configureLayout() {
         collectionView.snp.makeConstraints {
             $0.width.equalToSuperview().priority(1000)
             $0.height.equalTo(collectionView.snp.width).multipliedBy(0.8).priority(999)
-            $0.top.horizontalEdges.equalToSuperview().inset(Constant.offsetFromHorizon).priority(998)
-        }
-        
-        informationLabel.snp.makeConstraints {
-            $0.top.equalTo(collectionView.snp.bottom).offset(Constant.offsetFromHorizon)
-            $0.horizontalEdges.bottom.equalToSuperview().inset(Constant.offsetFromHorizon)
+            $0.edges.equalToSuperview().inset(Constant.offsetFromHorizon).priority(998)
         }
     }
     
     private func configureView() {
-        informationLabel.do {
-            $0.textAlignment = .center
-            $0.text = "abcdefg"
-        }
+        
     }
 }
 // MARK: -CollectionView-
