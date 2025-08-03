@@ -79,8 +79,11 @@ private extension MovieViewController {
         view.backgroundColor = .Background
         
         headerView.do {
+            let tapGestrue = UITapGestureRecognizer(target: self, action: #selector(settingsNickname))
             $0.backgroundColor = .systemGray5
             $0.layer.cornerRadius = Constant.defaultRadius
+            $0.isUserInteractionEnabled = true
+            $0.addGestureRecognizer(tapGestrue)
         }
         
         nicknameLabel.do {
@@ -127,6 +130,24 @@ private extension MovieViewController {
     private func pushSearchViewController() {
         let vc = MovieSearchViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func settingsNickname() {
+        let settingsNicknameViewContoller = SettingsNicknameViewController().then {
+            $0.input(.present)
+            $0.bind(presentDismissHandler: updateNicknameLabel)
+        }
+        
+        let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
+        present(navigationController, animated: true)
+    }
+    
+    private func updateNicknameLabel() {
+        nicknameLabel.text = loadNickname()
+    }
+    
+    private func loadNickname() -> String {
+        UserDefaults.standard.string(forKey: "nickname") ?? "닉네임 로딩 실패"
     }
 }
 // MARK: -Network-
