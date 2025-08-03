@@ -149,6 +149,52 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
         return 3
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if section == 0 {
+            return UIView(frame: .zero)
+        }
+        else if section == 1 {
+            let uiView = UIView()
+            let headerLabel = UILabel().then {
+                $0.text = "Synopsis"
+                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
+            }
+            
+            let button = UIButton().then {
+                $0.setTitle("More", for: .normal)
+            }
+            
+            uiView.addSubviews(headerLabel, button)
+            
+            headerLabel.snp.makeConstraints {
+                $0.leading.verticalEdges.equalToSuperview()
+            }
+            
+            button.snp.makeConstraints {
+                $0.trailing.verticalEdges.equalToSuperview()
+            }
+            
+            return uiView
+        }
+        else {
+            let headerLabel = UILabel().then {
+                $0.text = "Cast"
+                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
+            }
+            
+            return headerLabel
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if section == 0 {
+            return 0
+        }
+        else {
+            return UITableView.automaticDimension
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
         
