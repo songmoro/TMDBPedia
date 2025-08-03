@@ -15,6 +15,7 @@ final class MovieDetailViewController: UIViewController {
     private var tableView = UITableView()
     private var id: Int?
     private var synopsis: String?
+    private var imagesInfo = ImagesResponse()
     private var creditsInfo = CreditsResponse()
     
     override func viewDidLoad() {
@@ -51,13 +52,48 @@ extension MovieDetailViewController {
     
     private func handleInput(_ item: SearchMovieItem) {
         self.id = item.id
-        self.synopsis = item.overview
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+        
+        updateBackdrops(item.id)
+        updateSynopsis(text: item.overview)
         callCreditsAPI(item.id)
     }
     
+    private func updateBackdrops(_ id: Int) {
+        let url = URL(string: APIURL.imagesURL(id))!
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+//        let queryItems: [URLQueryItem] = [
+//          URLQueryItem(name: "include_image_language", value: "ko"),
+//        ]
+//        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = [
+            "accept": "application/json",
+            "Authorization": "Bearer \(APIKey.tmdbToken)"
+        ]
+
+        AF.request(request)
+            .validate(statusCode: 200..<300)
+            .responseDecodable(of: ImagesResponse.self) {
+                switch $0.result {
+                case .success(let imagesResponse):
+                    self.imagesInfo = imagesResponse
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+    
+    private func updateSynopsis(text: String) {
+        synopsis = text
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
+    }
+    
     private func callCreditsAPI(_ id: Int) {
-        let url = URL(string: APIURL.creditsAPI(id))!
+        let url = URL(string: APIURL.creditsURL(id))!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
           URLQueryItem(name: "language", value: "ko-KR")
@@ -117,7 +153,10 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
         let cell: UITableViewCell
         
         if indexPath.section == 0 {
-            cell = tableView.dequeueReusableCell(BackdropsCell.self, for: indexPath)
+            let item = imagesInfo.backdrops
+            cell = tableView.dequeueReusableCell(BackdropsCell.self, for: indexPath).then {
+                $0.input(item)
+            }
         }
         else if indexPath.section == 1 {
             let item = synopsis ?? ""

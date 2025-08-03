@@ -11,8 +11,9 @@ import Then
 
 // MARK: -BackdropsCell-
 final class BackdropsCell: UITableViewCell, IsIdentifiable {
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-    let informationLabel = UILabel()
+    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
+    private let informationLabel = UILabel()
+    private var backdrops = [BackdropsItem]()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,6 +22,13 @@ final class BackdropsCell: UITableViewCell, IsIdentifiable {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+// MARK: -Open-
+extension BackdropsCell {
+    public func input(_ items: [BackdropsItem]) {
+        self.backdrops = items
+        collectionView.reloadData()
     }
 }
 // MARK: -Configure-
@@ -86,12 +94,15 @@ extension BackdropsCell: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        5
+        min(backdrops.count, 5)
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: UICollectionViewCell
-        cell = collectionView.dequeueReusableCell(BackdropCell.self, for: indexPath)
+        cell = collectionView.dequeueReusableCell(BackdropCell.self, for: indexPath).then {
+            let item = backdrops[indexPath.item]
+            $0.input(item.file_path)
+        }
         
         return cell
     }

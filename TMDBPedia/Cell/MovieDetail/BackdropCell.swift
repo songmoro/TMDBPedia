@@ -22,7 +22,21 @@ final class BackdropCell: UICollectionViewCell, IsIdentifiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+// MARK: -Open-
+extension BackdropCell {
+    public func input(_ item: String) {
+        handleInput(item)
+    }
     
+    private func handleInput(_ item: String) {
+        if let url = URL(string: APIURL.todayMoviePosterURL + item) {
+            backdropImageView.kf.setImage(with: url)
+        }
+    }
+}
+// MARK: -Configure-
+private extension BackdropCell {
     private func configure() {
         configureSubview()
         configureLayout()
