@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
+// MARK: -SettingsNicknameDetailViewController-
 final class SettingsNicknameDetailViewController: UIViewController {
     private let nicknameTextField = UITextField()
     private var lastResult: Result<String, NicknameError>?
@@ -32,8 +33,7 @@ final class SettingsNicknameDetailViewController: UIViewController {
         passValidateNicknameResult()
     }
 }
-
-// MARK: Open
+// MARK: -Open-
 extension SettingsNicknameDetailViewController {
     public func inputNickname(_ text: String?) {
         nicknameTextField.text = text
@@ -43,8 +43,7 @@ extension SettingsNicknameDetailViewController {
         nicknameHandler = handler
     }
 }
-
-// MARK: Configure
+// MARK: -Configure-
 private extension SettingsNicknameDetailViewController {
     private func configure() {
         configureSubview()
@@ -91,8 +90,7 @@ private extension SettingsNicknameDetailViewController {
         }
     }
 }
-
-// MARK: TextField
+// MARK: -TextField-
 extension SettingsNicknameDetailViewController {
     private func configureTextField() {
         nicknameTextField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
@@ -145,3 +143,4 @@ extension SettingsNicknameDetailViewController {
         return "@#$%".contains(character)
     }
 }
+// MARK: -
