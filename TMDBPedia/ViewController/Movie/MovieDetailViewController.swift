@@ -132,6 +132,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
         tableView.do {
             $0.delegate = self
             $0.dataSource = self
+            $0.separatorStyle = .none
             $0.register(BackdropsCell.self)
             $0.register(SynopsisCell.self)
             $0.register(CastCell.self)
