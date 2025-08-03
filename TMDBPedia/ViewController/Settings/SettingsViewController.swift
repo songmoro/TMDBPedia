@@ -18,12 +18,7 @@ final class SettingsViewController: UIViewController {
     private let storageButton = UIButton()
     
     private let tableView = UITableView()
-    private let list = [
-        "자주 묻는 질문",
-        "1:1 문의",
-        "알림 설정",
-        "탈퇴하기"
-    ]
+    private let list = ["자주 묻는 질문", "1:1 문의", "알림 설정", "탈퇴하기"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,6 +148,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func withdraw(_: UIAlertAction) {
         UserDefaults.standard.removeObject(forKey: "nickname")
+        tabBarController?.replaceToOnboarding()
     }
 }
 // MARK: -

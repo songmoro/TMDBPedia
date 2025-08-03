@@ -21,13 +21,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarController = UITabBarController()
         
         if UserDefaults.standard.string(forKey: "nickname") == nil {
-            let onboardingViewController = UINavigationController(rootViewController: OnboardingViewController())
-            
-            tabBarController.tabBar.isHidden = true
-            tabBarController.setViewControllers([onboardingViewController], animated: true)
+            tabBarController.replaceToOnboarding()
         }
         else {
-            tabBarController.replaceViewControllerAndVisibleTabbar()
+            tabBarController.replaceToMovie()
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
