@@ -53,9 +53,14 @@ extension MovieDetailViewController {
     private func handleInput(_ item: SearchMovieItem) {
         self.id = item.id
         
+        updateNavigation(item.title)
         updateBackdrops(item.id)
         updateSynopsis(text: item.overview)
         callCreditsAPI(item.id)
+    }
+    
+    private func updateNavigation(_ text: String) {
+        navigationItem.title = text
     }
     
     private func updateBackdrops(_ id: Int) {

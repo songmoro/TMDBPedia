@@ -71,7 +71,10 @@ private extension MovieSearchViewController {
     }
     
     private func configureNavigation() {
-        navigationItem.title = "영화 검색"
+        navigationItem.do {
+            $0.backButtonTitle = ""
+            $0.title = "영화 검색"
+        }
     }
 }
 // MARK: -SearchBar-
