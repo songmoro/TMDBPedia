@@ -14,6 +14,7 @@ import Then
 final class TodayMovieCell: UITableViewCell, IsIdentifiable {
     private var movieInfoItems = [TodayMovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
+    private var selectedItemHandler: ((TodayMovieItem) -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -24,7 +25,7 @@ final class TodayMovieCell: UITableViewCell, IsIdentifiable {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
+// MARK: -Open-
 extension TodayMovieCell {
     public func input(_ items: [TodayMovieItem]) {
         handleInput(items)
@@ -34,8 +35,12 @@ extension TodayMovieCell {
         movieInfoItems = items
         collectionView.reloadData()
     }
+    
+    public func bind(handler: @escaping (TodayMovieItem) -> Void) {
+        selectedItemHandler = handler
+    }
 }
-
+// MARK: -Configure-
 private extension TodayMovieCell {
     private func configure() {
         configureSubview()
@@ -58,7 +63,7 @@ private extension TodayMovieCell {
         
     }
 }
-
+// MARK: -CollectionView-
 extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     private func configureCollectionView() {
         collectionView.do {
@@ -93,6 +98,15 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
         
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let item = movieInfoItems[indexPath.item]
+        pushViewContoller(item)
+    }
+    
+    private func pushViewContoller(_ item: TodayMovieItem) {
+        selectedItemHandler?(item)
+    }
 }
 // MARK: -
 
@@ -112,7 +126,7 @@ final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
+// MARK: -Open-
 extension TodayMovieContentCell {
     public func input(_ item: TodayMovieItem) {
         handleInput(item)
@@ -126,7 +140,7 @@ extension TodayMovieContentCell {
         plotLabel.text = item.overview
     }
 }
-
+// MARK: -Configure-
 private extension TodayMovieContentCell {
     private func configure() {
         configureSubview()

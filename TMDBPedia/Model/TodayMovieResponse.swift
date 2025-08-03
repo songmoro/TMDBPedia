@@ -14,7 +14,11 @@ struct TodayMovieResponse: Decodable {
 }
 
 struct TodayMovieItem: Decodable {
+    let id: Int
     let title: String
+    let release_date: String
+    let vote_average: Float
+    let genre_ids: [Int]
     let poster_path: String
     let overview: String
 }

@@ -130,7 +130,7 @@ private extension MovieViewController {
     }
 }
 // MARK: -Network-
-private extension MovieViewController{
+private extension MovieViewController {
     private func callTodayMovieAPI() {
         let url = URL(string: APIURL.todayMovieURL)!
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
@@ -194,6 +194,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         else {
             cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
                 $0.input(movieInfo.results)
+                $0.bind(handler: pushDetailViewController)
             }
         }
         
@@ -222,6 +223,14 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         return headerLabel
+    }
+    
+    private func pushDetailViewController(_ item: TodayMovieItem) {
+        let vc = MovieDetailViewController().then {
+            $0.input(item)
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 // MARK: -

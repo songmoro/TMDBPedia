@@ -16,6 +16,7 @@ final class MovieDetailViewController: UIViewController {
     private var id: Int?
     private var synopsis: (String, Bool) = ("", false)
     private var searchInfo: SearchMovieItem?
+    private var movieInfo: TodayMovieItem?
     private var imagesInfo = ImagesResponse()
     private var creditsInfo = CreditsResponse()
     
@@ -61,11 +62,29 @@ extension MovieDetailViewController {
         callCreditsAPI(item.id)
     }
     
+    public func input(_ item: TodayMovieItem) {
+        handleInput(item)
+    }
+    
+    private func handleInput(_ item: TodayMovieItem) {
+        self.id = item.id
+        
+        updateNavigation(item.title)
+        updateBackdrops(item)
+        updateSynopsis(text: item.overview)
+        callCreditsAPI(item.id)
+    }
+    
     private func updateNavigation(_ text: String) {
         navigationItem.title = text
     }
     
     private func updateBackdrops(_ item: SearchMovieItem) {
+        updateBackdropsImages(item.id)
+        updateFooter(item)
+    }
+    
+    private func updateBackdrops(_ item: TodayMovieItem) {
         updateBackdropsImages(item.id)
         updateFooter(item)
     }
@@ -101,6 +120,11 @@ extension MovieDetailViewController {
     
     private func updateFooter(_ item: SearchMovieItem) {
         self.searchInfo = item
+        tableView.reloadSections([1], with: .automatic)
+    }
+    
+    private func updateFooter(_ item: TodayMovieItem) {
+        self.movieInfo = item
         tableView.reloadSections([1], with: .automatic)
     }
     
@@ -220,18 +244,28 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == 0, let searchInfo {
-            let footerLabel = UILabel().then {
-                $0.text = "\(searchInfo.release_date) | \(searchInfo.vote_average) | \(searchInfo.genre_ids.compactMap(MovieGenre.init).map(\.text).joined(separator: ", "))"
-                $0.font = .systemFont(ofSize: Constant.titleSize)
-                $0.textAlignment = .center
+        if section == 0 {
+            if let searchInfo {
+                let footerLabel = UILabel().then {
+                    $0.text = "\(searchInfo.release_date) | \(searchInfo.vote_average) | \(searchInfo.genre_ids.compactMap(MovieGenre.init).map(\.text).joined(separator: ", "))"
+                    $0.font = .systemFont(ofSize: Constant.titleSize)
+                    $0.textAlignment = .center
+                }
+                
+                return footerLabel
             }
-            
-            return footerLabel
+            else if let movieInfo {
+                let footerLabel = UILabel().then {
+                    $0.text = "\(movieInfo.release_date) | \(movieInfo.vote_average) | \(movieInfo.genre_ids.compactMap(MovieGenre.init).map(\.text).joined(separator: ", "))"
+                    $0.font = .systemFont(ofSize: Constant.titleSize)
+                    $0.textAlignment = .center
+                }
+                
+                return footerLabel
+            }
         }
-        else {
-            return UIView(frame: .zero)
-        }
+        
+        return UIView(frame: .zero)
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
