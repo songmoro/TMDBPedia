@@ -15,6 +15,7 @@ final class MovieDetailViewController: UIViewController {
     private var tableView = UITableView()
     private var id: Int?
     private var synopsis: (String, Bool) = ("", false)
+    private var searchInfo: SearchMovieItem?
     private var imagesInfo = ImagesResponse()
     private var creditsInfo = CreditsResponse()
     
@@ -36,7 +37,8 @@ final class MovieDetailViewController: UIViewController {
     
     private func configureLayout() {
         tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview(\.safeAreaLayoutGuide)
+            $0.verticalEdges.equalToSuperview(\.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
         }
     }
     
@@ -54,7 +56,7 @@ extension MovieDetailViewController {
         self.id = item.id
         
         updateNavigation(item.title)
-        updateBackdrops(item.id)
+        updateBackdrops(item)
         updateSynopsis(text: item.overview)
         callCreditsAPI(item.id)
     }
@@ -63,7 +65,12 @@ extension MovieDetailViewController {
         navigationItem.title = text
     }
     
-    private func updateBackdrops(_ id: Int) {
+    private func updateBackdrops(_ item: SearchMovieItem) {
+        updateBackdropsImages(item.id)
+        updateFooter(item)
+    }
+    
+    private func updateBackdropsImages(_ id: Int) {
         let url = URL(string: APIURL.imagesURL(id))!
         let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
 //        let queryItems: [URLQueryItem] = [
@@ -90,6 +97,11 @@ extension MovieDetailViewController {
                     print(error)
                 }
             }
+    }
+    
+    private func updateFooter(_ item: SearchMovieItem) {
+        self.searchInfo = item
+        tableView.reloadSections([1], with: .automatic)
     }
     
     private func updateSynopsis(text: String) {
@@ -208,10 +220,9 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        if section == 0 {
-            
+        if section == 0, let searchInfo {
             let footerLabel = UILabel().then {
-                $0.text = "Cast"
+                $0.text = "\(searchInfo.release_date) | \(searchInfo.vote_average) | \(searchInfo.genre_ids.compactMap(MovieGenre.init).map(\.text).joined(separator: ", "))"
                 $0.font = .systemFont(ofSize: Constant.titleSize)
                 $0.textAlignment = .center
             }
