@@ -10,18 +10,23 @@ import UIKit
 extension UITabBarController {
     func replaceViewControllerAndVisibleTabbar() {
         let movieViewController = UINavigationController(rootViewController: MovieViewController())
-        let movieViewController2 = UINavigationController(rootViewController: MovieViewController())
+        let upcomingViewController = UIViewController()
+        let settingsViewController = UINavigationController(rootViewController: SettingsViewController())
         
-        setViewControllers([movieViewController, movieViewController2], animated: true)
+        setViewControllers([movieViewController, upcomingViewController, settingsViewController], animated: true)
         
         if let items = tabBar.items {
-            items[0].selectedImage = UIImage(systemName: "star.fill")
-            items[0].image = UIImage(systemName: "star")
-            items[0].title = "Item1"
+            items[0].selectedImage = UIImage(systemName: "popcorn")
+            items[0].image = UIImage(systemName: "popcorn")
+            items[0].title = "CINEMA"
             
-            items[1].selectedImage = UIImage(systemName: "moon.fill")
-            items[1].image = UIImage(systemName: "moon")
-            items[1].title = "Item2"
+            items[1].selectedImage = UIImage(systemName: "film")
+            items[1].image = UIImage(systemName: "film")
+            items[1].title = "UPCOMING"
+            
+            items[2].selectedImage = UIImage(systemName: "person.circle")
+            items[2].image = UIImage(systemName: "person.circle")
+            items[2].title = "PROFILE"
         }
         
         tabBar.isHidden = false
