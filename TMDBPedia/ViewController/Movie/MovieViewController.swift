@@ -224,6 +224,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             else {
                 cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath).then {
                     $0.input(keywords)
+                    $0.bind(tableView.reloadData)
                 }
             }
         }

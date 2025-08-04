@@ -107,7 +107,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: -
 
 // MARK: -ContentCell-
-final class TodayMovieContentCell: BaseCollecctionViewCell {
+final class TodayMovieContentCell: BaseCollectionViewCell {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let likeButton = UIButton()

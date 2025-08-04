@@ -11,7 +11,7 @@ import Kingfisher
 import Then
 
 // MARK: -BackdropCell-
-final class BackdropCell: BaseCollecctionViewCell {
+final class BackdropCell: BaseCollectionViewCell {
     private let backdropImageView = UIImageView()
     
     override init(frame: CGRect) {

@@ -1,5 +1,5 @@
 //
-//  BaseCollecctionViewCell.swift
+//  BaseCollectionViewCell.swift
 //  TMDBPedia
 //
 //  Created by 송재훈 on 8/4/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class BaseCollecctionViewCell: UICollectionViewCell {
+class BaseCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
     }

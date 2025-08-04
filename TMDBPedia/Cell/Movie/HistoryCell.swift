@@ -9,10 +9,36 @@ import UIKit
 import SnapKit
 import Then
 
+// MARK: -WithIndexPathButton-
+class BaseButton: UIButton {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class WithIndexPathButton: BaseButton {
+    var indexPath = IndexPath()
+    
+    init(indexPath: IndexPath = IndexPath()) {
+        super.init(frame: .zero)
+        self.indexPath = indexPath
+    }
+    
+    func update(_ indexPath: IndexPath) {
+        self.indexPath = indexPath
+    }
+}
+
 // MARK: -HistoryCell-
 final class HistoryCell: BaseTableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var keywords: [String] = []
+    private var needsUpdateKeywords: (() -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -23,7 +49,10 @@ final class HistoryCell: BaseTableViewCell {
 extension HistoryCell {
     public func input(_ keywords: [String]) {
         self.keywords = keywords
-        collectionView.reloadData()
+    }
+    
+    public func bind(_ keywordsHandler: @escaping () -> Void) {
+        self.needsUpdateKeywords = keywordsHandler
     }
 }
 // MARK: -Configure-
@@ -76,16 +105,29 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         let keyword = keywords[indexPath.item]
         
         cell.input(keyword)
+        cell.deleteButton.do {
+            $0.update(indexPath)
+            $0.addTarget(self, action: #selector(deleteKeyword), for: .touchUpInside)
+        }
         
         return cell
+    }
+    
+    @objc private func deleteKeyword(_ sender: WithIndexPathButton) {
+        let item = sender.indexPath.item
+        
+        var keywords = keywords
+        keywords.remove(at: item)
+        UserDefaults.standard.set(keywords, forKey: "keywords")
+        needsUpdateKeywords?()
     }
 }
 // MARK: -
 
 // MARK: -HistoryContentCell-
-final class HistoryContentCell: BaseCollecctionViewCell {
+final class HistoryContentCell: BaseCollectionViewCell {
     private let keywordLabel = UILabel()
-    private let deleteButton = UIButton()
+    let deleteButton = WithIndexPathButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -96,6 +138,10 @@ final class HistoryContentCell: BaseCollecctionViewCell {
 extension HistoryContentCell {
     public func input(_ keyword: String) {
         keywordLabel.text = keyword
+    }
+    
+    public func bindDeleteAction(_ handler: @escaping () -> Void) {
+        handler()
     }
 }
 // MARK: -Configure-
@@ -121,7 +167,9 @@ private extension HistoryContentCell {
     }
     
     private func configureView() {
-        deleteButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        deleteButton.do {
+            $0.setImage(UIImage(systemName: "xmark"), for: .normal)
+        }
     }
 }
 // MARK: -
