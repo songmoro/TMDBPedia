@@ -33,14 +33,15 @@ final class SearchMovieCell: BaseTableViewCell {
         
         titleLabel.text = item.title
         dateLabel.text = item.release_date
+        
         let isLiked = UserDefaultsManager.shared.getArray(.likeList)?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
         likeButton.isSelected = isLiked
         
-        for genreId in item.genre_ids {
+        let genres = item.genre_ids.compactMap(MovieGenre.init)[..<min(2, item.genre_ids.count)]
+        
+        for genre in genres {
             let label = UILabel().then {
-                if let genre = MovieGenre(rawValue: genreId) {
-                    $0.text = genre.text
-                }
+                $0.text = genre.text
                 $0.textColor = .Label
             }
             
