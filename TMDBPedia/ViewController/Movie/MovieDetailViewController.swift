@@ -28,7 +28,6 @@ final class MovieDetailViewController: UIViewController {
     private func configure() {
         configureSubview()
         configureLayout()
-        configureView()
         configreTableView()
     }
     
@@ -41,10 +40,6 @@ final class MovieDetailViewController: UIViewController {
             $0.verticalEdges.equalToSuperview(\.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
         }
-    }
-    
-    private func configureView() {
-        
     }
 }
 // MARK: -Open-
@@ -76,7 +71,40 @@ extension MovieDetailViewController {
     }
     
     private func updateNavigation(_ text: String) {
-        navigationItem.title = text
+        navigationItem.do {
+            $0.title = text
+            
+            var image = UIImage(systemName: "heart")
+            if let id {
+                let likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+                
+                if likeList.contains(id) {
+                    image = UIImage(systemName: "heart.fill")
+                }
+                else {
+                    image = UIImage(systemName: "heart")
+                }
+            }
+            
+            $0.rightBarButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(needsLikeAction))
+        }
+    }
+    
+    @objc private func needsLikeAction() {
+        if let id {
+            var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+            
+            if likeList.contains(id) {
+                likeList.removeAll(where: { $0 == id })
+                navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart")
+            }
+            else {
+                likeList.append(id)
+                navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart.fill")
+            }
+            
+            UserDefaultsManager.shared.set(.likeList, to: likeList)
+        }
     }
     
     private func updateBackdrops(_ item: SearchMovieItem) {
