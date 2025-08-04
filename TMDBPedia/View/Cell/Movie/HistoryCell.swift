@@ -114,10 +114,6 @@ extension HistoryContentCell {
     public func input(_ keyword: String) {
         keywordLabel.text = keyword
     }
-    
-    public func bindDeleteAction(_ handler: @escaping () -> Void) {
-        handler()
-    }
 }
 // MARK: -Configure-
 private extension HistoryContentCell {

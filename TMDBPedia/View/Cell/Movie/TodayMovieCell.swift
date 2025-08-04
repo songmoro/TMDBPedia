@@ -15,6 +15,7 @@ final class TodayMovieCell: BaseTableViewCell {
     private var movieInfoItems = [TodayMovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var selectedItemHandler: ((TodayMovieItem) -> Void)?
+    private var needsUpdateLikeList: (() -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -34,6 +35,12 @@ extension TodayMovieCell {
     
     public func bind(handler: @escaping (TodayMovieItem) -> Void) {
         selectedItemHandler = handler
+    }
+}
+// MARK: -Open-
+extension TodayMovieCell {
+    public func bind(_ likeListHandler: @escaping () -> Void) {
+        self.needsUpdateLikeList = likeListHandler
     }
 }
 // MARK: -Configure-
@@ -91,8 +98,27 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
         
         let item = movieInfoItems[indexPath.item]
         cell.input(item)
+        cell.likeButton.do {
+            $0.update(indexPath)
+            $0.addTarget(self, action: #selector(handleLikeAction), for: .touchUpInside)
+        }
         
         return cell
+    }
+    
+    @objc private func handleLikeAction(_ sender: WithIndexPathButton) {
+        let item = movieInfoItems[sender.indexPath.item]
+        var likeList: [Int] = (UserDefaults.standard.array(forKey: "likeList") as? [Int] ?? [])
+        
+        if likeList.contains(item.id) {
+            likeList.removeAll(where: { $0 == item.id })
+        }
+        else {
+            likeList.append(item.id)
+        }
+        
+        UserDefaults.standard.set(likeList, forKey: "likeList")
+        needsUpdateLikeList?()
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -110,7 +136,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
 final class TodayMovieContentCell: BaseCollectionViewCell {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
-    private let likeButton = UIButton()
+    let likeButton = WithIndexPathButton()
     private let plotLabel = UILabel()
     
     override init(frame: CGRect) {
@@ -129,6 +155,8 @@ extension TodayMovieContentCell {
             posterImageView.kf.setImage(with: url)
         }
         titleLabel.text = item.title
+        let isLiked = UserDefaults.standard.array(forKey: "likeList")?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
+        likeButton.isSelected = isLiked
         plotLabel.text = item.overview
     }
 }

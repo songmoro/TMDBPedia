@@ -234,6 +234,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
                 $0.input(movieInfo.results)
                 $0.bind(handler: pushDetailViewController)
+                $0.bind(tableView.reloadData)
             }
         }
         
