@@ -169,7 +169,7 @@ private extension MovieViewController {
 extension MovieViewController {
     private func configureObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateKeywords), name: .forName(.removeKeyword), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateHeader), name: .forName(.likeAction), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsLikeAction), name: .forName(.likeAction), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .forName(.pushMovieSearchViewController), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .forName(.pushMovieDetailViewController), object: nil)
     }
@@ -184,7 +184,7 @@ extension MovieViewController {
         }
     }
     
-    @objc private func needsUpdateHeader(_ notification: NSNotification) {
+    @objc private func needsLikeAction(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath, let todayMovieCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? TodayMovieCell {
             let item = movieInfo.results[indexPath.item]
             

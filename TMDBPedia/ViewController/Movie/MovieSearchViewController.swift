@@ -171,6 +171,10 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
         
         let item = movieInfo.results[indexPath.row]
         cell.input(item)
+        cell.likeButton.do {
+            $0.update(indexPath)
+            $0.addTarget(self, action: #selector(needsLikeAction), for: .touchUpInside)
+        }
         
         return cell
     }
@@ -181,6 +185,23 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
         vc.input(item)
         
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func needsLikeAction(_ sender: WithIndexPathButton) {
+        let indexPath = sender.indexPath
+        let item = movieInfo.results[indexPath.item]
+        
+        var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+        
+        if likeList.contains(item.id) {
+            likeList.removeAll(where: { $0 == item.id })
+        }
+        else {
+            likeList.append(item.id)
+        }
+        
+        UserDefaultsManager.shared.set(.likeList, to: likeList)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
 }
 // MARK: -

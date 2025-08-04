@@ -15,7 +15,7 @@ final class SearchMovieCell: BaseTableViewCell {
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
     private let genreStackView = UIStackView()
-    private let likeButton = UIButton()
+    let likeButton = WithIndexPathButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
