@@ -106,6 +106,8 @@ private extension SettingsViewController {
             configuration.title = "0개의 무비박스 보관중"
             
             $0.configuration = configuration
+            
+            $0.isUserInteractionEnabled = false
         }
     }
     
