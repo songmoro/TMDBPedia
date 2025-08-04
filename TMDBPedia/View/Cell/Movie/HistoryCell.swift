@@ -58,7 +58,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
     private func configureCollectionView() {
         collectionView.do {
             let layout = UICollectionViewFlowLayout().then {
-                $0.itemSize = CGSize(width: 60, height: 30)
+                $0.itemSize = CGSize(width: 120, height: 30)
                 $0.minimumLineSpacing = CGFloat(Constant.offsetFromHorizon)
                 $0.minimumInteritemSpacing = 0
                 $0.scrollDirection = .horizontal
@@ -94,6 +94,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         var keywords = keywords
         keywords.remove(at: item)
         UserDefaultsManager.shared.set(.keywords, to: keywords)
+        collectionView.reloadData()
         needsUpdateKeywords?()
     }
 }
@@ -101,6 +102,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
 
 // MARK: -HistoryContentCell-
 final class HistoryContentCell: BaseCollectionViewCell {
+    private let keywordButton = UIButton()
     private let keywordLabel = UILabel()
     let deleteButton = WithIndexPathButton()
     
@@ -124,22 +126,50 @@ private extension HistoryContentCell {
     }
     
     private func configureSubview() {
-        contentView.addSubviews(keywordLabel, deleteButton)
+        keywordButton.addSubviews(keywordLabel, deleteButton)
+        contentView.addSubview(keywordButton)
     }
     
     private func configureLayout() {
-        keywordLabel.snp.makeConstraints {
-            $0.leading.centerY.equalToSuperview()
+        keywordButton.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
+        keywordLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(Constant.offsetFromHorizon)
+        }
+        
+        deleteButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         deleteButton.snp.makeConstraints {
-            $0.trailing.centerY.equalToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(keywordLabel.snp.trailing).offset(Constant.offsetFromTop).priority(1000)
+            $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon).priority(1000)
         }
     }
     
     private func configureView() {
+        keywordButton.do {
+            var configuration = UIButton.Configuration.roundBordered()
+            configuration.background.backgroundColor = .Label
+            configuration.background.strokeWidth = 0
+            
+            $0.configuration = configuration
+        }
+        
+        keywordLabel.do {
+            $0.textColor = .Background
+            $0.textAlignment = .center
+        }
+        
         deleteButton.do {
-            $0.setImage(UIImage(systemName: "xmark"), for: .normal)
+            var configuration = UIButton.Configuration.plain()
+            configuration.image = UIImage(systemName: "xmark")
+            configuration.baseForegroundColor = .Background
+            configuration.buttonSize = .mini
+            configuration.contentInsets = .zero
+            
+            $0.configuration = configuration
         }
     }
 }
