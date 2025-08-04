@@ -51,8 +51,6 @@ private extension BackdropCell {
     
     private func configureView() {
         backdropImageView.do {
-            let systemColors: [UIColor] = [.systemBlue, .systemRed, .systemPink, .systemOrange, .systemMint, .systemTeal, .systemGreen, .systemCyan, .systemBrown]
-            $0.backgroundColor = systemColors.randomElement()!
             $0.kf.indicatorType = .activity
         }
     }
