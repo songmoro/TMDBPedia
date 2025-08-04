@@ -93,7 +93,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         
         var keywords = keywords
         keywords.remove(at: item)
-        UserDefaults.standard.set(keywords, forKey: "keywords")
+        UserDefaultsManager.shared.set(.keywords, to: keywords)
         needsUpdateKeywords?()
     }
 }

@@ -126,7 +126,7 @@ private extension SettingsNicknameViewController {
         
         view.backgroundColor = .Background
         
-        nicknameLabel.text = UserDefaults.standard.string(forKey: "nickname") ?? ""
+        nicknameLabel.text = UserDefaultsManager.shared.get(.nickname) as? String ?? ""
         
         editButton.do {
             var configuration = UIButton.Configuration.roundBordered()
@@ -149,7 +149,7 @@ private extension SettingsNicknameViewController {
         
         view.backgroundColor = .Background
         
-        nicknameLabel.text = UserDefaults.standard.string(forKey: "nickname") ?? ""
+        nicknameLabel.text = UserDefaultsManager.shared.get(.nickname) as? String ?? ""
         
         editButton.do {
             var configuration = UIButton.Configuration.roundBordered()
@@ -232,7 +232,7 @@ private extension SettingsNicknameViewController {
     }
     
     private func saveNickname(_ text: String?) {
-        UserDefaults.standard.set(text, forKey: "nickname")
+        UserDefaultsManager.shared.set(.nickname, to: text)
     }
     
     private func showToast(_ message: String) {

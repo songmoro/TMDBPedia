@@ -106,8 +106,8 @@ extension MovieSearchViewController: UITextFieldDelegate {
     }
     
     private func achiveKeyword(_ text: String) {
-        let keywords = (UserDefaults.standard.stringArray(forKey: "keywords") ?? []) + [text]
-        UserDefaults.standard.set(keywords, forKey: "keywords")
+        let keywords = (UserDefaultsManager.shared.getArray(.keywords) ?? [String]()) + [text]
+        UserDefaultsManager.shared.set(.keywords, to: keywords)
     }
 }
 // MARK: -Networking-

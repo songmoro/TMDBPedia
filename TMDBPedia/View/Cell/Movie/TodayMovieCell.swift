@@ -108,7 +108,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     @objc private func handleLikeAction(_ sender: WithIndexPathButton) {
         let item = movieInfoItems[sender.indexPath.item]
-        var likeList: [Int] = (UserDefaults.standard.array(forKey: "likeList") as? [Int] ?? [])
+        var likeList: [Int] = (UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? [])
         
         if likeList.contains(item.id) {
             likeList.removeAll(where: { $0 == item.id })
@@ -117,7 +117,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
             likeList.append(item.id)
         }
         
-        UserDefaults.standard.set(likeList, forKey: "likeList")
+        UserDefaultsManager.shared.set(.likeList, to: likeList)
         needsUpdateLikeList?()
     }
     
@@ -155,7 +155,7 @@ extension TodayMovieContentCell {
             posterImageView.kf.setImage(with: url)
         }
         titleLabel.text = item.title
-        let isLiked = UserDefaults.standard.array(forKey: "likeList")?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
+        let isLiked = UserDefaultsManager.shared.getArray(.likeList)?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
         likeButton.isSelected = isLiked
         plotLabel.text = item.overview
     }

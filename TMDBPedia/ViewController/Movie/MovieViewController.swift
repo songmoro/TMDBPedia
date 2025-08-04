@@ -23,7 +23,7 @@ final class MovieViewController: UIViewController {
     private var movieInfo = TodayMovieResponse()
     
     private var keywords: [String] {
-        UserDefaults.standard.stringArray(forKey: "keywords") ?? []
+        UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
     }
     
     override func viewDidLoad() {
@@ -96,7 +96,7 @@ private extension MovieViewController {
         }
         
         nicknameLabel.do {
-            $0.text = UserDefaults.standard.string(forKey: "nickname") ?? "닉네임 로딩 실패"
+            $0.text = UserDefaultsManager.shared.get(.nickname) as? String ?? "닉네임 로딩 실패"
             $0.textColor = .Label
             $0.font = .systemFont(ofSize: Constant.headerSize, weight: .semibold)
         }
@@ -116,7 +116,7 @@ private extension MovieViewController {
             var configuration = UIButton.Configuration.bordered()
             configuration.baseBackgroundColor = .Tint.withAlphaComponent(0.3)
             configuration.baseForegroundColor = .Label
-            configuration.title = "\(UserDefaults.standard.array(forKey: "likeList")?.count ?? 0)개의 무비박스 보관중"
+            configuration.title = "\(UserDefaultsManager.shared.getArray(.likeList)?.count ?? 0)개의 무비박스 보관중"
             
             $0.configuration = configuration
             
@@ -158,7 +158,7 @@ private extension MovieViewController {
     }
     
     private func loadNickname() -> String {
-        UserDefaults.standard.string(forKey: "nickname") ?? "닉네임 로딩 실패"
+        UserDefaultsManager.shared.get(.nickname) as? String ?? "닉네임 로딩 실패"
     }
 }
 // MARK: -Network-
