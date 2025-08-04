@@ -10,16 +10,12 @@ import SnapKit
 import Then
 
 // MARK: -HistoryCell-
-final class HistoryCell: UITableViewCell {
+final class HistoryCell: BaseTableViewCell {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -76,17 +72,13 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: -
 
 // MARK: -HistoryContentCell-
-final class HistoryContentCell: UICollectionViewCell {
+final class HistoryContentCell: BaseCollecctionViewCell {
     private let keywordLabel = UILabel()
     private let deleteButton = UIButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 

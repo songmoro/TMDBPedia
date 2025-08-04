@@ -10,7 +10,7 @@ import Kingfisher
 import SnapKit
 import Then
 
-final class SearchMovieCell: UITableViewCell {
+final class SearchMovieCell: BaseTableViewCell {
     let posterImageView = UIImageView()
     let titleLabel = UILabel()
     let dateLabel = UILabel()
@@ -20,10 +20,6 @@ final class SearchMovieCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     public func input(_ item: SearchMovieItem) {

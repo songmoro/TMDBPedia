@@ -11,7 +11,7 @@ import Kingfisher
 import Then
 
 // MARK: -MovieCell-
-final class TodayMovieCell: UITableViewCell {
+final class TodayMovieCell: BaseTableViewCell {
     private var movieInfoItems = [TodayMovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var selectedItemHandler: ((TodayMovieItem) -> Void)?
@@ -19,10 +19,6 @@ final class TodayMovieCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 // MARK: -Open-
@@ -111,7 +107,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: -
 
 // MARK: -ContentCell-
-final class TodayMovieContentCell: UICollectionViewCell {
+final class TodayMovieContentCell: BaseCollecctionViewCell {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let likeButton = UIButton()
@@ -120,10 +116,6 @@ final class TodayMovieContentCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 // MARK: -Open-

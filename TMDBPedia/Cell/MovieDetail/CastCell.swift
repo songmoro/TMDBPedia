@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 // MARK: -CastCell-
-final class CastCell: UITableViewCell {
+final class CastCell: BaseTableViewCell {
     private let actorImageView = UIImageView()
     private let actorNameLabel = UILabel()
     private let actorRoleLabel = UILabel()
@@ -19,10 +19,6 @@ final class CastCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 // MARK: -Open-

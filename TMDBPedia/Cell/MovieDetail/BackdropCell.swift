@@ -11,16 +11,12 @@ import Kingfisher
 import Then
 
 // MARK: -BackdropCell-
-final class BackdropCell: UICollectionViewCell {
+final class BackdropCell: BaseCollecctionViewCell {
     private let backdropImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 // MARK: -Open-

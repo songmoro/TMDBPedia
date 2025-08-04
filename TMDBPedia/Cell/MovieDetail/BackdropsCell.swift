@@ -10,17 +10,13 @@ import SnapKit
 import Then
 
 // MARK: -BackdropsCell-
-final class BackdropsCell: UITableViewCell {
+final class BackdropsCell: BaseTableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var backdrops = [BackdropsItem]()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 // MARK: -Open-

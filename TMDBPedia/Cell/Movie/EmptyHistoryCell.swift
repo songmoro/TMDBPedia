@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class EmptyHistoryCell: UITableViewCell {
+final class EmptyHistoryCell: BaseTableViewCell {
     let emptyLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -23,9 +23,5 @@ final class EmptyHistoryCell: UITableViewCell {
         emptyLabel.text = "최근 검색어 내역이 없습니다."
         emptyLabel.textColor = .Placeholder
         emptyLabel.font = .systemFont(ofSize: Constant.bodySize)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

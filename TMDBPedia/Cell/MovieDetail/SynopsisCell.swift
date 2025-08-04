@@ -10,16 +10,12 @@ import SnapKit
 import Then
 
 // MARK: -SynopsisCell-
-final class SynopsisCell: UITableViewCell {
+final class SynopsisCell: BaseTableViewCell {
     private let synopsisLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 // MARK: -Open-
