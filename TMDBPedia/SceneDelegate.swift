@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let tabBarController = UITabBarController()
         
-        if UserDefaultsManager.shared.get(.nickname) == nil {
+        if Nickname.get() == nil {
             tabBarController.replaceToOnboarding()
         }
         else {

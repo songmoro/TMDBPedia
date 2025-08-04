@@ -96,7 +96,7 @@ private extension MovieViewController {
         }
         
         nicknameLabel.do {
-            $0.text = UserDefaultsManager.shared.get(.nickname) as? String ?? "닉네임 로딩 실패"
+            $0.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
             $0.textColor = .Label
             $0.font = .systemFont(ofSize: Constant.headerSize, weight: .semibold)
         }
@@ -107,7 +107,15 @@ private extension MovieViewController {
         }
         
         registerDateLabel.do {
-            $0.text = "25.06.24 가입"
+            let date = Nickname.get()?.date.description
+            
+            if let date {
+                $0.text = "\(date) 가입"
+            }
+            else {
+                $0.text = "가입 시기 로딩 실패"
+            }
+            
             $0.textColor = .Fill
             $0.font = .systemFont(ofSize: Constant.bodySize, weight: .light)
         }
@@ -154,11 +162,7 @@ private extension MovieViewController {
     }
     
     private func updateNicknameLabel() {
-        nicknameLabel.text = loadNickname()
-    }
-    
-    private func loadNickname() -> String {
-        UserDefaultsManager.shared.get(.nickname) as? String ?? "닉네임 로딩 실패"
+        nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
     }
 }
 // MARK: -Network-

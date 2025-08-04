@@ -126,7 +126,7 @@ private extension SettingsNicknameViewController {
         
         view.backgroundColor = .Background
         
-        nicknameLabel.text = UserDefaultsManager.shared.get(.nickname) as? String ?? ""
+        nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
         
         editButton.do {
             var configuration = UIButton.Configuration.roundBordered()
@@ -148,8 +148,7 @@ private extension SettingsNicknameViewController {
         }
         
         view.backgroundColor = .Background
-        
-        nicknameLabel.text = UserDefaultsManager.shared.get(.nickname) as? String ?? ""
+        nicknameLabel.text = Nickname.get()?.text ?? ""
         
         editButton.do {
             var configuration = UIButton.Configuration.roundBordered()
@@ -232,7 +231,7 @@ private extension SettingsNicknameViewController {
     }
     
     private func saveNickname(_ text: String?) {
-        UserDefaultsManager.shared.set(.nickname, to: text)
+        Nickname.set(text!)
     }
     
     private func showToast(_ message: String) {
