@@ -103,7 +103,7 @@ private extension SettingsViewController {
             var configuration = UIButton.Configuration.bordered()
             configuration.baseBackgroundColor = .Tint.withAlphaComponent(0.3)
             configuration.baseForegroundColor = .Label
-            configuration.title = "0개의 무비박스 보관중"
+            configuration.title = "\(UserDefaults.standard.array(forKey: "likeList")?.count ?? 0)개의 무비박스 보관중"
             
             $0.configuration = configuration
             

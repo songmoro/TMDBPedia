@@ -116,7 +116,7 @@ private extension MovieViewController {
             var configuration = UIButton.Configuration.bordered()
             configuration.baseBackgroundColor = .Tint.withAlphaComponent(0.3)
             configuration.baseForegroundColor = .Label
-            configuration.title = "0개의 무비박스 보관중"
+            configuration.title = "\(UserDefaults.standard.array(forKey: "likeList")?.count ?? 0)개의 무비박스 보관중"
             
             $0.configuration = configuration
             
@@ -234,11 +234,16 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
                 $0.input(movieInfo.results)
                 $0.bind(handler: pushDetailViewController)
-                $0.bind(tableView.reloadData)
+                $0.bind(needsUpdateFromLikeList)
             }
         }
         
         return cell
+    }
+    
+    private func needsUpdateFromLikeList() {
+        tableView.reloadData()
+        storageButton.configuration?.title = "\(UserDefaults.standard.array(forKey: "likeList")?.count ?? 0)개의 무비박스 보관중"
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
