@@ -88,11 +88,11 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     @objc private func postIndexPathForRemoveKeyword(_ sender: WithIndexPathButton) {
-        NotificationCenter.default.post(name: .by(.removeKeyword), object: nil, userInfo: ["indexPath": sender.indexPath])
+        NotificationCenter.default.post(name: .forName(.removeKeyword), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
     
     @objc private func postIndexPathForPushMovieSearchViewController(_ sender: WithIndexPathButton) {
-        NotificationCenter.default.post(name: .by(.pushMovieSearchViewController), object: nil, userInfo: ["indexPath": sender.indexPath])
+        NotificationCenter.default.post(name: .forName(.pushMovieSearchViewController), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
 }
 // MARK: -

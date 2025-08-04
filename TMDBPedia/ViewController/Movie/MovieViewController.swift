@@ -168,10 +168,10 @@ private extension MovieViewController {
 // MARK: -NotificationCenter-
 extension MovieViewController {
     private func configureObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateKeywords), name: .by(.removeKeyword), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateHeader), name: .by(.likeAction), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .by(.pushMovieSearchViewController), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .by(.pushMovieDetailViewController), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateKeywords), name: .forName(.removeKeyword), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateHeader), name: .forName(.likeAction), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .forName(.pushMovieSearchViewController), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .forName(.pushMovieDetailViewController), object: nil)
     }
     
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {

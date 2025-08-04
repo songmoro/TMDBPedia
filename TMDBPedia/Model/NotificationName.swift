@@ -19,7 +19,7 @@ enum NotificationName: String {
 }
 
 extension Notification.Name {
-    static func by(_ name: NotificationName) -> Self {
+    static func forName(_ name: NotificationName) -> Self {
         return name.name
     }
 }

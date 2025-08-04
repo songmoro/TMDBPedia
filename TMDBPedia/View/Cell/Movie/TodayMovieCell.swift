@@ -94,11 +94,11 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     @objc private func postIndexPathForLikeAction(_ sender: WithIndexPathButton) {
-        NotificationCenter.default.post(name: .by(.likeAction), object: nil, userInfo: ["indexPath": sender.indexPath])
+        NotificationCenter.default.post(name: .forName(.likeAction), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
     
     private func postIndexPathForPushDetailViewController(_ sender: IndexPath) {
-        NotificationCenter.default.post(name: .by(.pushMovieDetailViewController), object: nil, userInfo: ["indexPath": sender])
+        NotificationCenter.default.post(name: .forName(.pushMovieDetailViewController), object: nil, userInfo: ["indexPath": sender])
     }
 }
 // MARK: -

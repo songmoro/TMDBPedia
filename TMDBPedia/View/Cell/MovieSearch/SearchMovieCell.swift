@@ -11,11 +11,11 @@ import SnapKit
 import Then
 
 final class SearchMovieCell: BaseTableViewCell {
-    let posterImageView = UIImageView()
-    let titleLabel = UILabel()
-    let dateLabel = UILabel()
-    let genreStackView = UIStackView()
-    let likeButton = UIButton()
+    private let posterImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let genreStackView = UIStackView()
+    private let likeButton = UIButton()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -33,6 +33,8 @@ final class SearchMovieCell: BaseTableViewCell {
         
         titleLabel.text = item.title
         dateLabel.text = item.release_date
+        let isLiked = UserDefaultsManager.shared.getArray(.likeList)?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
+        likeButton.isSelected = isLiked
         
         for genreId in item.genre_ids {
             let label = UILabel().then {
