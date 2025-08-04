@@ -9,31 +9,6 @@ import UIKit
 import SnapKit
 import Then
 
-// MARK: -WithIndexPathButton-
-class BaseButton: UIButton {
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-class WithIndexPathButton: BaseButton {
-    var indexPath = IndexPath()
-    
-    init(indexPath: IndexPath = IndexPath()) {
-        super.init(frame: .zero)
-        self.indexPath = indexPath
-    }
-    
-    func update(_ indexPath: IndexPath) {
-        self.indexPath = indexPath
-    }
-}
-
 // MARK: -HistoryCell-
 final class HistoryCell: BaseTableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
