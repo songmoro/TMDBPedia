@@ -90,6 +90,8 @@ extension MovieSearchViewController: UITextFieldDelegate {
     
     private func handleSearchTextFieldReturn(_ textField: UITextField) {
         let text = textField.text!
+        
+        achiveKeyword(text)
         callSearchMovieAPI(text) {
             if $0.results.isEmpty {
                 self.emptyLabel.isHidden = false
@@ -101,6 +103,11 @@ extension MovieSearchViewController: UITextFieldDelegate {
                 self.handleSuccess($0)
             }
         }
+    }
+    
+    private func achiveKeyword(_ text: String) {
+        let keywords = (UserDefaults.standard.stringArray(forKey: "keywords") ?? []) + [text]
+        UserDefaults.standard.set(keywords, forKey: "keywords")
     }
 }
 // MARK: -Networking-

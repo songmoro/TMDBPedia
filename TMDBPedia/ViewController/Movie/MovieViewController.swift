@@ -22,11 +22,20 @@ final class MovieViewController: UIViewController {
     
     private var movieInfo = TodayMovieResponse()
     
+    private var keywords: [String] {
+        UserDefaults.standard.stringArray(forKey: "keywords") ?? []
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
         
         callTodayMovieAPI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
     }
 }
 // MARK: -Configure-
@@ -209,8 +218,14 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         let cell: UITableViewCell
         
         if indexPath.section == 0 {
-//            let cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath)
-            cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
+            if keywords.isEmpty {
+                cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
+            }
+            else {
+                cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath).then {
+                    $0.input(keywords)
+                }
+            }
         }
         else {
             cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {

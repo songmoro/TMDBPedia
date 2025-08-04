@@ -11,14 +11,22 @@ import Then
 
 // MARK: -HistoryCell-
 final class HistoryCell: BaseTableViewCell {
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
+    private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
+    private var keywords: [String] = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
     }
 }
-
+// MARK: -Open-
+extension HistoryCell {
+    public func input(_ keywords: [String]) {
+        self.keywords = keywords
+        collectionView.reloadData()
+    }
+}
+// MARK: -Configure-
 private extension HistoryCell {
     private func configure() {
         configureSubview()
@@ -41,7 +49,7 @@ private extension HistoryCell {
         
     }
 }
-
+// MARK: -CollectionView-
 extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
     private func configureCollectionView() {
         collectionView.do {
@@ -60,11 +68,14 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        20
+        keywords.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(HistoryContentCell.self, for: indexPath)
+        let keyword = keywords[indexPath.item]
+        
+        cell.input(keyword)
         
         return cell
     }
@@ -81,7 +92,13 @@ final class HistoryContentCell: BaseCollecctionViewCell {
         configure()
     }
 }
-
+// MARK: -Open-
+extension HistoryContentCell {
+    public func input(_ keyword: String) {
+        keywordLabel.text = keyword
+    }
+}
+// MARK: -Configure-
 private extension HistoryContentCell {
     private func configure() {
         configureSubview()
@@ -104,7 +121,6 @@ private extension HistoryContentCell {
     }
     
     private func configureView() {
-        keywordLabel.text = "하얼빈"
         deleteButton.setImage(UIImage(systemName: "xmark"), for: .normal)
     }
 }
