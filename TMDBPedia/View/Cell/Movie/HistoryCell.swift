@@ -13,6 +13,7 @@ import Then
 final class HistoryCell: BaseTableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var keywords: [String] = []
+    private var needsPushByKeyword: ((String) -> Void)?
     private var needsUpdateKeywords: (() -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -26,8 +27,12 @@ extension HistoryCell {
         self.keywords = keywords
     }
     
-    public func bind(_ keywordsHandler: @escaping () -> Void) {
+    public func bind(keywordsHandler: @escaping () -> Void) {
         self.needsUpdateKeywords = keywordsHandler
+    }
+    
+    public func bind(searchKeywordHandler: @escaping (String) -> Void) {
+        needsPushByKeyword = searchKeywordHandler
     }
 }
 // MARK: -Configure-
@@ -80,6 +85,11 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         let keyword = keywords[indexPath.item]
         
         cell.input(keyword)
+        cell.keywordButton.do {
+            $0.update(indexPath)
+            $0.addTarget(self, action: #selector(keywordButtonClicked), for: .touchUpInside)
+        }
+        
         cell.deleteButton.do {
             $0.update(indexPath)
             $0.addTarget(self, action: #selector(deleteKeyword), for: .touchUpInside)
@@ -97,12 +107,20 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         collectionView.reloadData()
         needsUpdateKeywords?()
     }
+    
+    @objc private func keywordButtonClicked(_ sender: WithIndexPathButton) {
+        pushViewContoller(keywords[sender.indexPath.item])
+    }
+    
+    private func pushViewContoller(_ keyword: String) {
+        needsPushByKeyword?(keyword)
+    }
 }
 // MARK: -
 
 // MARK: -HistoryContentCell-
 final class HistoryContentCell: BaseCollectionViewCell {
-    private let keywordButton = UIButton()
+    let keywordButton = WithIndexPathButton()
     private let keywordLabel = UILabel()
     let deleteButton = WithIndexPathButton()
     

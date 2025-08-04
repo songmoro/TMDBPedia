@@ -226,7 +226,8 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             else {
                 cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath).then {
                     $0.input(keywords)
-                    $0.bind(tableView.reloadData)
+                    $0.bind(keywordsHandler: tableView.reloadData)
+                    $0.bind(searchKeywordHandler: needsPush)
                 }
             }
         }
@@ -239,6 +240,14 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         return cell
+    }
+    
+    private func needsPush(from keyword: String) {
+        let vc = MovieSearchViewController().then {
+            $0.input(keyword: keyword)
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func needsUpdateFromLikeList() {
