@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 // MARK: -CastCell-
-final class CastCell: UITableViewCell, IsIdentifiable {
+final class CastCell: UITableViewCell {
     private let actorImageView = UIImageView()
     private let actorNameLabel = UILabel()
     private let actorRoleLabel = UILabel()

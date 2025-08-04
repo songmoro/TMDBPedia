@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -HistoryCell-
-final class HistoryCell: UITableViewCell, IsIdentifiable {
+final class HistoryCell: UITableViewCell {
     let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -76,7 +76,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: -
 
 // MARK: -HistoryContentCell-
-final class HistoryContentCell: UICollectionViewCell, IsIdentifiable {
+final class HistoryContentCell: UICollectionViewCell {
     private let keywordLabel = UILabel()
     private let deleteButton = UIButton()
     

@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -BackdropsCell-
-final class BackdropsCell: UITableViewCell, IsIdentifiable {
+final class BackdropsCell: UITableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var backdrops = [BackdropsItem]()
     

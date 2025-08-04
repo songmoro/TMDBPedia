@@ -10,7 +10,7 @@ import Kingfisher
 import SnapKit
 import Then
 
-final class SearchMovieCell: UITableViewCell, IsIdentifiable {
+final class SearchMovieCell: UITableViewCell {
     let posterImageView = UIImageView()
     let titleLabel = UILabel()
     let dateLabel = UILabel()

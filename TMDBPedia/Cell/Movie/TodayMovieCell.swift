@@ -11,7 +11,7 @@ import Kingfisher
 import Then
 
 // MARK: -MovieCell-
-final class TodayMovieCell: UITableViewCell, IsIdentifiable {
+final class TodayMovieCell: UITableViewCell {
     private var movieInfoItems = [TodayMovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var selectedItemHandler: ((TodayMovieItem) -> Void)?
@@ -111,7 +111,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: -
 
 // MARK: -ContentCell-
-final class TodayMovieContentCell: UICollectionViewCell, IsIdentifiable {
+final class TodayMovieContentCell: UICollectionViewCell {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let likeButton = UIButton()

@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class EmptyHistoryCell: UITableViewCell, IsIdentifiable {
+final class EmptyHistoryCell: UITableViewCell {
     let emptyLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
