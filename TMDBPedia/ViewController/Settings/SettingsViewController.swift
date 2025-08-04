@@ -174,7 +174,10 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func withdraw(_: UIAlertAction) {
-        Nickname.remove()
+        UserDefaultsManager.shared.remove(.likeList)
+        UserDefaultsManager.shared.remove(.keywords)
+        UserDefaultsManager.shared.remove(.nickname)
+        
         tabBarController?.replaceToOnboarding()
     }
 }
