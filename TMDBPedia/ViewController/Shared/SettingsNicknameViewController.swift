@@ -167,7 +167,7 @@ private extension SettingsNicknameViewController {
             configuration.title = "완료"
             $0.configuration = configuration
             
-            $0.isEnabled = false
+            $0.isUserInteractionEnabled = false
             $0.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         }
     }
@@ -217,7 +217,7 @@ private extension SettingsNicknameViewController {
     }
     
     private func updateDoneButton(to status: Bool = false) {
-        doneButton.isEnabled = status
+        doneButton.isUserInteractionEnabled = status
         navigationItem.rightBarButtonItem?.isEnabled = status
     }
     
