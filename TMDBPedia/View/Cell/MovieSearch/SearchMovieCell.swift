@@ -40,12 +40,20 @@ final class SearchMovieCell: BaseTableViewCell {
         let genres = item.genre_ids.compactMap(MovieGenre.init)[..<min(2, item.genre_ids.count)]
         
         for genre in genres {
-            let label = UILabel().then {
-                $0.text = genre.text
-                $0.textColor = .Label
+            let button = UIButton().then {
+                $0.isUserInteractionEnabled = false
+                
+                var configuration = UIButton.Configuration.filled()
+                configuration.title = genre.text
+                configuration.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+                configuration.background.backgroundColor = .systemGray5
+                configuration.baseForegroundColor = .Label
+                
+                $0.configuration = configuration
             }
             
-            genreStackView.addArrangedSubview(label)
+            genreStackView.addArrangedSubview(button)
+            
         }
     }
     
@@ -109,6 +117,7 @@ final class SearchMovieCell: BaseTableViewCell {
         
         genreStackView.do {
             $0.axis = .horizontal
+            $0.distribution = .fillProportionally
             $0.spacing = CGFloat(Constant.offsetFromTop)
         }
         
