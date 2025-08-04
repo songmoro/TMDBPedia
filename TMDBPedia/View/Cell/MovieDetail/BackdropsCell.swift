@@ -42,7 +42,7 @@ private extension BackdropsCell {
         collectionView.snp.makeConstraints {
             $0.width.equalToSuperview().priority(1000)
             $0.height.equalTo(collectionView.snp.width).multipliedBy(0.8).priority(999)
-            $0.edges.equalToSuperview().inset(Constant.offsetFromHorizon).priority(998)
+            $0.edges.equalToSuperview().priority(998)
         }
     }
     
