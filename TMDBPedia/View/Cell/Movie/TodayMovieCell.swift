@@ -89,18 +89,17 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        postIndexPathForPushDetailViewController(indexPath)
+    }
+    
     @objc private func postIndexPathForLikeAction(_ sender: WithIndexPathButton) {
         NotificationCenter.default.post(name: .by(.likeAction), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let item = movieInfoItems[indexPath.item]
-//        pushViewContoller(item)
+    private func postIndexPathForPushDetailViewController(_ sender: IndexPath) {
+        NotificationCenter.default.post(name: .by(.pushMovieDetailViewController), object: nil, userInfo: ["indexPath": sender])
     }
-    
-//    private func pushViewContoller(_ item: TodayMovieItem) {
-//        selectedItemHandler?(item)
-//    }
 }
 // MARK: -
 

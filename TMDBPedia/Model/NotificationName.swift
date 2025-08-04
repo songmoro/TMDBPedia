@@ -11,6 +11,7 @@ enum NotificationName: String {
     case removeKeyword
     case likeAction
     case pushMovieSearchViewController
+    case pushMovieDetailViewController
     
     var name: Notification.Name {
         return Notification.Name(rawValue: self.rawValue)

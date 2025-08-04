@@ -171,6 +171,7 @@ extension MovieViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateKeywords), name: .by(.removeKeyword), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateHeader), name: .by(.likeAction), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .by(.pushMovieSearchViewController), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .by(.pushMovieDetailViewController), object: nil)
     }
     
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {
@@ -207,6 +208,18 @@ extension MovieViewController {
             
             let vc = MovieSearchViewController().then {
                 $0.input(keyword: keyword)
+            }
+            
+            navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
+    @objc private func needsPushMovieDetailViewController(_ notification: NSNotification) {
+        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
+            let item = movieInfo.results[indexPath.item]
+            
+            let vc = MovieDetailViewController().then {
+                $0.input(item)
             }
             
             navigationController?.pushViewController(vc, animated: true)
@@ -290,11 +303,6 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    private func needsUpdateFromLikeList() {
-        tableView.reloadData()
-        storageButton.configuration?.title = "\(UserDefaults.standard.array(forKey: "likeList")?.count ?? 0)개의 무비박스 보관중"
-    }
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return CGFloat(Constant.textFieldHeight)
@@ -317,14 +325,6 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         return headerLabel
-    }
-    
-    private func pushDetailViewController(_ item: TodayMovieItem) {
-        let vc = MovieDetailViewController().then {
-            $0.input(item)
-        }
-        
-        navigationController?.pushViewController(vc, animated: true)
     }
 }
 // MARK: -
