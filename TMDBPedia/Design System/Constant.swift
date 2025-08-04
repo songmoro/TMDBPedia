@@ -15,6 +15,11 @@ struct Constant {
     static let offsetFromTop = 4
     
     /**
+     연관된 이미지간 구분을 주기위한 정도
+     */
+    static let offsetFromImage = 8
+    
+    /**
      스크린 너비에서 조금 떨어진 정도
      */
     static let offsetFromHorizon = 12

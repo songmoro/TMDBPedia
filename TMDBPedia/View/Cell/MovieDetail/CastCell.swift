@@ -20,6 +20,13 @@ final class CastCell: BaseTableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configure()
     }
+    
+    override func layoutIfNeeded() {
+        super.layoutIfNeeded()
+        actorImageView.do {
+            $0.layer.cornerRadius = $0.bounds.width / 2
+        }
+    }
 }
 // MARK: -Open-
 extension CastCell {
@@ -46,9 +53,10 @@ private extension CastCell {
     
     private func configureLayout() {
         actorImageView.snp.makeConstraints {
-            $0.width.equalToSuperview().multipliedBy(0.2).priority(1000)
+            $0.width.equalToSuperview().multipliedBy(0.15).priority(1000)
             $0.height.equalTo(actorImageView.snp.width).priority(999)
-            $0.leading.verticalEdges.equalToSuperview().inset(Constant.offsetFromHorizon).priority(998)
+            $0.leading.equalToSuperview().priority(998)
+            $0.verticalEdges.equalToSuperview().inset(Constant.offsetFromImage).priority(997)
         }
         
         actorNameLabel.snp.makeConstraints {
@@ -57,13 +65,27 @@ private extension CastCell {
         }
         
         actorRoleLabel.snp.makeConstraints {
-            $0.leading.equalTo(actorNameLabel.snp.trailing).offset(Constant.offsetFromHorizon)
+            $0.leading.equalTo(actorNameLabel.snp.trailing).offset(Constant.offsetFromImage)
             $0.centerY.equalToSuperview()
         }
     }
     
     private func configureView() {
-        actorImageView.kf.indicatorType = .activity
+        actorImageView.do {
+            $0.contentMode = .scaleAspectFill
+            $0.clipsToBounds = true
+            $0.kf.indicatorType = .activity
+        }
+        
+        actorNameLabel.do {
+            $0.font = .systemFont(ofSize: Constant.titleSize, weight: .bold)
+            $0.textColor = .Label
+        }
+        
+        actorRoleLabel.do {
+            $0.font = .systemFont(ofSize: Constant.bodySize)
+            $0.textColor = .Placeholder
+        }
     }
 }
 // MARK: -
