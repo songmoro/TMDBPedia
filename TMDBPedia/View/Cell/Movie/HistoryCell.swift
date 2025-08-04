@@ -13,8 +13,6 @@ import Then
 final class HistoryCell: BaseTableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var keywords: [String] = []
-    private var needsPushByKeyword: ((String) -> Void)?
-    private var needsUpdateKeywords: (() -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -27,12 +25,8 @@ extension HistoryCell {
         self.keywords = keywords
     }
     
-    public func bind(keywordsHandler: @escaping () -> Void) {
-        self.needsUpdateKeywords = keywordsHandler
-    }
-    
-    public func bind(searchKeywordHandler: @escaping (String) -> Void) {
-        needsPushByKeyword = searchKeywordHandler
+    public func needsReload() {
+        collectionView.reloadData()
     }
 }
 // MARK: -Configure-
@@ -40,7 +34,6 @@ private extension HistoryCell {
     private func configure() {
         configureSubview()
         configureLayout()
-        configureView()
         configureCollectionView()
     }
     
@@ -52,10 +45,6 @@ private extension HistoryCell {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-    }
-    
-    private func configureView() {
-        
     }
 }
 // MARK: -CollectionView-
@@ -87,33 +76,23 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.input(keyword)
         cell.keywordButton.do {
             $0.update(indexPath)
-            $0.addTarget(self, action: #selector(keywordButtonClicked), for: .touchUpInside)
+            $0.addTarget(self, action: #selector(postIndexPathForPushMovieSearchViewController), for: .touchUpInside)
         }
         
         cell.deleteButton.do {
             $0.update(indexPath)
-            $0.addTarget(self, action: #selector(deleteKeyword), for: .touchUpInside)
+            $0.addTarget(self, action: #selector(postIndexPathForPushMovieSearchViewController), for: .touchUpInside)
         }
         
         return cell
     }
     
-    @objc private func deleteKeyword(_ sender: WithIndexPathButton) {
-        let item = sender.indexPath.item
-        
-        var keywords = keywords
-        keywords.remove(at: item)
-        UserDefaultsManager.shared.set(.keywords, to: keywords)
-        collectionView.reloadData()
-        needsUpdateKeywords?()
+    @objc private func postIndexPathForRemoveKeyword(_ sender: WithIndexPathButton) {
+        NotificationCenter.default.post(name: .by(.removeKeyword), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
     
-    @objc private func keywordButtonClicked(_ sender: WithIndexPathButton) {
-        pushViewContoller(keywords[sender.indexPath.item])
-    }
-    
-    private func pushViewContoller(_ keyword: String) {
-        needsPushByKeyword?(keyword)
+    @objc private func postIndexPathForPushMovieSearchViewController(_ sender: WithIndexPathButton) {
+        NotificationCenter.default.post(name: .by(.pushMovieSearchViewController), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
 }
 // MARK: -

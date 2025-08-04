@@ -14,8 +14,6 @@ import Then
 final class TodayMovieCell: BaseTableViewCell {
     private var movieInfoItems = [TodayMovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-    private var selectedItemHandler: ((TodayMovieItem) -> Void)?
-    private var needsUpdateLikeList: (() -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -25,22 +23,12 @@ final class TodayMovieCell: BaseTableViewCell {
 // MARK: -Open-
 extension TodayMovieCell {
     public func input(_ items: [TodayMovieItem]) {
-        handleInput(items)
-    }
-    
-    private func handleInput(_ items: [TodayMovieItem]) {
         movieInfoItems = items
         collectionView.reloadData()
     }
     
-    public func bind(handler: @escaping (TodayMovieItem) -> Void) {
-        selectedItemHandler = handler
-    }
-}
-// MARK: -Open-
-extension TodayMovieCell {
-    public func bind(_ likeListHandler: @escaping () -> Void) {
-        self.needsUpdateLikeList = likeListHandler
+    public func needsReload() {
+        collectionView.reloadData()
     }
 }
 // MARK: -Configure-
@@ -48,7 +36,6 @@ private extension TodayMovieCell {
     private func configure() {
         configureSubview()
         configureLayout()
-        configureView()
         configureCollectionView()
     }
     
@@ -60,10 +47,6 @@ private extension TodayMovieCell {
         collectionView.snp.makeConstraints {
             $0.size.equalToSuperview()
         }
-    }
-    
-    private func configureView() {
-        
     }
 }
 // MARK: -CollectionView-
@@ -100,35 +83,24 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
         cell.input(item)
         cell.likeButton.do {
             $0.update(indexPath)
-            $0.addTarget(self, action: #selector(handleLikeAction), for: .touchUpInside)
+            $0.addTarget(self, action: #selector(postIndexPathForLikeAction), for: .touchUpInside)
         }
         
         return cell
     }
     
-    @objc private func handleLikeAction(_ sender: WithIndexPathButton) {
-        let item = movieInfoItems[sender.indexPath.item]
-        var likeList: [Int] = (UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? [])
-        
-        if likeList.contains(item.id) {
-            likeList.removeAll(where: { $0 == item.id })
-        }
-        else {
-            likeList.append(item.id)
-        }
-        
-        UserDefaultsManager.shared.set(.likeList, to: likeList)
-        needsUpdateLikeList?()
+    @objc private func postIndexPathForLikeAction(_ sender: WithIndexPathButton) {
+        NotificationCenter.default.post(name: .by(.likeAction), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = movieInfoItems[indexPath.item]
-        pushViewContoller(item)
+//        pushViewContoller(item)
     }
     
-    private func pushViewContoller(_ item: TodayMovieItem) {
-        selectedItemHandler?(item)
-    }
+//    private func pushViewContoller(_ item: TodayMovieItem) {
+//        selectedItemHandler?(item)
+//    }
 }
 // MARK: -
 

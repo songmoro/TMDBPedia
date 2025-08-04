@@ -22,19 +22,18 @@ final class MovieViewController: UIViewController {
     
     private var movieInfo = TodayMovieResponse()
     
-    private var keywords: [String] {
-        UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
-    }
+    private var keywords: [String] = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
+    private var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        
         callTodayMovieAPI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
         tableView.reloadData()
     }
 }
@@ -46,6 +45,7 @@ private extension MovieViewController {
         configureView()
         configureNavigation()
         configureTableView()
+        configureObserver()
     }
     
     private func configureSubview() {
@@ -165,6 +165,54 @@ private extension MovieViewController {
         nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
     }
 }
+// MARK: -NotificationCenter-
+extension MovieViewController {
+    private func configureObserver() {
+        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateKeywords), name: .by(.removeKeyword), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateHeader), name: .by(.likeAction), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .by(.pushMovieSearchViewController), object: nil)
+    }
+    
+    @objc private func needsUpdateKeywords(_ notification: NSNotification) {
+        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath, let historyCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? HistoryCell {
+            keywords.remove(at: indexPath.item)
+            UserDefaultsManager.shared.set(.keywords, to: keywords)
+            
+            tableView.reloadData()
+            historyCell.needsReload()
+        }
+    }
+    
+    @objc private func needsUpdateHeader(_ notification: NSNotification) {
+        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath, let todayMovieCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? TodayMovieCell {
+            let item = movieInfo.results[indexPath.item]
+            
+            if likeList.contains(item.id) {
+                likeList.removeAll(where: { $0 == item.id })
+            }
+            else {
+                likeList.append(item.id)
+            }
+            
+            UserDefaultsManager.shared.set(.likeList, to: likeList)
+            storageButton.configuration?.title = "\(likeList.count)개의 무비박스 보관중"
+            tableView.reloadData()
+            todayMovieCell.needsReload()
+        }
+    }
+    
+    @objc private func needsPushMovieSearchViewController(_ notification: NSNotification) {
+        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
+            let keyword = keywords[indexPath.item]
+            
+            let vc = MovieSearchViewController().then {
+                $0.input(keyword: keyword)
+            }
+            
+            navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+}
 // MARK: -Network-
 private extension MovieViewController {
     private func callTodayMovieAPI() {
@@ -230,28 +278,16 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             else {
                 cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath).then {
                     $0.input(keywords)
-                    $0.bind(keywordsHandler: tableView.reloadData)
-                    $0.bind(searchKeywordHandler: needsPush)
                 }
             }
         }
         else {
             cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
                 $0.input(movieInfo.results)
-                $0.bind(handler: pushDetailViewController)
-                $0.bind(needsUpdateFromLikeList)
             }
         }
         
         return cell
-    }
-    
-    private func needsPush(from keyword: String) {
-        let vc = MovieSearchViewController().then {
-            $0.input(keyword: keyword)
-        }
-        
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func needsUpdateFromLikeList() {
