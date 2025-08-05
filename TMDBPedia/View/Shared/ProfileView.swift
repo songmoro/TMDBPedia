@@ -9,12 +9,19 @@ import UIKit
 import SnapKit
 import Then
 
+// MARK: -ProfileViewError-
+enum ProfileViewErrorReason: Error {
+    case failedLoadNickname
+}
+// MARK: -
+
 // MARK: -ProfileView-
 final class ProfileView: BaseView {
     private let nicknameLabel = UILabel()
     private let registerDateLabel = UILabel()
     private let chevronImageView = UIImageView()
     private let storageButton = UIButton()
+    private let dateFormatter = DateFormatter()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,9 +41,14 @@ extension ProfileView {
 // MARK: -Configure-
 private extension ProfileView {
     private func configure() {
+        configureDateFormatter()
         configureSubview()
         configureLayout()
         configureView()
+    }
+    
+    private func configureDateFormatter() {
+        dateFormatter.dateFormat = "yy.MM.dd 가입"
     }
     
     private func configureSubview() {
@@ -69,8 +81,11 @@ private extension ProfileView {
         layer.cornerRadius = Constant.defaultRadius
         isUserInteractionEnabled = true
         
+        guard let nickname = Nickname.get() else { return }
+        let likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+        
         nicknameLabel.do {
-            $0.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
+            $0.text = nickname.text
             $0.textColor = .Label
             $0.font = .systemFont(ofSize: Constant.headerSize, weight: .semibold)
         }
@@ -81,15 +96,7 @@ private extension ProfileView {
         }
         
         registerDateLabel.do {
-            let date = Nickname.get()?.date.description
-            
-            if let date {
-                $0.text = "\(date) 가입"
-            }
-            else {
-                $0.text = "가입 시기 로딩 실패"
-            }
-            
+            $0.text = dateFormatter.string(from: nickname.date)
             $0.textColor = .Fill
             $0.font = .systemFont(ofSize: Constant.bodySize, weight: .light)
         }
@@ -98,7 +105,7 @@ private extension ProfileView {
             var configuration = UIButton.Configuration.bordered()
             configuration.baseBackgroundColor = .Tint.withAlphaComponent(0.3)
             configuration.baseForegroundColor = .Label
-            configuration.title = "\(UserDefaultsManager.shared.getArray(.likeList)?.count ?? 0)개의 무비박스 보관중"
+            configuration.title = "\(likeList.count)개의 무비박스 보관중"
             
             $0.configuration = configuration
             $0.isUserInteractionEnabled = false
