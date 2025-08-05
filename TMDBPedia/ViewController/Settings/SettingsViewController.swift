@@ -11,13 +11,9 @@ import Then
 
 // MARK: -SettingsViewController-
 final class SettingsViewController: BaseViewController {
-    private let headerView = BaseView()
-    private let nicknameLabel = UILabel()
-    private let registerDateLabel = UILabel()
-    private let chevronImageView = UIImageView()
-    private let storageButton = UIButton()
-    
+    private let profileView = ProfileView()
     private let tableView = UITableView()
+    
     private let list = ["자주 묻는 질문", "1:1 문의", "알림 설정", "탈퇴하기"]
     
     override func viewDidLoad() {
@@ -27,7 +23,9 @@ final class SettingsViewController: BaseViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
+        
+        guard let nickname = Nickname.get() else { return }
+        profileView.updateNicknameLabel(nickname.text)
     }
 }
 // MARK: -Configure-
@@ -41,37 +39,17 @@ private extension SettingsViewController {
     }
     
     private func configureSubview() {
-        headerView.addSubviews(nicknameLabel, registerDateLabel, chevronImageView, storageButton)
-        view.addSubviews(headerView, tableView)
+        view.addSubviews(profileView, tableView)
     }
     
     private func configureLayout() {
-        headerView.snp.makeConstraints {
+        profileView.snp.makeConstraints {
             $0.top.horizontalEdges.equalToSuperview(\.safeAreaLayoutGuide).inset(Constant.offsetFromHorizon)
             $0.height.equalTo(100)
         }
         
-        nicknameLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().offset(Constant.offsetFromHorizon)
-        }
-        
-        chevronImageView.snp.makeConstraints {
-            $0.verticalEdges.equalTo(nicknameLabel)
-            $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
-        }
-        
-        registerDateLabel.snp.makeConstraints {
-            $0.verticalEdges.equalTo(nicknameLabel)
-            $0.trailing.equalTo(chevronImageView.snp.leading).inset(-Constant.offsetFromHorizon)
-        }
-        
-        storageButton.snp.makeConstraints {
-            $0.top.equalTo(nicknameLabel.snp.bottom).offset(Constant.offsetFromHorizon)
-            $0.horizontalEdges.bottom.equalToSuperview().inset(Constant.semiOffsetFromHorizon)
-        }
-        
         tableView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom).offset(Constant.offsetFromRelated)
+            $0.top.equalTo(profileView.snp.bottom).offset(Constant.offsetFromRelated)
             $0.horizontalEdges.bottom.equalToSuperview(\.safeAreaLayoutGuide)
         }
     }
@@ -80,48 +58,9 @@ private extension SettingsViewController {
         view.backgroundColor = .Background
         tableView.backgroundColor = .Background
         
-        headerView.do {
+        profileView.do {
             let tapGestrue = UITapGestureRecognizer(target: self, action: #selector(settingsNickname))
-            $0.backgroundColor = .GroupedBackground
-            $0.layer.cornerRadius = Constant.defaultRadius
-            $0.isUserInteractionEnabled = true
             $0.addGestureRecognizer(tapGestrue)
-        }
-        
-        nicknameLabel.do {
-            $0.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
-            $0.textColor = .Label
-            $0.font = .systemFont(ofSize: Constant.headerSize, weight: .semibold)
-        }
-        
-        chevronImageView.do {
-            $0.image = UIImage(systemName: "chevron.right")
-            $0.tintColor = .Fill
-        }
-        
-        registerDateLabel.do {
-            let date = Nickname.get()?.date.description
-            
-            if let date {
-                $0.text = "\(date) 가입"
-            }
-            else {
-                $0.text = "가입 시기 로딩 실패"
-            }
-            
-            $0.textColor = .Fill
-            $0.font = .systemFont(ofSize: Constant.bodySize, weight: .light)
-        }
-        
-        storageButton.do {
-            var configuration = UIButton.Configuration.bordered()
-            configuration.baseBackgroundColor = .Tint.withAlphaComponent(0.3)
-            configuration.baseForegroundColor = .Label
-            configuration.title = "\(UserDefaults.standard.array(forKey: "likeList")?.count ?? 0)개의 무비박스 보관중"
-            
-            $0.configuration = configuration
-            
-            $0.isUserInteractionEnabled = false
         }
     }
     
@@ -139,7 +78,7 @@ private extension SettingsViewController {
     }
     
     private func updateNicknameLabel(_ newNickname: Nickname) {
-        nicknameLabel.text = newNickname.text
+        profileView.updateNicknameLabel(newNickname.text)
     }
 }
 // MARK: -TableView-
