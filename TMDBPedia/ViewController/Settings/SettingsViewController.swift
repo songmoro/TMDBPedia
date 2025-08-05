@@ -24,6 +24,11 @@ final class SettingsViewController: UIViewController {
         super.viewDidLoad()
         configure()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
+    }
 }
 // MARK: -Configure-
 private extension SettingsViewController {
