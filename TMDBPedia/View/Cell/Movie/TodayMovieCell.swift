@@ -12,7 +12,7 @@ import Then
 
 // MARK: -MovieCell-
 final class TodayMovieCell: BaseTableViewCell {
-    private var movieInfoItems = [TodayMovieItem]()
+    private var movieInfoItems = [MovieItem]()
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -22,7 +22,7 @@ final class TodayMovieCell: BaseTableViewCell {
 }
 // MARK: -Open-
 extension TodayMovieCell {
-    public func input(_ items: [TodayMovieItem]) {
+    public func input(_ items: [MovieItem]) {
         movieInfoItems = items
         collectionView.reloadData()
     }
@@ -127,12 +127,12 @@ final class TodayMovieContentCell: BaseCollectionViewCell {
 }
 // MARK: -Open-
 extension TodayMovieContentCell {
-    public func input(_ item: TodayMovieItem) {
+    public func input(_ item: MovieItem) {
         handleInput(item)
     }
     
-    private func handleInput(_ item: TodayMovieItem) {
-        if let url = URL(string: APIURL.imageURL + item.poster_path) {
+    private func handleInput(_ item: MovieItem) {
+        if let posterPath = item.poster_path, let url = URL(string: APIURL.imageURL + posterPath) {
             posterImageView.kf.setImage(with: url)
         }
         titleLabel.text = item.title

@@ -14,7 +14,7 @@ final class MovieViewController: BaseViewController {
     private let profileView = ProfileView()
     private let tableView = UITableView()
     
-    private var movieInfo = TodayMovieResponse()
+    private var movieInfo = MovieResponse()
     private var keywords: [String] = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
     private var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
     
@@ -172,7 +172,7 @@ private extension MovieViewController {
     private func callTodayMovieAPI() {
         Task {
             do {
-                let response = try await NetworkManager.shared.call(by: MovieAPI.trending, of: TodayMovieResponse.self)
+                let response = try await NetworkManager.shared.call(by: MovieAPI.trending, of: MovieResponse.self)
                 handleSuccess(response)
             }
             catch let error {
@@ -181,9 +181,9 @@ private extension MovieViewController {
         }
     }
     
-    private func handleSuccess(_ response: TodayMovieResponse) {
+    private func handleSuccess(_ response: MovieResponse) {
         if response.results.count >= 20 {
-            let result = TodayMovieResponse(results: Array(response.results[..<20]))
+            let result = MovieResponse(results: Array(response.results[..<20]))
             movieInfo = result
         }
         else {

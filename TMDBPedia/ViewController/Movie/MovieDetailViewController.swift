@@ -14,8 +14,8 @@ final class MovieDetailViewController: BaseViewController {
     private var tableView = UITableView()
     private var id: Int?
     private var synopsis: (String, Bool) = ("", false)
-    private var searchInfo: SearchMovieItem?
-    private var movieInfo: TodayMovieItem?
+    private var movieItem: MovieItem?
+    private var movieInfo: MovieItem?
     private var imagesInfo = ImagesResponse()
     private var creditsInfo = CreditsResponse()
     
@@ -49,24 +49,11 @@ final class MovieDetailViewController: BaseViewController {
 }
 // MARK: -Open-
 extension MovieDetailViewController {
-    public func input(_ item: SearchMovieItem) {
+    public func input(_ item: MovieItem) {
         handleInput(item)
     }
     
-    private func handleInput(_ item: SearchMovieItem) {
-        self.id = item.id
-        
-        updateNavigation(item.title)
-        updateBackdrops(item)
-        updateSynopsis(text: item.overview)
-        callCreditsAPI(item.id)
-    }
-    
-    public func input(_ item: TodayMovieItem) {
-        handleInput(item)
-    }
-    
-    private func handleInput(_ item: TodayMovieItem) {
+    private func handleInput(_ item: MovieItem) {
         self.id = item.id
         
         updateNavigation(item.title)
@@ -112,12 +99,7 @@ extension MovieDetailViewController {
         }
     }
     
-    private func updateBackdrops(_ item: SearchMovieItem) {
-        updateBackdropsImages(item.id)
-        updateFooter(item)
-    }
-    
-    private func updateBackdrops(_ item: TodayMovieItem) {
+    private func updateBackdrops(_ item: MovieItem) {
         updateBackdropsImages(item.id)
         updateFooter(item)
     }
@@ -135,13 +117,8 @@ extension MovieDetailViewController {
         }
     }
     
-    private func updateFooter(_ item: SearchMovieItem) {
-        self.searchInfo = item
-        tableView.reloadSections([1], with: .automatic)
-    }
-    
-    private func updateFooter(_ item: TodayMovieItem) {
-        self.movieInfo = item
+    private func updateFooter(_ item: MovieItem) {
+        self.movieItem = item
         tableView.reloadSections([1], with: .automatic)
     }
     
@@ -246,7 +223,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if section == 0 {
-            if let searchInfo {
+            if let movieItem {
                 let footerLabel = UILabel().then {
                     let font = UIFont.systemFont(ofSize: Constant.placeholderSize)
                     let color = UIColor.Fill
@@ -254,11 +231,11 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
                     let attributedSeparatorString = NSAttributedString(string: "  |  ", attributes: [.font: font])
                     
                     var images = ["calendar", "star.fill"]
-                    var texts = [searchInfo.release_date, String(searchInfo.vote_average)]
+                    var texts = [movieItem.release_date, String(movieItem.vote_average)]
                     
-                    let genres: String = searchInfo.genre_ids
+                    let genres: String = movieItem.genre_ids
                         .compactMap(MovieGenre.init)
-                        .map(\.text)[..<min(searchInfo.genre_ids.count, 2)]
+                        .map(\.text)[..<min(movieItem.genre_ids.count, 2)]
                         .joined(separator: ", ")
                     
                     if !genres.isEmpty {

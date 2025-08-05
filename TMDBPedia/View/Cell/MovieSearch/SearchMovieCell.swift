@@ -22,11 +22,11 @@ final class SearchMovieCell: BaseTableViewCell {
         configure()
     }
     
-    public func input(_ item: SearchMovieItem) {
+    public func input(_ item: MovieItem) {
         handleInput(item)
     }
     
-    private func handleInput(_ item: SearchMovieItem) {
+    private func handleInput(_ item: MovieItem) {
         if let posterPath =  item.poster_path, let url = URL(string: APIURL.imageURL + posterPath) {
             posterImageView.kf.setImage(with: url)
         }

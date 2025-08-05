@@ -16,7 +16,7 @@ final class MovieSearchViewController: BaseViewController {
     private let tableView = UITableView()
     private let emptyLabel = UILabel()
     
-    private var movieInfo = SearchMovieResponse()
+    private var movieInfo = MovieResponse()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -140,7 +140,7 @@ private extension MovieSearchViewController {
     private func callSearchMovieAPI(_ text: String) {
         Task {
             do {
-                let response = try await NetworkManager.shared.call(by: MovieAPI.search(text: text, page: movieInfo.page), of: SearchMovieResponse.self)
+                let response = try await NetworkManager.shared.call(by: MovieAPI.search(text: text, page: movieInfo.page), of: MovieResponse.self)
                 handleSuccess(response)
             }
             catch let error {
@@ -149,7 +149,7 @@ private extension MovieSearchViewController {
         }
     }
     
-    private func handleSuccess(_ response: SearchMovieResponse) {
+    private func handleSuccess(_ response: MovieResponse) {
         if movieInfo.results.isEmpty {
             movieInfo = response
         }
