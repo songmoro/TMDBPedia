@@ -20,10 +20,6 @@ final class UserDefaultsManager {
         case test
     }
     
-    func get(_ key: Key) -> Any? {
-        return standard.value(forKey: key.rawValue)
-    }
-    
     func getArray(_ key: Key) -> [Any]? {
         return standard.array(forKey: key.rawValue)
     }
