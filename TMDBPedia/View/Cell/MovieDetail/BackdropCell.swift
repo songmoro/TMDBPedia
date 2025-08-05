@@ -53,6 +53,7 @@ private extension BackdropCell {
         backgroundColor = .Background
         
         backdropImageView.do {
+            $0.backgroundColor = .Background
             $0.kf.indicatorType = .activity
         }
     }

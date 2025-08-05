@@ -156,7 +156,7 @@ private extension TodayMovieContentCell {
     private func configureLayout() {
         posterImageView.snp.makeConstraints {
             $0.top.width.centerX.equalToSuperview()
-            $0.height.equalTo(posterImageView.snp.width).multipliedBy(1.4)
+            $0.height.lessThanOrEqualTo(posterImageView.snp.width).multipliedBy(1.4)
         }
         
         titleLabel.snp.makeConstraints {
