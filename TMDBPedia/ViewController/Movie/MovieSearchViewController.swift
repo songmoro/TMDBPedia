@@ -37,9 +37,9 @@ final class MovieSearchViewController: BaseViewController {
 }
 // MARK: -Open-
 extension MovieSearchViewController {
-    public func input(keyword: String) {
+    public func input(keyword: Keyword) {
         isKeywordAccess = true
-        searchBar.text = keyword
+        searchBar.text = keyword.text
         _ = textFieldShouldReturn(searchBar.searchTextField)
     }
 }
@@ -131,8 +131,10 @@ extension MovieSearchViewController: UITextFieldDelegate {
     }
     
     private func achiveKeyword(_ text: String) {
-        let keywords = [text] + (UserDefaultsManager.shared.getArray(.keywords) ?? [String]())
-        UserDefaultsManager.shared.set(.keywords, to: keywords)
+        let newKeyword = Keyword(text: text)
+        let keywords = UserDefaultsManager.shared.getObject(of: [Keyword].self, .keywords) ?? []
+        
+        UserDefaultsManager.shared.setObject(.keywords, to: keywords + [newKeyword])
     }
 }
 // MARK: -Networking-

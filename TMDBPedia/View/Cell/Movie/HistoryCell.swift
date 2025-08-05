@@ -12,7 +12,7 @@ import Then
 // MARK: -HistoryCell-
 final class HistoryCell: BaseTableViewCell {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-    private var keywords: [String] = []
+    private var keywords: [Keyword] = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,7 +21,7 @@ final class HistoryCell: BaseTableViewCell {
 }
 // MARK: -Open-
 extension HistoryCell {
-    public func input(_ keywords: [String]) {
+    public func input(_ keywords: [Keyword]) {
         self.keywords = keywords
     }
     
@@ -116,8 +116,8 @@ final class HistoryContentCell: BaseCollectionViewCell {
 }
 // MARK: -Open-
 extension HistoryContentCell {
-    public func input(_ keyword: String) {
-        keywordLabel.text = keyword
+    public func input(_ keyword: Keyword) {
+        keywordLabel.text = keyword.text
     }
 }
 // MARK: -Configure-

@@ -15,7 +15,7 @@ final class MovieViewController: BaseViewController {
     private let tableView = UITableView()
     
     private var movieInfo = MovieResponse()
-    private var keywords: [String] = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
+    private var keywords: [Keyword] = UserDefaultsManager.shared.getObject(.keywords) ?? []
     private var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
     
     private var historyCell: HistoryCell?
@@ -27,12 +27,13 @@ final class MovieViewController: BaseViewController {
         callTodayMovieAPI()
     }
     
+    // TODO: 화면 전환이 완전히 이루어지기 전에 키워드 갱신 시 싱크가 맞지 않음
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         guard let nickname = Nickname.get() else { return }
         likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-        keywords = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
+        keywords = UserDefaultsManager.shared.getObject(of: [Keyword].self, .keywords) ?? []
         
         profileView.updateNicknameLabel(nickname.text)
         profileView.updateStorageButton(likeList.count)
@@ -122,7 +123,7 @@ extension MovieViewController {
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
             keywords.remove(at: indexPath.item)
-            UserDefaultsManager.shared.set(.keywords, to: keywords)
+            UserDefaultsManager.shared.setObject(.keywords, to: keywords)
             
             tableView.reloadData()
             historyCell?.needsReload()
@@ -150,7 +151,10 @@ extension MovieViewController {
     
     @objc private func needsPushMovieSearchViewController(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let keyword = keywords[indexPath.item]
+            let keyword = Keyword(text: keywords[indexPath.item].text)
+            keywords[indexPath.item] = keyword
+            UserDefaultsManager.shared.setObject(.keywords, to: keywords)
+            historyCell?.needsReload()
             
             let vc = MovieSearchViewController().then {
                 $0.input(keyword: keyword)

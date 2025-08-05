@@ -17,7 +17,6 @@ final class UserDefaultsManager {
         case nickname
         case keywords
         case likeList
-        case test
     }
     
     func getArray(_ key: Key) -> [Any]? {
@@ -30,13 +29,34 @@ final class UserDefaultsManager {
     
     func getObject<T: Decodable>(of type: T.Type = T.self, _ key: Key) -> T? {
         if let data = standard.data(forKey: key.rawValue) {
-            return try? PropertyListDecoder().decode(T.self, from: data)
+            if key == .keywords {
+                let value: [Keyword]? = try? PropertyListDecoder().decode([Keyword].self, from: data)
+                
+                if let value {
+                    return value.sorted(by: { $0.date > $1.date }) as? T
+                }
+            }
+            else {
+                return try? PropertyListDecoder().decode(T.self, from: data)
+            }
         }
+        
         return nil
     }
     
     func setObject<T: Encodable>(_ key: Key, to newValue: T?) {
-        standard.set(try? PropertyListEncoder().encode(newValue), forKey: key.rawValue)
+        switch key {
+        case .keywords:
+            if var newValue = newValue as? [Keyword] {
+                newValue = Set(newValue).sorted { $0.date > $1.date }
+                standard.set(try? PropertyListEncoder().encode(newValue), forKey: key.rawValue)
+            }
+            else {
+                remove(key)
+            }
+        default:
+            standard.set(try? PropertyListEncoder().encode(newValue), forKey: key.rawValue)
+        }
     }
     
     func remove(_ key: Key) {
