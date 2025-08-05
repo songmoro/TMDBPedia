@@ -173,6 +173,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func handleWithdrawFromAccount() {
         UIAlertController(title: "탈퇴하기", message: "탈퇴를 하면 데이터가 모두 초기화됩니다. 탈퇴 하시겠습니까?", preferredStyle: .alert).then {
+            $0.overrideUserInterfaceStyle = .dark
             $0.addAction(UIAlertAction(title: "취소", style: .cancel))
             $0.addAction(UIAlertAction(title: "확인", style: .destructive, handler: withdraw))
         }
