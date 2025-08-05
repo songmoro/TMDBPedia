@@ -21,6 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabBarStandard.backgroundColor = .Background
         UITabBar.appearance().standardAppearance = tabBarStandard
         
+        UITextField.appearance().keyboardAppearance = .dark
+        
         return true
     }
     
