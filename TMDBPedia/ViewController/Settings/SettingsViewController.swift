@@ -10,8 +10,8 @@ import SnapKit
 import Then
 
 // MARK: -SettingsViewController-
-final class SettingsViewController: UIViewController {
-    private let headerView = UIView()
+final class SettingsViewController: BaseViewController {
+    private let headerView = BaseView()
     private let nicknameLabel = UILabel()
     private let registerDateLabel = UILabel()
     private let chevronImageView = UIImageView()
@@ -78,10 +78,11 @@ private extension SettingsViewController {
     
     private func configureView() {
         view.backgroundColor = .Background
+        tableView.backgroundColor = .Background
         
         headerView.do {
             let tapGestrue = UITapGestureRecognizer(target: self, action: #selector(settingsNickname))
-            $0.backgroundColor = .systemGray5
+            $0.backgroundColor = .GroupedBackground
             $0.layer.cornerRadius = Constant.defaultRadius
             $0.isUserInteractionEnabled = true
             $0.addGestureRecognizer(tapGestrue)
@@ -158,6 +159,8 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         cell.textLabel?.text = list[indexPath.row]
+        cell.textLabel?.textColor = .Label
+        cell.backgroundColor = .Background
         
         return cell
     }

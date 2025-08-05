@@ -1,16 +1,16 @@
 //
-//  BaseCollectionViewCell.swift
+//  BaseView.swift
 //  TMDBPedia
 //
-//  Created by 송재훈 on 8/4/25.
+//  Created by 송재훈 on 8/5/25.
 //
 
 import UIKit
 
-class BaseCollectionViewCell: UICollectionViewCell {
+class BaseView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .Background
+        backgroundColor = .Background
     }
     
     @available(*, unavailable)

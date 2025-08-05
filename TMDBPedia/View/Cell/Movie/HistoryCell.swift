@@ -34,6 +34,7 @@ private extension HistoryCell {
     private func configure() {
         configureSubview()
         configureLayout()
+        configureView()
         configureCollectionView()
     }
     
@@ -45,6 +46,11 @@ private extension HistoryCell {
         collectionView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+    
+    private func configureView() {
+        backgroundColor = .Background
+        collectionView.backgroundColor = .Background
     }
 }
 // MARK: -CollectionView-

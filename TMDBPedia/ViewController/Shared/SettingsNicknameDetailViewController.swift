@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -SettingsNicknameDetailViewController-
-final class SettingsNicknameDetailViewController: UIViewController {
+final class SettingsNicknameDetailViewController: BaseViewController {
     private let nicknameTextField = UITextField()
     private var lastResult: Result<String, NicknameError>?
     private var nicknameHandler: ((Result<String, NicknameError>) -> ())?
@@ -82,7 +82,12 @@ private extension SettingsNicknameDetailViewController {
         
         underlineView.backgroundColor = .Label
         
-        nicknameTextField.placeholder = "닉네임을 입력해주세요."
+        nicknameTextField.do {
+            let attributedString = NSAttributedString(string: "닉네임을 입력해주세요.", attributes: [.foregroundColor: UIColor.Label])
+            
+            $0.attributedPlaceholder = attributedString
+            $0.textColor = .Label
+        }
         
         statusLabel.do {
             $0.font = .systemFont(ofSize: Constant.bodySize)

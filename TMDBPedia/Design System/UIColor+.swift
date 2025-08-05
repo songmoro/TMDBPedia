@@ -13,4 +13,5 @@ extension UIColor {
     static let Fill = #colorLiteral(red: 0.5568627451, green: 0.5568627451, blue: 0.5568627451, alpha: 1) // UIColor(named: "Colors/Fill")!
     static let Background = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) // UIColor(named: "Colors/Background")!
     static let Label = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // UIColor(named: "Colors/Label")!
+    static let GroupedBackground = #colorLiteral(red: 0.1843137255, green: 0.1843137255, blue: 0.1843137255, alpha: 1) // UIColor(named: "Colors/GroupedBackground")!
 }

@@ -11,8 +11,8 @@ import Alamofire
 import Then
 
 // MARK: -MovieViewController-
-final class MovieViewController: UIViewController {
-    private let headerView = UIView()
+final class MovieViewController: BaseViewController {
+    private let headerView = BaseView()
     private let nicknameLabel = UILabel()
     private let registerDateLabel = UILabel()
     private let chevronImageView = UIImageView()
@@ -91,7 +91,7 @@ private extension MovieViewController {
         
         headerView.do {
             let tapGestrue = UITapGestureRecognizer(target: self, action: #selector(settingsNickname))
-            $0.backgroundColor = .systemGray5
+            $0.backgroundColor = .GroupedBackground
             $0.layer.cornerRadius = Constant.defaultRadius
             $0.isUserInteractionEnabled = true
             $0.addGestureRecognizer(tapGestrue)
@@ -131,6 +131,10 @@ private extension MovieViewController {
             $0.configuration = configuration
             
             $0.isUserInteractionEnabled = false
+        }
+        
+        tableView.do {
+            $0.backgroundColor = .Background
         }
     }
     
@@ -318,7 +322,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         let uiView: UIView
         
         if section == 0 {
-            uiView = UIView()
+            uiView = BaseView()
             
             let headerLabel = UILabel().then {
                 $0.text = "최근검색어"

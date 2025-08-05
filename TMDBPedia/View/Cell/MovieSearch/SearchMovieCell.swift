@@ -46,7 +46,7 @@ final class SearchMovieCell: BaseTableViewCell {
                 var configuration = UIButton.Configuration.filled()
                 configuration.title = genre.text
                 configuration.contentInsets = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
-                configuration.background.backgroundColor = .systemGray5
+                configuration.background.backgroundColor = .GroupedBackground
                 configuration.baseForegroundColor = .Label
                 
                 $0.configuration = configuration

@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -SplashViewController-
-final class SplashViewController: UIViewController {
+final class SplashViewController: BaseViewController {
     private let splashImageView = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()

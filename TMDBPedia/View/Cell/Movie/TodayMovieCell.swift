@@ -36,6 +36,7 @@ private extension TodayMovieCell {
     private func configure() {
         configureSubview()
         configureLayout()
+        configureView()
         configureCollectionView()
     }
     
@@ -46,6 +47,15 @@ private extension TodayMovieCell {
     private func configureLayout() {
         collectionView.snp.makeConstraints {
             $0.size.equalToSuperview()
+        }
+    }
+    
+    private func configureView() {
+        contentView.backgroundColor = .Background
+        backgroundColor = .Background
+        
+        collectionView.do {
+            $0.backgroundColor = .Background
         }
     }
 }
@@ -167,6 +177,8 @@ private extension TodayMovieContentCell {
     }
     
     private func configureView() {
+        contentView.backgroundColor = .Background
+        
         posterImageView.do {
             $0.kf.indicatorType = .activity
         }

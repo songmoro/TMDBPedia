@@ -50,6 +50,8 @@ private extension BackdropCell {
     }
     
     private func configureView() {
+        backgroundColor = .Background
+        
         backdropImageView.do {
             $0.kf.indicatorType = .activity
         }

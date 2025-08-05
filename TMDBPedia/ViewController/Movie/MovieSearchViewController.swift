@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 // MARK: -MovieSearchViewController-
-final class MovieSearchViewController: UIViewController {
+final class MovieSearchViewController: BaseViewController {
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
     private let emptyLabel = UILabel()
@@ -69,11 +69,16 @@ private extension MovieSearchViewController {
         searchBar.do {
             $0.searchTextField.leftView?.tintColor = .Label
             $0.searchBarStyle = .minimal
+            $0.searchTextField.textColor = .Label
         }
         
         emptyLabel.do {
             $0.text = "원하는 검색결과를 찾지 못했습니다"
             $0.isHidden = true
+        }
+        
+        tableView.do {
+            $0.backgroundColor = .Background
         }
     }
     

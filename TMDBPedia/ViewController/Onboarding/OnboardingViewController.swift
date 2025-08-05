@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class OnboardingViewController: UIViewController {
+final class OnboardingViewController: BaseViewController {
     private let splashImageView = UIImageView()
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()

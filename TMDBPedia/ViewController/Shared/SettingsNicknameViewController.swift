@@ -15,7 +15,7 @@ enum EntryPoint {
 }
 
 // MARK: -SettingsNicknameViewController-
-final class SettingsNicknameViewController: UIViewController {
+final class SettingsNicknameViewController: BaseViewController {
     private let nicknameLabel = UILabel()
     private let editButton = UIButton()
     private let underlineView = UIView()

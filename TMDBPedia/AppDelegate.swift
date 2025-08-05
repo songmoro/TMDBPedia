@@ -13,6 +13,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIView.appearance().tintColor = .Tint
         UILabel.appearance().textColor = .Label
         
+        let navigationStandard = UINavigationBarAppearance()
+        navigationStandard.backgroundColor = .Background
+        UINavigationBar.appearance().standardAppearance = navigationStandard
+        
+        let tabBarStandard = UITabBarAppearance()
+        tabBarStandard.backgroundColor = .Background
+        UITabBar.appearance().standardAppearance = tabBarStandard
+        
         return true
     }
     

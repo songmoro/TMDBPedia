@@ -11,7 +11,7 @@ import SnapKit
 import Then
 
 // MARK: -MovieDetailViewController-
-final class MovieDetailViewController: UIViewController {
+final class MovieDetailViewController: BaseViewController {
     private var tableView = UITableView()
     private var id: Int?
     private var synopsis: (String, Bool) = ("", false)
@@ -28,6 +28,7 @@ final class MovieDetailViewController: UIViewController {
     private func configure() {
         configureSubview()
         configureLayout()
+        configureView()
         configreTableView()
     }
     
@@ -40,6 +41,11 @@ final class MovieDetailViewController: UIViewController {
             $0.verticalEdges.equalToSuperview(\.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
         }
+    }
+    
+    private func configureView() {
+        view.backgroundColor = .Background
+        tableView.backgroundColor = .Background
     }
 }
 // MARK: -Open-
@@ -221,10 +227,10 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if section == 0 {
-            return UIView(frame: .zero)
+            return BaseView(frame: .zero)
         }
         else if section == 1 {
-            let uiView = UIView()
+            let uiView = BaseView()
             let headerLabel = UILabel().then {
                 $0.text = "Synopsis"
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
@@ -369,7 +375,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
             }
         }
         
-        return UIView(frame: .zero)
+        return BaseView(frame: .zero)
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
