@@ -55,7 +55,7 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
         collectionView.do {
             let layout = UICollectionViewFlowLayout().then {
                 let bounds = UIScreen.main.bounds
-                $0.itemSize = CGSize(width: bounds.width * 0.6, height: bounds.height * 0.4)
+                $0.itemSize = CGSize(width: bounds.width * 0.6, height: bounds.height * 0.6)
                 $0.minimumLineSpacing = CGFloat(Constant.offsetFromHorizon)
                 $0.minimumInteritemSpacing = 0
                 $0.scrollDirection = .horizontal
@@ -145,8 +145,8 @@ private extension TodayMovieContentCell {
     
     private func configureLayout() {
         posterImageView.snp.makeConstraints {
-            $0.top.horizontalEdges.equalToSuperview()
-            $0.height.equalToSuperview().multipliedBy(0.6)
+            $0.top.width.centerX.equalToSuperview()
+            $0.height.equalTo(posterImageView.snp.width).multipliedBy(1.4)
         }
         
         titleLabel.snp.makeConstraints {
