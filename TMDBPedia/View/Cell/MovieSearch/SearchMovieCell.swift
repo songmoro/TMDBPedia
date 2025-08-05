@@ -11,6 +11,10 @@ import SnapKit
 import Then
 
 final class SearchMovieCell: BaseTableViewCell {
+    static let dateFormatter = DateFormatter().then {
+        $0.dateFormat = "yyyy. MM. DD"
+    }
+    
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
@@ -32,7 +36,9 @@ final class SearchMovieCell: BaseTableViewCell {
         }
         
         titleLabel.text = item.title
-        dateLabel.text = item.release_date
+        
+        let date = item.release_date.replacingOccurrences(of: "-", with: ". ")
+        dateLabel.text = date
         
         let likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
         let isLiked = likeList.contains(where: { $0 == item.id })
