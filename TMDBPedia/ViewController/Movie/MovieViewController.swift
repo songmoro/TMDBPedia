@@ -257,11 +257,9 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let uiView: UIView
+        let uiView = BaseView()
         
         if section == 0 {
-            uiView = BaseView()
-            
             let headerLabel = UILabel().then {
                 $0.text = "최근검색어"
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
@@ -275,17 +273,23 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             uiView.addSubviews(headerLabel, button)
             
             headerLabel.snp.makeConstraints {
-                $0.leading.verticalEdges.equalToSuperview()
+                $0.leading.equalToSuperview().inset(Constant.offsetFromHorizon)
             }
             
             button.snp.makeConstraints {
-                $0.trailing.verticalEdges.equalToSuperview()
+                $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
             }
         }
         else {
-            uiView = UILabel().then {
+            let label = UILabel().then {
                 $0.text = "오늘의 영화"
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
+            }
+            
+            uiView.addSubview(label)
+            
+            label.snp.makeConstraints {
+                $0.leading.equalToSuperview().inset(Constant.offsetFromHorizon)
             }
         }
         

@@ -46,7 +46,8 @@ private extension TodayMovieCell {
     
     private func configureLayout() {
         collectionView.snp.makeConstraints {
-            $0.size.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(Constant.offsetFromHorizon)
+            $0.verticalEdges.equalToSuperview()
         }
     }
     
