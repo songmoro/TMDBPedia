@@ -34,6 +34,7 @@ final class MovieViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
+        keywords = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
         likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
         tableView.reloadData()
     }
