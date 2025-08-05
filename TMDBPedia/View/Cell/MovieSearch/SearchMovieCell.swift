@@ -34,7 +34,8 @@ final class SearchMovieCell: BaseTableViewCell {
         titleLabel.text = item.title
         dateLabel.text = item.release_date
         
-        let isLiked = UserDefaultsManager.shared.getArray(.likeList)?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
+        let likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+        let isLiked = likeList.contains(where: { $0 == item.id })
         likeButton.isSelected = isLiked
         
         let genres = item.genre_ids.compactMap(MovieGenre.init)[..<min(2, item.genre_ids.count)]
@@ -113,6 +114,10 @@ final class SearchMovieCell: BaseTableViewCell {
         
         titleLabel.do {
             $0.numberOfLines = 2
+        }
+        
+        dateLabel.do {
+            $0.textColor = .Fill
         }
         
         genreStackView.do {
