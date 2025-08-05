@@ -73,11 +73,13 @@ private extension MovieSearchViewController {
         
         emptyLabel.do {
             $0.text = "원하는 검색결과를 찾지 못했습니다"
+            $0.textColor = .Label
             $0.isHidden = true
         }
         
         tableView.do {
             $0.backgroundColor = .Background
+            $0.keyboardDismissMode = .interactive
         }
     }
     
@@ -103,17 +105,7 @@ extension MovieSearchViewController: UITextFieldDelegate {
         let text = textField.text!
         
         achiveKeyword(text)
-        callSearchMovieAPI(text) {
-            if $0.results.isEmpty {
-                self.emptyLabel.isHidden = false
-                self.tableView.isHidden = true
-            }
-            else {
-                self.emptyLabel.isHidden = true
-                self.tableView.isHidden = false
-                self.handleSuccess($0)
-            }
-        }
+        callSearchMovieAPI(text)
     }
     
     private func achiveKeyword(_ text: String) {
@@ -123,7 +115,7 @@ extension MovieSearchViewController: UITextFieldDelegate {
 }
 // MARK: -Networking-
 private extension MovieSearchViewController {
-    private func callSearchMovieAPI(_ text: String, handler: @escaping (SearchMovieResponse) -> Void) {
+    private func callSearchMovieAPI(_ text: String) {
         Task {
             do {
                 let response = try await NetworkManager.shared.call(by: MovieAPI.search(text: text), of: SearchMovieResponse.self)
@@ -137,6 +129,16 @@ private extension MovieSearchViewController {
     
     private func handleSuccess(_ response: SearchMovieResponse) {
         movieInfo = response
+        
+        if response.results.isEmpty {
+            emptyLabel.isHidden = false
+            tableView.isHidden = true
+        }
+        else {
+            emptyLabel.isHidden = true
+            tableView.isHidden = false
+        }
+        
         tableView.reloadData()
     }
 }
