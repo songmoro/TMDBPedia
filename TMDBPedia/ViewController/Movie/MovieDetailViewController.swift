@@ -154,14 +154,11 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return 1
-        }
-        else if section == 1 {
-            return 1
+        if section == 2 {
+            return creditsInfo.cast.count
         }
         else {
-            return creditsInfo.cast.count
+            return 1
         }
     }
     
@@ -170,29 +167,40 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let uiView = BaseView()
+        
         if section == 0 {
-            return BaseView(frame: .zero)
+            return uiView
         }
         else if section == 1 {
-            let uiView = BaseView()
             let headerLabel = UILabel().then {
                 $0.text = "Synopsis"
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
             }
             
             let button = UIButton().then {
-                $0.setTitle("More", for: .normal)
+                var configuration = UIButton.Configuration.plain()
+                var attributedText = AttributedString("More")
+                attributedText.foregroundColor = UIColor.Tint
+                attributedText.font = .systemFont(ofSize: Constant.titleSize, weight: .bold)
+                
+                configuration.baseForegroundColor = .Tint
+                configuration.attributedTitle = attributedText
+                
+                $0.configuration = configuration
                 $0.addTarget(self, action: #selector(toggleSynopsis), for: .touchUpInside)
             }
             
             uiView.addSubviews(headerLabel, button)
             
             headerLabel.snp.makeConstraints {
-                $0.leading.verticalEdges.equalToSuperview()
+                $0.leading.equalToSuperview().offset(Constant.offsetFromHorizon)
+                $0.centerY.equalToSuperview()
             }
             
             button.snp.makeConstraints {
-                $0.trailing.verticalEdges.equalToSuperview()
+                $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
+                $0.centerY.equalToSuperview()
             }
             
             return uiView
@@ -203,7 +211,14 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
             }
             
-            return headerLabel
+            uiView.addSubview(headerLabel)
+            
+            headerLabel.snp.makeConstraints {
+                $0.leading.equalToSuperview().offset(Constant.offsetFromHorizon)
+                $0.centerY.equalToSuperview()
+            }
+            
+            return uiView
         }
     }
     

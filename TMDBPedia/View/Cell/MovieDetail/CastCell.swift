@@ -55,7 +55,7 @@ private extension CastCell {
         actorImageView.snp.makeConstraints {
             $0.width.equalToSuperview().multipliedBy(0.15).priority(1000)
             $0.height.equalTo(actorImageView.snp.width).priority(999)
-            $0.leading.equalToSuperview().priority(998)
+            $0.leading.equalToSuperview().offset(Constant.offsetFromHorizon).priority(998)
             $0.verticalEdges.equalToSuperview().inset(Constant.offsetFromImage).priority(997)
         }
         
