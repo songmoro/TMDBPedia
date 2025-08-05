@@ -9,86 +9,53 @@ import UIKit
 import SnapKit
 import Then
 
-enum EntryPoint {
-    case present
-    case push
-}
-
 // MARK: -SettingsNicknameViewController-
 final class SettingsNicknameViewController: BaseViewController {
     private let nicknameLabel = UILabel()
     private let editButton = UIButton()
     private let underlineView = UIView()
     private let doneButton = UIButton()
-    private var presentDismissHandler: (() -> Void)?
+    private var dismissHandler: ((Nickname) -> Void)?
     
-    private var entryPoint: EntryPoint?
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        configure()
+    }
 }
 // MARK: -Open-
 extension SettingsNicknameViewController {
-    public func input(_ entryPoint: EntryPoint) {
-        handleInput(entryPoint)
-    }
-    
-    public func bind(presentDismissHandler: @escaping () -> Void) {
-        self.presentDismissHandler = presentDismissHandler
-    }
-    
-    private func handleInput(_ entryPoint: EntryPoint) {
-        self.entryPoint = entryPoint
-        
-        switch entryPoint {
-        case .present:
-            configureByPresent()
-        case .push:
-            configureByPush()
-        }
+    public func bind(dismissHandler: @escaping (Nickname) -> Void) {
+        self.dismissHandler = dismissHandler
     }
 }
 // MARK: -Configure-
 private extension SettingsNicknameViewController {
-    private func configureByPresent() {
-        configurePresentSubview()
-        configurePresentLayout()
-        configurePresentView()
+    private func configure() {
+        handleEntryPoint()
+        configureSubview()
+        configureLayout()
+        configureView()
     }
     
-    private func configureByPush() {
-        configurePushSubview()
-        configurePushLayout()
-        configurePushView()
+    private func handleEntryPoint() {
+        if let nickname = Nickname.get() {
+            nicknameLabel.text = nickname.text
+            doneButton.isHidden = true
+            
+            navigationItem.do {
+                $0.title = "닉네임 설정"
+                $0.backButtonTitle = ""
+                $0.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissButtonClicked))
+                $0.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(saveButtonClicked))
+            }
+        }
     }
     
-    private func configurePresentSubview() {
-        view.addSubviews(nicknameLabel, editButton, underlineView)
-    }
-    
-    private func configurePushSubview() {
+    private func configureSubview() {
         view.addSubviews(nicknameLabel, editButton, underlineView, doneButton)
     }
     
-    private func configurePresentLayout() {
-        nicknameLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(Constant.offsetFromVertical)
-            $0.width.equalToSuperview().multipliedBy(0.7)
-            $0.height.equalTo(Constant.textFieldHeight)
-        }
-        
-        editButton.snp.makeConstraints {
-            $0.leading.equalTo(nicknameLabel.snp.trailing)
-            $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
-            $0.height.centerY.equalTo(nicknameLabel)
-        }
-        
-        underlineView.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(Constant.semiOffsetFromHorizon)
-            $0.trailing.equalTo(editButton.snp.leading).multipliedBy(1.1)
-            $0.bottom.equalTo(nicknameLabel)
-            $0.height.equalTo(1)
-        }
-    }
-    
-    private func configurePushLayout() {
+    private func configureLayout() {
         nicknameLabel.snp.makeConstraints {
             $0.top.leading.equalToSuperview(\.safeAreaLayoutGuide).offset(Constant.offsetFromVertical)
             $0.width.equalToSuperview().multipliedBy(0.7)
@@ -115,48 +82,19 @@ private extension SettingsNicknameViewController {
         }
     }
     
-    private func configurePresentView() {
+    private func configureView() {
         navigationItem.do {
             $0.title = "닉네임 설정"
             $0.backButtonTitle = ""
-            $0.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissButtonClicked))
-            $0.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(saveButtonClicked))
-            $0.rightBarButtonItem?.isEnabled = false
         }
-        
-        view.backgroundColor = .Background
-        
-        nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
         
         editButton.do {
             var configuration = UIButton.Configuration.roundBordered()
             configuration.title = "편집"
             configuration.baseForegroundColor = .Label
             configuration.background.strokeColor = .Label
-            $0.configuration = configuration
             
-            $0.addTarget(self, action: #selector(editButtonClicked), for: .touchUpInside)
-        }
-        
-        underlineView.backgroundColor = .Label
-    }
-    
-    private func configurePushView() {
-        navigationItem.do {
-            $0.title = "닉네임 설정"
-            $0.backButtonTitle = ""
-        }
-        
-        view.backgroundColor = .Background
-        nicknameLabel.text = Nickname.get()?.text ?? ""
-        
-        editButton.do {
-            var configuration = UIButton.Configuration.roundBordered()
-            configuration.title = "편집"
-            configuration.baseForegroundColor = .Label
-            configuration.background.strokeColor = .Label
             $0.configuration = configuration
-            
             $0.addTarget(self, action: #selector(editButtonClicked), for: .touchUpInside)
         }
         
@@ -165,9 +103,8 @@ private extension SettingsNicknameViewController {
         doneButton.do {
             var configuration = UIButton.Configuration.roundBordered()
             configuration.title = "완료"
-            $0.configuration = configuration
             
-            $0.isUserInteractionEnabled = false
+            $0.configuration = configuration
             $0.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
         }
     }
@@ -181,57 +118,54 @@ private extension SettingsNicknameViewController {
     }
     
     @objc private func saveButtonClicked() {
-        completeSettingsNickname()
-        presentDismissHandler?()
-        dismissButtonClicked()
+        handleUpdate()
     }
     
     @objc private func doneButtonClicked() {
-        completeSettingsNickname()
+        handleRegister()
     }
 }
 // MARK: -Nickname-
 private extension SettingsNicknameViewController {
-    private func pushSettingsNicknameDetailViewController() {
-        let vc = SettingsNicknameDetailViewController().then {
-            $0.inputNickname(nicknameLabel.text)
-            $0.bindNicknameHandler(handler: handleNicknameHandler)
-        }
+    private func handleRegister() {
+        let text = nicknameLabel.text
         
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func handleNicknameHandler(_ result: (Result<String, NicknameError>)) {
-        switch result {
-        case .success(let nickname):
-            updateNicknameLabel(nickname)
-            updateDoneButton(to: true)
-        case .failure(let error):
-            updateNicknameLabel(error.text)
-            showToast(error.kind.description)
+        switch Nickname.validateNickname(text: text) {
+        case .success(let success):
+            saveNickname(success)
+            replaceRootViewController()
+        case .failure(let failure):
+            showToast(failure.kind.description)
         }
     }
     
-    private func updateNicknameLabel(_ text: String?) {
-        nicknameLabel.text = text
+    private func handleUpdate() {
+        let text = nicknameLabel.text
+        
+        switch Nickname.validateNickname(text: text) {
+        case .success(let success):
+            saveNickname(success)
+            dismissHandler?(success)
+            dismissButtonClicked()
+        case .failure(let failure):
+            showToast(failure.kind.description)
+        }
     }
     
-    private func updateDoneButton(to status: Bool = false) {
-        doneButton.isUserInteractionEnabled = status
-        navigationItem.rightBarButtonItem?.isEnabled = status
+    private func saveNickname(_ nickname: Nickname) {
+        UserDefaultsManager.shared.setObject(.nickname, to: nickname)
     }
     
-    private func completeSettingsNickname() {
-        saveNickname(nicknameLabel.text)
-        replaceRootViewController()
+    private func updateNickname(_ newNickname: Nickname) {
+        let oldNickname: Nickname? = UserDefaultsManager.shared.getObject(.nickname)
+        guard var oldNickname else { return }
+        
+        oldNickname.text = newNickname.text
+        saveNickname(oldNickname)
     }
     
     private func replaceRootViewController() {
         tabBarController?.replaceToMovie()
-    }
-    
-    private func saveNickname(_ text: String?) {
-        Nickname.set(text!)
     }
     
     private func showToast(_ message: String) {
@@ -265,6 +199,19 @@ private extension SettingsNicknameViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             uiView.removeFromSuperview()
         }
+    }
+    
+    private func pushSettingsNicknameDetailViewController() {
+        let vc = SettingsNicknameDetailViewController().then {
+            $0.inputNickname(nicknameLabel.text)
+            $0.bindNicknameHandler(handler: handleNicknameHandler)
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func handleNicknameHandler(_ text: String?) {
+        nicknameLabel.text = text
     }
 }
 // MARK: -

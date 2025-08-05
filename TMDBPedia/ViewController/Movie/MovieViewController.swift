@@ -159,16 +159,15 @@ private extension MovieViewController {
     
     @objc private func settingsNickname() {
         let settingsNicknameViewContoller = SettingsNicknameViewController().then {
-            $0.input(.present)
-            $0.bind(presentDismissHandler: updateNicknameLabel)
+            $0.bind(dismissHandler: updateNicknameLabel)
         }
         
         let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
         present(navigationController, animated: true)
     }
     
-    private func updateNicknameLabel() {
-        nicknameLabel.text = Nickname.get()?.text ?? "닉네임 로딩 실패"
+    private func updateNicknameLabel(_ newNickname: Nickname) {
+        nicknameLabel.text = newNickname.text
     }
 }
 // MARK: -NotificationCenter-

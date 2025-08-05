@@ -12,9 +12,7 @@ import Then
 // MARK: -SettingsNicknameDetailViewController-
 final class SettingsNicknameDetailViewController: BaseViewController {
     private let nicknameTextField = UITextField()
-    private var lastResult: Result<String, NicknameError>?
-    private var nicknameHandler: ((Result<String, NicknameError>) -> ())?
-    
+    private var nicknameHandler: ((String?) -> Void)?
     private let underlineView = UIView()
     private let statusLabel = UILabel()
     
@@ -30,7 +28,7 @@ final class SettingsNicknameDetailViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        passValidateNicknameResult()
+        passText()
     }
 }
 // MARK: -Open-
@@ -39,7 +37,7 @@ extension SettingsNicknameDetailViewController {
         nicknameTextField.text = text
     }
     
-    public func bindNicknameHandler(handler: @escaping (Result<String, NicknameError>) -> Void) {
+    public func bindNicknameHandler(handler: @escaping (String?) -> Void) {
         nicknameHandler = handler
     }
 }
@@ -106,8 +104,7 @@ extension SettingsNicknameDetailViewController {
     }
     
     private func handleNickname(text: String?)  {
-        let result = validateNickname(text: text)
-        lastResult = result
+        let result = Nickname.validateNickname(text: text)
         
         switch result {
         case .success:
@@ -117,35 +114,12 @@ extension SettingsNicknameDetailViewController {
         }
     }
     
-    private func validateNickname(text: String?) -> Result<String, NicknameError> {
-        guard let text else {
-            return .failure(NicknameError(text: nil, kind: .textIsNil))
-        }
-        guard 2..<10 ~= text.count else {
-            return .failure(NicknameError(text: text, kind: .invalidRange))
-        }
-        guard !text.contains(where: \.isNumber) else {
-            return .failure(NicknameError(text: text, kind: .containsNumber))
-        }
-        guard !text.contains(where: isLimitedSymbol) else {
-            return .failure(NicknameError(text: text, kind: .containsSpecialSymbol))
-        }
-        
-        return .success(text)
-    }
-    
     private func updateStatusLabel(text: String) {
         statusLabel.text = text
     }
     
-    private func passValidateNicknameResult() {
-        if let lastResult {
-            nicknameHandler?(lastResult)
-        }
-    }
-    
-    private func isLimitedSymbol(_ character: Character) -> Bool {
-        return "@#$%".contains(character)
+    private func passText() {
+        nicknameHandler?(nicknameTextField.text)
     }
 }
 // MARK: -

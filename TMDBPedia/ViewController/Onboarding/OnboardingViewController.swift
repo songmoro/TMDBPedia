@@ -86,9 +86,7 @@ private extension OnboardingViewController {
     }
     
     @objc private func startButtonClicked() {
-        let settingsNicknameViewController = SettingsNicknameViewController().then {
-            $0.input(.push)
-        }
+        let settingsNicknameViewController = SettingsNicknameViewController()
         
         navigationController?.pushViewController(settingsNicknameViewController, animated: true)
     }
