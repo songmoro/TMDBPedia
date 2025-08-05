@@ -11,6 +11,7 @@ import Then
 
 // MARK: -MovieSearchViewController-
 final class MovieSearchViewController: BaseViewController {
+    private var isKeywordAccess = false
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
     private let emptyLabel = UILabel()
@@ -21,10 +22,18 @@ final class MovieSearchViewController: BaseViewController {
         super.viewDidLoad()
         configure()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !isKeywordAccess {
+            searchBar.becomeFirstResponder()
+        }
+    }
 }
 // MARK: -Open-
 extension MovieSearchViewController {
     public func input(keyword: String) {
+        isKeywordAccess = true
         searchBar.text = keyword
         _ = textFieldShouldReturn(searchBar.searchTextField)
     }
@@ -66,9 +75,10 @@ private extension MovieSearchViewController {
         view.backgroundColor = .Background
         
         searchBar.do {
-            $0.searchTextField.leftView?.tintColor = .Label
             $0.searchBarStyle = .minimal
+            $0.searchTextField.leftView?.tintColor = .Label
             $0.searchTextField.textColor = .Label
+            $0.searchTextField.backgroundColor = .GroupedBackground
         }
         
         emptyLabel.do {
