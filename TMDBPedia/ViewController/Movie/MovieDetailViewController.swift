@@ -258,7 +258,7 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
                     
                     let genres: String = searchInfo.genre_ids
                         .compactMap(MovieGenre.init)
-                        .map(\.text)[...min(searchInfo.genre_ids.count, 1)]
+                        .map(\.text)[..<min(searchInfo.genre_ids.count, 2)]
                         .joined(separator: ", ")
                     
                     if !genres.isEmpty {
