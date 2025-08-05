@@ -27,7 +27,7 @@ final class SearchMovieCell: BaseTableViewCell {
     }
     
     private func handleInput(_ item: SearchMovieItem) {
-        if let url = URL(string: APIURL.todayMoviePosterURL + item.poster_path) {
+        if let url = URL(string: APIURL.imageURL + item.poster_path) {
             posterImageView.kf.setImage(with: url)
         }
         

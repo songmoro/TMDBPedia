@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import Alamofire
 import Then
 
 // MARK: -MovieViewController-
@@ -170,29 +169,15 @@ extension MovieViewController {
 // MARK: -Network-
 private extension MovieViewController {
     private func callTodayMovieAPI() {
-        let url = URL(string: APIURL.todayMovieURL)!
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-        let queryItems: [URLQueryItem] = [URLQueryItem(name: "language", value: "ko-KR")]
-        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-        
-        var request = URLRequest(url: components.url!)
-        request.httpMethod = "GET"
-        request.timeoutInterval = 10
-        request.allHTTPHeaderFields = [
-            "accept": "application/json",
-            "Authorization": "Bearer \(APIKey.tmdbToken)"
-        ]
-        
-        AF.request(request)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: TodayMovieResponse.self) {
-                switch $0.result {
-                case .success(let todayMovieResponse):
-                    self.handleSuccess(todayMovieResponse)
-                case .failure(let error):
-                    print(error)
-                }
+        Task {
+            do {
+                let response = try await NetworkManager.shared.call(by: MovieAPI.trending, of: TodayMovieResponse.self)
+                handleSuccess(response)
             }
+            catch let error {
+                print(error)
+            }
+        }
     }
     
     private func handleSuccess(_ response: TodayMovieResponse) {

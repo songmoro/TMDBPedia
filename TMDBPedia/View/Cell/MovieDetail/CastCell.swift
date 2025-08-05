@@ -31,7 +31,7 @@ final class CastCell: BaseTableViewCell {
 // MARK: -Open-
 extension CastCell {
     public func input(_ item: CreditsItem) {
-        if let path = item.profile_path, let url = URL(string: APIURL.todayMoviePosterURL + path) {
+        if let path = item.profile_path, let url = URL(string: APIURL.imageURL + path) {
             actorImageView.kf.setImage(with: url)
         }
         

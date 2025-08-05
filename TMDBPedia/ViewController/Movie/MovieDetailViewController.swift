@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Alamofire
 import SnapKit
 import Then
 
@@ -124,32 +123,16 @@ extension MovieDetailViewController {
     }
     
     private func updateBackdropsImages(_ id: Int) {
-        let url = URL(string: APIURL.imagesURL(id))!
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-//        let queryItems: [URLQueryItem] = [
-//          URLQueryItem(name: "include_image_language", value: "ko"),
-//        ]
-//        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
-        var request = URLRequest(url: components.url!)
-        request.httpMethod = "GET"
-        request.timeoutInterval = 10
-        request.allHTTPHeaderFields = [
-            "accept": "application/json",
-            "Authorization": "Bearer \(APIKey.tmdbToken)"
-        ]
-
-        AF.request(request)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: ImagesResponse.self) {
-                switch $0.result {
-                case .success(let imagesResponse):
-                    self.imagesInfo = imagesResponse
-                    self.tableView.reloadSections([0], with: .automatic)
-                case .failure(let error):
-                    print(error)
-                }
+        Task {
+            do {
+                let response = try await NetworkManager.shared.call(by: MovieAPI.images(id: id), of: ImagesResponse.self)
+                self.imagesInfo = response
+                self.tableView.reloadSections([0], with: .automatic)
             }
+            catch let error {
+                print(error)
+            }
+        }
     }
     
     private func updateFooter(_ item: SearchMovieItem) {
@@ -168,32 +151,16 @@ extension MovieDetailViewController {
     }
     
     private func callCreditsAPI(_ id: Int) {
-        let url = URL(string: APIURL.creditsURL(id))!
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-        let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "language", value: "ko-KR")
-        ]
-        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
-        var request = URLRequest(url: components.url!)
-        request.httpMethod = "GET"
-        request.timeoutInterval = 10
-        request.allHTTPHeaderFields = [
-          "accept": "application/json",
-          "Authorization": "Bearer \(APIKey.tmdbToken)"
-        ]
-
-        AF.request(request)
-            .validate(statusCode: 200..<300)
-            .responseDecodable(of: CreditsResponse.self) {
-                switch $0.result {
-                case .success(let creditsResponse):
-                    self.creditsInfo = creditsResponse
-                    self.tableView.reloadSections([2], with: .automatic)
-                case .failure(let error):
-                    print(error)
-                }
+        Task {
+            do {
+                let response = try await NetworkManager.shared.call(by: MovieAPI.credit(id: id), of: CreditsResponse.self)
+                self.creditsInfo = response
+                self.tableView.reloadSections([2], with: .automatic)
             }
+            catch let error {
+                print(error)
+            }
+        }
     }
 }
 // MARK: -TableView-

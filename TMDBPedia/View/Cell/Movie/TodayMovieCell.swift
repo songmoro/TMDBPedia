@@ -132,7 +132,7 @@ extension TodayMovieContentCell {
     }
     
     private func handleInput(_ item: TodayMovieItem) {
-        if let url = URL(string: APIURL.todayMoviePosterURL + item.poster_path) {
+        if let url = URL(string: APIURL.imageURL + item.poster_path) {
             posterImageView.kf.setImage(with: url)
         }
         titleLabel.text = item.title
