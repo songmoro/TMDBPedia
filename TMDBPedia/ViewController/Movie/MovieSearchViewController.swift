@@ -11,7 +11,6 @@ import Then
 
 // MARK: -MovieSearchViewController-
 final class MovieSearchViewController: BaseViewController {
-    private var currentPage = 1
     private var isKeywordAccess = false
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
