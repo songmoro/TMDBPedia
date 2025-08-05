@@ -18,6 +18,9 @@ final class MovieViewController: BaseViewController {
     private var keywords: [String] = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
     private var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
     
+    private var historyCell: HistoryCell?
+    private var todayMovieCell: TodayMovieCell?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
@@ -35,6 +38,8 @@ final class MovieViewController: BaseViewController {
         profileView.updateStorageButton(likeList.count)
         
         tableView.reloadData()
+        historyCell?.needsReload()
+        todayMovieCell?.needsReload()
     }
 }
 // MARK: -Configure-
@@ -115,17 +120,17 @@ extension MovieViewController {
     }
     
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {
-        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath, let historyCell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as? HistoryCell {
+        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
             keywords.remove(at: indexPath.item)
             UserDefaultsManager.shared.set(.keywords, to: keywords)
             
             tableView.reloadData()
-            historyCell.needsReload()
+            historyCell?.needsReload()
         }
     }
     
     @objc private func needsLikeAction(_ notification: NSNotification) {
-        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath, let todayMovieCell = tableView.cellForRow(at: IndexPath(row: 0, section: 1)) as? TodayMovieCell {
+        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
             let item = movieInfo.results[indexPath.item]
             
             if likeList.contains(item.id) {
@@ -139,7 +144,7 @@ extension MovieViewController {
             profileView.updateStorageButton(likeList.count)
             
             tableView.reloadData()
-            todayMovieCell.needsReload()
+            todayMovieCell?.needsReload()
         }
     }
     
@@ -220,18 +225,23 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         
         if indexPath.section == 0 {
             if keywords.isEmpty {
+                historyCell = nil
                 cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
             }
             else {
                 cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath).then {
                     $0.input(keywords)
                 }
+                
+                historyCell = cell as? HistoryCell
             }
         }
         else {
             cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
                 $0.input(movieInfo.results)
             }
+            
+            todayMovieCell = cell as? TodayMovieCell
         }
         
         return cell
