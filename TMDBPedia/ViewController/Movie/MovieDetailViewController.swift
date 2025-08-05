@@ -15,7 +15,6 @@ final class MovieDetailViewController: BaseViewController {
     private var id: Int?
     private var synopsis: (String, Bool) = ("", false)
     private var movieItem: MovieItem?
-    private var movieInfo: MovieItem?
     private var imagesInfo = ImagesResponse()
     private var creditsInfo = CreditsResponse()
     
@@ -251,53 +250,6 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
                     let genres: String = movieItem.genre_ids
                         .compactMap(MovieGenre.init)
                         .map(\.text)[..<min(movieItem.genre_ids.count, 2)]
-                        .joined(separator: ", ")
-                    
-                    if !genres.isEmpty {
-                        images.append("film.fill")
-                        texts.append(genres)
-                    }
-                    
-                    for i in 0..<images.count {
-                        let textAttachment = NSTextAttachment().then {
-                            $0.image = UIImage(systemName: images[i])?
-                                .withTintColor(color)
-                                .withConfiguration(UIImage.SymbolConfiguration(font: font))
-                        }
-                        
-                        let attributedAttachment = NSAttributedString(attachment: textAttachment)
-                        let attributedString = NSAttributedString(string: " \(texts[i])", attributes: [.font: font])
-                        
-                        mutableAttributedString.do {
-                            $0.append(attributedAttachment)
-                            $0.append(attributedString)
-                        }
-                        
-                        if i != (images.count - 1) {
-                            mutableAttributedString.append(attributedSeparatorString)
-                        }
-                    }
-                    
-                    $0.attributedText = mutableAttributedString
-                    $0.textColor = color
-                    $0.textAlignment = .center
-                }
-                
-                return footerLabel
-            }
-            else if let movieInfo {
-                let footerLabel = UILabel().then {
-                    let font = UIFont.systemFont(ofSize: Constant.placeholderSize)
-                    let color = UIColor.Fill
-                    let mutableAttributedString = NSMutableAttributedString()
-                    let attributedSeparatorString = NSAttributedString(string: "  |  ", attributes: [.font: font])
-                    
-                    var images = ["calendar", "star.fill"]
-                    var texts = [movieInfo.release_date, String(movieInfo.vote_average)]
-                    
-                    let genres: String = movieInfo.genre_ids
-                        .compactMap(MovieGenre.init)
-                        .map(\.text)[..<min(movieInfo.genre_ids.count, 2)]
                         .joined(separator: ", ")
                     
                     if !genres.isEmpty {
