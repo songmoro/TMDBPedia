@@ -81,7 +81,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
         
         cell.deleteButton.do {
             $0.update(indexPath)
-            $0.addTarget(self, action: #selector(postIndexPathForPushMovieSearchViewController), for: .touchUpInside)
+            $0.addTarget(self, action: #selector(postIndexPathForRemoveKeyword), for: .touchUpInside)
         }
         
         return cell
