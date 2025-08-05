@@ -12,7 +12,7 @@ enum MovieAPI: API {
     case trending
     case images(id: Int)
     case credit(id: Int)
-    case search(text: String)
+    case search(text: String, page: Int)
 }
 
 extension MovieAPI {
@@ -48,12 +48,12 @@ extension MovieAPI {
     private var parameters: Parameters? {
         switch self {
         case .trending:
-            ["language": "ko-KR"]
+            ["language": "ko-KR", "page": 1]
         case .images: nil
         case .credit:
             ["language": "ko-KR"]
-        case .search(let text):
-            ["query": text, "language": "ko-KR"]
+        case .search(let text, let page):
+            ["query": text, "language": "ko-KR", "include_adult": false, "page": page]
         }
     }
     

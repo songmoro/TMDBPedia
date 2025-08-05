@@ -11,6 +11,7 @@ import Then
 
 // MARK: -MovieSearchViewController-
 final class MovieSearchViewController: BaseViewController {
+    private var currentPage = 1
     private var isKeywordAccess = false
     private let searchBar = UISearchBar()
     private let tableView = UITableView()
@@ -118,6 +119,13 @@ extension MovieSearchViewController: UITextFieldDelegate {
         callSearchMovieAPI(text)
     }
     
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        movieInfo = .init()
+        tableView.reloadData()
+        
+        return true
+    }
+    
     private func achiveKeyword(_ text: String) {
         let keywords = [text] + (UserDefaultsManager.shared.getArray(.keywords) ?? [String]())
         UserDefaultsManager.shared.set(.keywords, to: keywords)
@@ -128,7 +136,7 @@ private extension MovieSearchViewController {
     private func callSearchMovieAPI(_ text: String) {
         Task {
             do {
-                let response = try await NetworkManager.shared.call(by: MovieAPI.search(text: text), of: SearchMovieResponse.self)
+                let response = try await NetworkManager.shared.call(by: MovieAPI.search(text: text, page: movieInfo.page), of: SearchMovieResponse.self)
                 handleSuccess(response)
             }
             catch let error {
@@ -138,9 +146,15 @@ private extension MovieSearchViewController {
     }
     
     private func handleSuccess(_ response: SearchMovieResponse) {
-        movieInfo = response
+        if movieInfo.results.isEmpty {
+            movieInfo = response
+        }
+        else {
+            movieInfo.page = response.page
+            movieInfo.results += response.results
+        }
         
-        if response.results.isEmpty {
+        if movieInfo.results.isEmpty {
             emptyLabel.isHidden = false
             tableView.isHidden = true
         }
@@ -175,6 +189,13 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
         }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if movieInfo.hasNextPage(indexPath.row) {
+            movieInfo.page += 1
+            _ = textFieldShouldReturn(searchBar.searchTextField)
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

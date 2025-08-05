@@ -6,16 +6,26 @@
 //
 
 struct SearchMovieResponse: Decodable {
-    let results: [SearchMovieItem]
+    var page: Int
+    let total_pages: Int
+    let total_results: Int
+    var results: [SearchMovieItem]
     
-    init(results: [SearchMovieItem] = []) {
+    init(page: Int = 1, total_pages: Int = 0, total_results: Int = 0, results: [SearchMovieItem] = []) {
+        self.page = page
+        self.total_pages = total_pages
+        self.total_results = total_results
         self.results = results
+    }
+    
+    func hasNextPage(_ row: Int) -> Bool {
+        row == (results.count - 2) && total_results > (results.count + 20)
     }
 }
 
 struct SearchMovieItem: Decodable {
     let id: Int
-    let poster_path: String
+    let poster_path: String?
     let title: String
     let overview: String
     let vote_average: Float
