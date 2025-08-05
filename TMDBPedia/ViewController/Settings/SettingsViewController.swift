@@ -25,7 +25,10 @@ final class SettingsViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         guard let nickname = Nickname.get() else { return }
+        let likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+        
         profileView.updateNicknameLabel(nickname.text)
+        profileView.updateStorageButton(likeList.count)
     }
 }
 // MARK: -Configure-
