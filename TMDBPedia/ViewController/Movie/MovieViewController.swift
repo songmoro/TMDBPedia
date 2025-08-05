@@ -28,11 +28,12 @@ final class MovieViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         guard let nickname = Nickname.get() else { return }
-        profileView.updateNicknameLabel(nickname.text)
-        
-        
-        keywords = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
         likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
+        keywords = UserDefaultsManager.shared.getArray(.keywords) as? [String] ?? []
+        
+        profileView.updateNicknameLabel(nickname.text)
+        profileView.updateStorageButton(likeList.count)
+        
         tableView.reloadData()
     }
 }
