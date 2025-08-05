@@ -181,7 +181,14 @@ private extension MovieViewController {
     }
     
     private func handleSuccess(_ response: TodayMovieResponse) {
-        movieInfo = response
+        if response.results.count >= 20 {
+            let result = TodayMovieResponse(results: Array(response.results[..<20]))
+            movieInfo = result
+        }
+        else {
+            movieInfo = response
+        }
+        
         tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
     }
 }

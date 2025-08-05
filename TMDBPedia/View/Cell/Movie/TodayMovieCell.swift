@@ -181,6 +181,8 @@ private extension TodayMovieContentCell {
         
         posterImageView.do {
             $0.kf.indicatorType = .activity
+            $0.clipsToBounds = true
+            $0.layer.cornerRadius = Constant.defaultRadius
         }
         
         titleLabel.do {
