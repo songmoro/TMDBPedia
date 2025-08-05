@@ -313,18 +313,46 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerLabel = UILabel()
-        headerLabel.do {
-            if section == 0 {
+        let uiView: UIView
+        
+        if section == 0 {
+            uiView = UIView()
+            
+            let headerLabel = UILabel().then {
                 $0.text = "최근검색어"
+                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
             }
-            else {
+            
+            let button = UIButton().then {
+                $0.setTitle("전체 삭제", for: .normal)
+                $0.addTarget(self, action: #selector(removeAllKeyword), for: .touchUpInside)
+            }
+            
+            uiView.addSubviews(headerLabel, button)
+            
+            headerLabel.snp.makeConstraints {
+                $0.leading.verticalEdges.equalToSuperview()
+            }
+            
+            button.snp.makeConstraints {
+                $0.trailing.verticalEdges.equalToSuperview()
+            }
+        }
+        else {
+            uiView = UILabel().then {
                 $0.text = "오늘의 영화"
+                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
             }
-            $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
         }
         
-        return headerLabel
+        return uiView
+    }
+    
+    @objc private func removeAllKeyword() {
+        keywords = []
+        UserDefaultsManager.shared.remove(.keywords)
+        
+        tableView.reloadSections([0], with: .automatic)
     }
 }
 // MARK: -
