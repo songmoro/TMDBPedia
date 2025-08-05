@@ -87,6 +87,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.do {
             $0.delegate = self
             $0.dataSource = self
+            
         }
     }
     
@@ -106,7 +107,12 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 3 {
             handleWithdrawFromAccount()
+            tableView.deselectRow(at: indexPath, animated: true)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        indexPath.row == 3 ? indexPath : nil
     }
     
     private func handleWithdrawFromAccount() {
