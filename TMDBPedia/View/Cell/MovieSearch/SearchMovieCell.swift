@@ -11,10 +11,6 @@ import SnapKit
 import Then
 
 final class SearchMovieCell: BaseTableViewCell {
-    static let dateFormatter = DateFormatter().then {
-        $0.dateFormat = "yyyy. MM. DD"
-    }
-    
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
     private let dateLabel = UILabel()
