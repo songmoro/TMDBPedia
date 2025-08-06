@@ -11,31 +11,19 @@ final class HeaderView: BaseView {
     private let headerLabel = UILabel()
     private let actionButton = UIButton()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
-    }
-    
-    private func configure() {
-        headerLabel.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
-    }
-    
     public func plain(_ headerText: String) {
-        headerLabel.text = headerText
-        
-        addHeaderLabel()
+        addHeaderLabel(headerText)
     }
     
     public func withAction(_ headerText: String, _ buttonText: String, _ action: Selector) {
-        headerLabel.text = headerText
-        actionButton.setTitle(buttonText, for: .normal)
-        actionButton.addTarget(nil, action: action, for: .touchUpInside)
-        
-        addHeaderLabel()
-        addActionButton()
+        addHeaderLabel(headerText)
+        addActionButton(buttonText, action)
     }
     
-    private func addHeaderLabel() {
+    private func addHeaderLabel(_ text: String) {
+        headerLabel.text = text
+        headerLabel.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
+        
         addSubview(headerLabel)
         
         headerLabel.snp.makeConstraints {
@@ -43,7 +31,20 @@ final class HeaderView: BaseView {
         }
     }
     
-    private func addActionButton() {
+    private func addActionButton(_ text: String, _ action: Selector) {
+        actionButton.do {
+            var attributedText = AttributedString(text)
+            attributedText.foregroundColor = UIColor.Tint
+            attributedText.font = .systemFont(ofSize: Constant.titleSize, weight: .bold)
+            
+            var configuration = UIButton.Configuration.plain()
+            configuration.attributedTitle = attributedText
+            configuration.baseForegroundColor = .Tint
+            
+            $0.configuration = configuration
+            $0.addTarget(nil, action: action, for: .touchUpInside)
+        }
+        
         addSubview(actionButton)
         
         actionButton.snp.makeConstraints {

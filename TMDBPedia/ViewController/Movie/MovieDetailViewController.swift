@@ -160,59 +160,19 @@ extension MovieDetailViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let uiView = BaseView()
+        let headerView = HeaderView()
         
         if section == 0 {
-            return uiView
+            return headerView
         }
         else if section == 1 {
-            let headerLabel = UILabel().then {
-                $0.text = "Synopsis"
-                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
-            }
-            
-            let button = UIButton().then {
-                var configuration = UIButton.Configuration.plain()
-                var attributedText = AttributedString("More")
-                attributedText.foregroundColor = UIColor.Tint
-                attributedText.font = .systemFont(ofSize: Constant.titleSize, weight: .bold)
-                
-                configuration.baseForegroundColor = .Tint
-                configuration.attributedTitle = attributedText
-                
-                $0.configuration = configuration
-                $0.addTarget(self, action: #selector(toggleSynopsis), for: .touchUpInside)
-            }
-            
-            uiView.addSubviews(headerLabel, button)
-            
-            headerLabel.snp.makeConstraints {
-                $0.leading.equalToSuperview().offset(Constant.offsetFromHorizon)
-                $0.centerY.equalToSuperview()
-            }
-            
-            button.snp.makeConstraints {
-                $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
-                $0.centerY.equalToSuperview()
-            }
-            
-            return uiView
+            headerView.withAction("Synopsis", "More", #selector(toggleSynopsis))
         }
         else {
-            let headerLabel = UILabel().then {
-                $0.text = "Cast"
-                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
-            }
-            
-            uiView.addSubview(headerLabel)
-            
-            headerLabel.snp.makeConstraints {
-                $0.leading.equalToSuperview().offset(Constant.offsetFromHorizon)
-                $0.centerY.equalToSuperview()
-            }
-            
-            return uiView
+            headerView.plain("Cast")
         }
+        
+        return headerView
     }
     
     @objc private func toggleSynopsis() {
