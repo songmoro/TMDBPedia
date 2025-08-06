@@ -287,44 +287,16 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let uiView = BaseView()
+        let header = HeaderView()
             
         switch movieViewControllerItem[section] {
         case .history:
-            // TODO: 뷰로 분리
-            let headerLabel = UILabel().then {
-                $0.text = "최근검색어"
-                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
-            }
-            
-            let button = UIButton().then {
-                $0.setTitle("전체 삭제", for: .normal)
-                $0.addTarget(self, action: #selector(removeAllKeyword), for: .touchUpInside)
-            }
-            
-            uiView.addSubviews(headerLabel, button)
-            
-            headerLabel.snp.makeConstraints {
-                $0.leading.equalToSuperview().inset(Constant.offsetFromHorizon)
-            }
-            
-            button.snp.makeConstraints {
-                $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
-            }
+            header.withAction("최근검색어", "전체 삭제", #selector(removeAllKeyword))
         case .todayMovie:
-            let label = UILabel().then {
-                $0.text = "오늘의 영화"
-                $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
-            }
-            
-            uiView.addSubview(label)
-            
-            label.snp.makeConstraints {
-                $0.leading.equalToSuperview().inset(Constant.offsetFromHorizon)
-            }
+            header.plain("오늘의 영화")
         }
         
-        return uiView
+        return header
     }
     
     @objc private func removeAllKeyword() {
