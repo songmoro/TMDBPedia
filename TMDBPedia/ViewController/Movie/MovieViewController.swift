@@ -41,6 +41,9 @@ private extension MovieViewController {
                 self.tableView.reloadData()
                 self.historyCell?.needsReload()
             })
+            .map {
+                [Keyword]($0).sorted(by: { $0.date > $1.date })
+            }
             .assign(to: \.keywords, on: self)
             .store(in: &cancellable)
         
@@ -134,7 +137,8 @@ extension MovieViewController {
     
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            UserDefaultsManager.shared.keywords?.remove(at: indexPath.item)
+            let keyword = keywords[indexPath.item]
+            UserDefaultsManager.shared.keywords?.remove(keyword)
         }
     }
     
@@ -155,12 +159,14 @@ extension MovieViewController {
     
     @objc private func needsPushMovieSearchViewController(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let keyword = Keyword(text: keywords[indexPath.item].text)
+            let oldKeyword = keywords[indexPath.item]
+            let newKeyword = Keyword(text: oldKeyword.text)
             
-            UserDefaultsManager.shared.keywords?[indexPath.item] = keyword
+            UserDefaultsManager.shared.keywords?.update(with: newKeyword)
+//            UserDefaultsManager.shared.keywords?.update(with: <#T##Keyword#>) [indexPath.item] = keyword
             
             let vc = MovieSearchViewController().then {
-                $0.input(keyword: keyword)
+                $0.input(keyword: newKeyword)
             }
             
             navigationController?.pushViewController(vc, animated: true)

@@ -21,7 +21,7 @@ final class UserDefaultsManager: ObservableObject {
         let keywordsData = UserDefaults.standard.data(forKey: Key.keywords.rawValue)
         
         if let keywordsData {
-            let value: [Keyword]? = try? PropertyListDecoder().decode([Keyword].self, from: keywordsData)
+            let value: Set<Keyword>? = try? PropertyListDecoder().decode(Set<Keyword>.self, from: keywordsData)
             self.keywords = value
         }
         else {
@@ -47,11 +47,10 @@ final class UserDefaultsManager: ObservableObject {
         }
     }
     
-    @Published var keywords: [Keyword]? {
+    @Published var keywords: Set<Keyword>? {
         willSet {
             if let newValue {
-                let newSortedValue = Set(newValue).sorted { $0.date > $1.date }
-                UserDefaults.standard.set(try? PropertyListEncoder().encode(newSortedValue), forKey: Key.keywords.rawValue)
+                UserDefaults.standard.set(try? PropertyListEncoder().encode(newValue), forKey: Key.keywords.rawValue)
             }
             else {
                 UserDefaults.standard.set(nil, forKey: Key.keywords.rawValue)
@@ -71,7 +70,7 @@ final class UserDefaultsManager: ObservableObject {
         }
     }
     
-    private(set) lazy var keywordsPublisher: AnyPublisher<[Keyword]?, Never> = $keywords.dropFirst().eraseToAnyPublisher()
+    private(set) lazy var keywordsPublisher: AnyPublisher<Set<Keyword>?, Never> = $keywords.dropFirst().eraseToAnyPublisher()
     private(set) lazy var nicknamePublisher: AnyPublisher<Nickname?, Never> = $nickname.dropFirst().eraseToAnyPublisher()
     private(set) lazy var likeListPublisher: AnyPublisher<[Int]?, Never> = $likeList.dropFirst().eraseToAnyPublisher()
 }
