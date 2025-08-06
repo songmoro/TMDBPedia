@@ -49,7 +49,6 @@ private extension MovieSearchViewController {
         configureSubview()
         configureLayout()
         configureView()
-        configureNavigation()
         configureTableView()
         configureSearchBar()
     }
@@ -77,6 +76,11 @@ private extension MovieSearchViewController {
     }
     
     private func configureView() {
+        navigationItem.do {
+            $0.backButtonTitle = ""
+            $0.title = "영화 검색"
+        }
+        
         view.backgroundColor = .Background
         
         searchBar.do {
@@ -95,13 +99,6 @@ private extension MovieSearchViewController {
         tableView.do {
             $0.backgroundColor = .Background
             $0.keyboardDismissMode = .interactive
-        }
-    }
-    
-    private func configureNavigation() {
-        navigationItem.do {
-            $0.backButtonTitle = ""
-            $0.title = "영화 검색"
         }
     }
 }
@@ -132,9 +129,9 @@ extension MovieSearchViewController: UITextFieldDelegate {
     
     private func achiveKeyword(_ text: String) {
         let newKeyword = Keyword(text: text)
-        let keywords = UserDefaultsManager.shared.getObject(of: [Keyword].self, .keywords) ?? []
+        let keywords = UserDefaultsManager.shared.keywords ?? []
         
-        UserDefaultsManager.shared.setObject(.keywords, to: keywords + [newKeyword])
+        UserDefaultsManager.shared.keywords = [newKeyword] + keywords
     }
 }
 // MARK: -Networking-
@@ -205,9 +202,10 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = MovieDetailViewController()
         let item = movieInfo.results[indexPath.row]
-        vc.input(item)
+        let vc = MovieDetailViewController().then {
+            $0.input(item)
+        }
         
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -216,16 +214,13 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
         let indexPath = sender.indexPath
         let item = movieInfo.results[indexPath.item]
         
-        var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-        
-        if likeList.contains(item.id) {
-            likeList.removeAll(where: { $0 == item.id })
+        if UserDefaultsManager.shared.likeList?.contains(item.id) ?? false {
+            UserDefaultsManager.shared.likeList?.removeAll(where: { $0 == item.id })
         }
         else {
-            likeList.append(item.id)
+            UserDefaultsManager.shared.likeList?.append(item.id)
         }
         
-        UserDefaultsManager.shared.set(.likeList, to: likeList)
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
 }

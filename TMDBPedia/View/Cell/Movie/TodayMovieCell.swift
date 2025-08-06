@@ -52,8 +52,8 @@ private extension TodayMovieCell {
     }
     
     private func configureView() {
-        contentView.backgroundColor = .Background
         backgroundColor = .Background
+        contentView.backgroundColor = .Background
         
         collectionView.do {
             $0.backgroundColor = .Background
@@ -89,8 +89,8 @@ extension TodayMovieCell: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(TodayMovieContentCell.self, for: indexPath)
-        
         let item = movieInfoItems[indexPath.item]
+        
         cell.input(item)
         cell.likeButton.do {
             $0.update(indexPath)
@@ -129,15 +129,13 @@ final class TodayMovieContentCell: BaseCollectionViewCell {
 // MARK: -Open-
 extension TodayMovieContentCell {
     public func input(_ item: MovieItem) {
-        handleInput(item)
-    }
-    
-    private func handleInput(_ item: MovieItem) {
         if let posterPath = item.poster_path, let url = URL(string: APIURL.imageURL + posterPath) {
             posterImageView.kf.setImage(with: url)
         }
+        
         titleLabel.text = item.title
-        let isLiked = UserDefaultsManager.shared.getArray(.likeList)?.contains(where: { ($0 is Int) && ($0 as! Int == item.id) }) ?? false
+        
+        let isLiked = UserDefaultsManager.shared.likeList?.contains(where: { $0 == item.id }) ?? false
         likeButton.isSelected = isLiked
         plotLabel.text = item.overview
     }

@@ -6,60 +6,72 @@
 //
 
 import Foundation
+import Combine
 
-final class UserDefaultsManager {
-    private init() { }
-    public static let shared = UserDefaultsManager()
+final class UserDefaultsManager: ObservableObject {
+    static let shared = UserDefaultsManager()
     
-    private let standard = UserDefaults.standard
-    
-    enum Key: String {
-        case nickname
+    private enum Key: String {
         case keywords
+        case nickname
         case likeList
     }
     
-    func getArray(_ key: Key) -> [Any]? {
-        return standard.array(forKey: key.rawValue)
-    }
-    
-    func set(_ key: Key, to newValue: Any?) {
-        standard.set(newValue, forKey: key.rawValue)
-    }
-    
-    func getObject<T: Decodable>(of type: T.Type = T.self, _ key: Key) -> T? {
-        if let data = standard.data(forKey: key.rawValue) {
-            if key == .keywords {
-                let value: [Keyword]? = try? PropertyListDecoder().decode([Keyword].self, from: data)
-                
-                if let value {
-                    return value.sorted(by: { $0.date > $1.date }) as? T
-                }
-            }
-            else {
-                return try? PropertyListDecoder().decode(T.self, from: data)
-            }
+    private init() {
+        let keywordsData = UserDefaults.standard.data(forKey: Key.keywords.rawValue)
+        
+        if let keywordsData {
+            let value: [Keyword]? = try? PropertyListDecoder().decode([Keyword].self, from: keywordsData)
+            self.keywords = value
+        }
+        else {
+            self.keywords = []
         }
         
-        return nil
-    }
-    
-    func setObject<T: Encodable>(_ key: Key, to newValue: T?) {
-        switch key {
-        case .keywords:
-            if var newValue = newValue as? [Keyword] {
-                newValue = Set(newValue).sorted { $0.date > $1.date }
-                standard.set(try? PropertyListEncoder().encode(newValue), forKey: key.rawValue)
-            }
-            else {
-                remove(key)
-            }
-        default:
-            standard.set(try? PropertyListEncoder().encode(newValue), forKey: key.rawValue)
+        let nicknameData = UserDefaults.standard.data(forKey: Key.nickname.rawValue)
+        if let nicknameData {
+            let value: Nickname? = try? PropertyListDecoder().decode(Nickname.self, from: nicknameData)
+            self.nickname = value
+        }
+        else {
+            self.nickname = nil
+        }
+        
+        let likeList = UserDefaults.standard.array(forKey: Key.likeList.rawValue)
+        if let likeList {
+            let value: [Int]? = likeList as? [Int]
+            self.likeList = value
+        }
+        else {
+            self.likeList = []
         }
     }
     
-    func remove(_ key: Key) {
-        standard.set(nil, forKey: key.rawValue)
+    @Published var keywords: [Keyword]? {
+        willSet {
+            if let newValue {
+                let newSortedValue = Set(newValue).sorted { $0.date > $1.date }
+                UserDefaults.standard.set(try? PropertyListEncoder().encode(newSortedValue), forKey: Key.keywords.rawValue)
+            }
+            else {
+                UserDefaults.standard.set(nil, forKey: Key.keywords.rawValue)
+            }
+        }
     }
+    
+    @Published var nickname: Nickname? {
+        willSet {
+            UserDefaults.standard.set(try? PropertyListEncoder().encode(newValue), forKey: Key.nickname.rawValue)
+        }
+    }
+    
+    @Published var likeList: [Int]? {
+        willSet {
+            UserDefaults.standard.set(newValue, forKey: Key.likeList.rawValue)
+        }
+    }
+    
+    private(set) lazy var keywordsPublisher: AnyPublisher<[Keyword]?, Never> = $keywords.dropFirst().eraseToAnyPublisher()
+    private(set) lazy var nicknamePublisher: AnyPublisher<Nickname?, Never> = $nickname.dropFirst().eraseToAnyPublisher()
+    private(set) lazy var likeListPublisher: AnyPublisher<[Int]?, Never> = $likeList.dropFirst().eraseToAnyPublisher()
 }

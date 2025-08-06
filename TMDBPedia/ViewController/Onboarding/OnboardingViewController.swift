@@ -58,10 +58,8 @@ private extension OnboardingViewController {
     }
     
     private func configureView() {
-        view.backgroundColor = .Background
-        
         navigationItem.backButtonTitle = ""
-        
+        view.backgroundColor = .Background
         splashImageView.image = UIImage(named: "splash")
         
         titleLabel.do {
@@ -86,8 +84,6 @@ private extension OnboardingViewController {
     }
     
     @objc private func startButtonClicked() {
-        let settingsNicknameViewController = SettingsNicknameViewController()
-        
-        navigationController?.pushViewController(settingsNicknameViewController, animated: true)
+        navigationController?.pushViewController(SettingsNicknameViewController(), animated: true)
     }
 }

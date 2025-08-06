@@ -11,8 +11,9 @@ import Then
 
 // MARK: -SettingsNicknameDetailViewController-
 final class SettingsNicknameDetailViewController: BaseViewController {
+    private var nickname = Nickname(text: "")
     private let nicknameTextField = UITextField()
-    private var nicknameHandler: ((String?) -> Void)?
+    private var nicknameHandler: ((Nickname) -> Void)?
     private let underlineView = UIView()
     private let statusLabel = UILabel()
     
@@ -33,11 +34,12 @@ final class SettingsNicknameDetailViewController: BaseViewController {
 }
 // MARK: -Open-
 extension SettingsNicknameDetailViewController {
-    public func inputNickname(_ text: String?) {
-        nicknameTextField.text = text
+    public func inputNickname(_ nickname: Nickname) {
+        self.nickname = nickname
+        nicknameTextField.text = nickname.text
     }
     
-    public func bindNicknameHandler(handler: @escaping (String?) -> Void) {
+    public func bindNicknameHandler(handler: @escaping (Nickname) -> Void) {
         nicknameHandler = handler
     }
 }
@@ -75,9 +77,7 @@ private extension SettingsNicknameDetailViewController {
     
     private func configureView() {
         navigationItem.title = "닉네임 설정"
-        
         view.backgroundColor = .Background
-        
         underlineView.backgroundColor = .Label
         
         nicknameTextField.do {
@@ -104,9 +104,10 @@ extension SettingsNicknameDetailViewController {
     }
     
     private func handleNickname(text: String?)  {
-        let result = Nickname.validateNickname(text: text)
+        guard let text else { return }
+        self.nickname.text = text
         
-        switch result {
+        switch nickname.validateNickname {
         case .success:
             updateStatusLabel(text: "사용할 수 있는 닉네임이에요")
         case .failure(let error):
@@ -119,7 +120,7 @@ extension SettingsNicknameDetailViewController {
     }
     
     private func passText() {
-        nicknameHandler?(nicknameTextField.text)
+        nicknameHandler?(nickname)
     }
 }
 // MARK: -

@@ -6,38 +6,49 @@
 //
 
 import UIKit
+import Combine
 import SnapKit
 import Then
 
 // MARK: -SettingsViewController-
 final class SettingsViewController: BaseViewController {
+    private var cancellable = Set<AnyCancellable>()
     private let profileView = ProfileView()
     private let tableView = UITableView()
+    private var nickname: Nickname = .init(text: "")
     
     private let list = ["자주 묻는 질문", "1:1 문의", "알림 설정", "탈퇴하기"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        bind()
         configure()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        guard let nickname = Nickname.get() else { return }
-        let likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-        
-        profileView.updateNicknameLabel(nickname.text)
-        profileView.updateStorageButton(likeList.count)
     }
 }
 // MARK: -Configure-
 private extension SettingsViewController {
+    private func bind() {
+        UserDefaultsManager.shared.$nickname
+            .compactMap(\.self)
+            .handleEvents(receiveOutput: {
+                self.profileView.inputNickname($0)
+            })
+            .assign(to: \.nickname, on: self)
+            .store(in: &cancellable)
+        
+        UserDefaultsManager.shared.$likeList
+            .replaceNil(with: [])
+            .sink {
+                self.profileView.inputLikeList($0.count)
+            }
+            .store(in: &cancellable)
+    }
+    
     private func configure() {
         configureSubview()
         configureLayout()
         configureView()
-        configureNavigation()
         configureTableView()
     }
     
@@ -58,6 +69,7 @@ private extension SettingsViewController {
     }
     
     private func configureView() {
+        navigationItem.title = "설정"
         view.backgroundColor = .Background
         tableView.backgroundColor = .Background
         
@@ -67,21 +79,13 @@ private extension SettingsViewController {
         }
     }
     
-    private func configureNavigation() {
-        navigationItem.title = "설정"
-    }
-    
     @objc private func settingsNickname() {
         let settingsNicknameViewContoller = SettingsNicknameViewController().then {
-            $0.bind(dismissHandler: updateNicknameLabel)
+            $0.inputNickname(self.nickname)
         }
         
         let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
         present(navigationController, animated: true)
-    }
-    
-    private func updateNicknameLabel(_ newNickname: Nickname) {
-        profileView.updateNicknameLabel(newNickname.text)
     }
 }
 // MARK: -TableView-
@@ -90,7 +94,6 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.do {
             $0.delegate = self
             $0.dataSource = self
-            
         }
     }
     
@@ -130,9 +133,9 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func withdraw(_: UIAlertAction) {
-        UserDefaultsManager.shared.remove(.likeList)
-        UserDefaultsManager.shared.remove(.keywords)
-        UserDefaultsManager.shared.remove(.nickname)
+        UserDefaultsManager.shared.likeList = nil
+        UserDefaultsManager.shared.keywords = nil
+        UserDefaultsManager.shared.nickname = nil
         
         tabBarController?.replaceToOnboarding()
     }

@@ -25,17 +25,23 @@ extension UITabBarController {
         setViewControllers([movieViewController, upcomingViewController, settingsViewController], animated: true)
         
         if let items = tabBar.items {
-            items[0].selectedImage = UIImage(systemName: "popcorn")
-            items[0].image = UIImage(systemName: "popcorn")
-            items[0].title = "CINEMA"
+            items[0].do {
+                $0.selectedImage = UIImage(systemName: "popcorn")
+                $0.image = UIImage(systemName: "popcorn")
+                $0.title = "CINEMA"
+            }
             
-            items[1].selectedImage = UIImage(systemName: "film")
-            items[1].image = UIImage(systemName: "film")
-            items[1].title = "UPCOMING"
+            items[1].do {
+                $0.selectedImage = UIImage(systemName: "film")
+                $0.image = UIImage(systemName: "film")
+                $0.title = "UPCOMING"
+            }
             
-            items[2].selectedImage = UIImage(systemName: "person.circle")
-            items[2].image = UIImage(systemName: "person.circle")
-            items[2].title = "PROFILE"
+            items[2].do {
+                $0.selectedImage = UIImage(systemName: "person.circle")
+                $0.image = UIImage(systemName: "person.circle")
+                $0.title = "PROFILE"
+            }
         }
     }
 }

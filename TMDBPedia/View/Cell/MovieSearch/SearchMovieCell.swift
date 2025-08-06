@@ -32,12 +32,9 @@ final class SearchMovieCell: BaseTableViewCell {
         }
         
         titleLabel.text = item.title
+        dateLabel.text = item.release_date.replacingOccurrences(of: "-", with: ". ")
         
-        let date = item.release_date.replacingOccurrences(of: "-", with: ". ")
-        dateLabel.text = date
-        
-        let likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-        let isLiked = likeList.contains(where: { $0 == item.id })
+        let isLiked = UserDefaultsManager.shared.likeList?.contains(where: { $0 == item.id }) ?? false
         likeButton.isSelected = isLiked
         
         let genres = item.genre_ids.compactMap(MovieGenre.init)[..<min(2, item.genre_ids.count)]

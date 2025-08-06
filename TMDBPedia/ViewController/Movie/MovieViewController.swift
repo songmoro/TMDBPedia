@@ -8,48 +8,65 @@
 import UIKit
 import SnapKit
 import Then
+import Combine
 
 // MARK: -MovieViewController-
 final class MovieViewController: BaseViewController {
     private let profileView = ProfileView()
     private let tableView = UITableView()
-    
-    private var movieInfo = MovieResponse()
-    private var keywords: [Keyword] = UserDefaultsManager.shared.getObject(.keywords) ?? []
-    private var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-    
     private var historyCell: HistoryCell?
     private var todayMovieCell: TodayMovieCell?
     
+    private var movieInfo = MovieResponse()
+    
+    private var cancellable = Set<AnyCancellable>()
+    private var nickname: Nickname = .init(text: "")
+    private var keywords: [Keyword] = []
+    private var likeList: [Int] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        bind()
         configure()
         callTodayMovieAPI()
-    }
-    
-    // TODO: 화면 전환이 완전히 이루어지기 전에 키워드 갱신 시 싱크가 맞지 않음
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        guard let nickname = Nickname.get() else { return }
-        likeList = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-        keywords = UserDefaultsManager.shared.getObject(of: [Keyword].self, .keywords) ?? []
-        
-        profileView.updateNicknameLabel(nickname.text)
-        profileView.updateStorageButton(likeList.count)
-        
-        tableView.reloadData()
-        historyCell?.needsReload()
-        todayMovieCell?.needsReload()
     }
 }
 // MARK: -Configure-
 private extension MovieViewController {
+    private func bind() {
+        UserDefaultsManager.shared.$keywords
+            .replaceNil(with: [])
+            .handleEvents(receiveOutput: { _ in
+                self.tableView.reloadData()
+                self.historyCell?.needsReload()
+            })
+            .assign(to: \.keywords, on: self)
+            .store(in: &cancellable)
+        
+        UserDefaultsManager.shared.$likeList
+            .replaceNil(with: [])
+            .handleEvents(receiveOutput: {
+                self.tableView.reloadData()
+                self.todayMovieCell?.needsReload()
+                self.profileView.inputLikeList($0.count)
+            })
+            .assign(to: \.likeList, on: self)
+            .store(in: &cancellable)
+        
+        UserDefaultsManager.shared.$nickname
+            .compactMap(\.self)
+            .handleEvents(receiveOutput: {
+                self.profileView.inputNickname($0)
+            })
+            .assign(to: \.nickname, on: self)
+            .store(in: &cancellable)
+    }
+    
     private func configure() {
         configureSubview()
         configureLayout()
         configureView()
-        configureNavigation()
         configureTableView()
         configureObserver()
     }
@@ -71,6 +88,14 @@ private extension MovieViewController {
     }
     
     private func configureView() {
+        navigationItem.do {
+            $0.title = "TMDBPedia"
+            $0.backButtonTitle = ""
+            
+            let rightBarButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
+            $0.setRightBarButton(rightBarButton, animated: true)
+        }
+        
         view.backgroundColor = .Background
         
         profileView.do {
@@ -83,50 +108,33 @@ private extension MovieViewController {
         }
     }
     
-    private func configureNavigation() {
-        navigationItem.do {
-            $0.title = "TMDBPedia"
-            $0.backButtonTitle = ""
-            
-            let rightBarButton = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonTapped))
-            $0.setRightBarButton(rightBarButton, animated: true)
-        }
-    }
-    
     @objc private func searchButtonTapped() {
-        let vc = MovieSearchViewController()
-        navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(MovieSearchViewController(), animated: true)
     }
     
     @objc private func settingsNickname() {
         let settingsNicknameViewContoller = SettingsNicknameViewController().then {
-            $0.bind(dismissHandler: updateNicknameLabel)
+            $0.inputNickname(nickname)
         }
         
         let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
         present(navigationController, animated: true)
     }
-    
-    private func updateNicknameLabel(_ newNickname: Nickname) {
-        profileView.updateNicknameLabel(newNickname.text)
-    }
 }
 // MARK: -NotificationCenter-
 extension MovieViewController {
     private func configureObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(needsUpdateKeywords), name: .forName(.removeKeyword), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsLikeAction), name: .forName(.likeAction), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .forName(.pushMovieSearchViewController), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .forName(.pushMovieDetailViewController), object: nil)
+        NotificationCenter.default.do {
+            $0.addObserver(self, selector: #selector(needsUpdateKeywords), name: .forName(.removeKeyword), object: nil)
+            $0.addObserver(self, selector: #selector(needsLikeAction), name: .forName(.likeAction), object: nil)
+            $0.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .forName(.pushMovieSearchViewController), object: nil)
+            $0.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .forName(.pushMovieDetailViewController), object: nil)
+        }
     }
     
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            keywords.remove(at: indexPath.item)
-            UserDefaultsManager.shared.setObject(.keywords, to: keywords)
-            
-            tableView.reloadData()
-            historyCell?.needsReload()
+            UserDefaultsManager.shared.keywords?.remove(at: indexPath.item)
         }
     }
     
@@ -134,27 +142,22 @@ extension MovieViewController {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
             let item = movieInfo.results[indexPath.item]
             
-            if likeList.contains(item.id) {
-                likeList.removeAll(where: { $0 == item.id })
+            if UserDefaultsManager.shared.likeList?.contains(item.id) ?? false {
+                UserDefaultsManager.shared.likeList?.removeAll(where: { $0 == item.id })
             }
             else {
-                likeList.append(item.id)
+                UserDefaultsManager.shared.likeList?.append(item.id)
             }
             
-            UserDefaultsManager.shared.set(.likeList, to: likeList)
-            profileView.updateStorageButton(likeList.count)
-            
-            tableView.reloadData()
-            todayMovieCell?.needsReload()
+            profileView.inputLikeList(likeList.count)
         }
     }
     
     @objc private func needsPushMovieSearchViewController(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
             let keyword = Keyword(text: keywords[indexPath.item].text)
-            keywords[indexPath.item] = keyword
-            UserDefaultsManager.shared.setObject(.keywords, to: keywords)
-            historyCell?.needsReload()
+            
+            UserDefaultsManager.shared.keywords?[indexPath.item] = keyword
             
             let vc = MovieSearchViewController().then {
                 $0.input(keyword: keyword)
@@ -301,10 +304,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     @objc private func removeAllKeyword() {
-        keywords = []
-        UserDefaultsManager.shared.remove(.keywords)
-        
-        tableView.reloadSections([0], with: .automatic)
+        UserDefaultsManager.shared.keywords?.removeAll()
     }
 }
 // MARK: -

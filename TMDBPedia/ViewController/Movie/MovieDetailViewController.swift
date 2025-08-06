@@ -67,9 +67,7 @@ extension MovieDetailViewController {
             
             var image = UIImage(systemName: "heart")
             if let id {
-                let likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-                
-                if likeList.contains(id) {
+                if UserDefaultsManager.shared.likeList?.contains(id) ?? false {
                     image = UIImage(systemName: "heart.fill")
                 }
                 else {
@@ -83,18 +81,14 @@ extension MovieDetailViewController {
     
     @objc private func needsLikeAction() {
         if let id {
-            var likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
-            
-            if likeList.contains(id) {
-                likeList.removeAll(where: { $0 == id })
+            if UserDefaultsManager.shared.likeList?.contains(id) ?? false {
+                UserDefaultsManager.shared.likeList?.removeAll(where: { $0 == id })
                 navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart")
             }
             else {
-                likeList.append(id)
+                UserDefaultsManager.shared.likeList?.append(id)
                 navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart.fill")
             }
-            
-            UserDefaultsManager.shared.set(.likeList, to: likeList)
         }
     }
     

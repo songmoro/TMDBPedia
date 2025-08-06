@@ -83,8 +83,7 @@ extension BackdropsCell: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     private func updateCollectionViewLayout() {
         let layout = UICollectionViewFlowLayout().then {
-            let cellBounds = self.bounds
-            $0.itemSize = cellBounds.size
+            $0.itemSize = bounds.size
             $0.minimumInteritemSpacing = 0
             $0.minimumLineSpacing = 0
             $0.scrollDirection = .horizontal

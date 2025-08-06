@@ -30,12 +30,13 @@ final class ProfileView: BaseView {
 }
 // MARK: -Open-
 extension ProfileView {
-    public func updateNicknameLabel(_ text: String) {
-        nicknameLabel.text = text
+    public func inputNickname(_ nickname: Nickname) {
+        nicknameLabel.text = nickname.text
+        registerDateLabel.text = dateFormatter.string(from: nickname.date)
     }
     
-    public func updateStorageButton(_ count: Int) {
-        storageButton.configuration?.title = "\(count)개의 무비박스 보관중"
+    public func inputLikeList(_ likeListCount: Int) {
+        storageButton.configuration?.title = "\(likeListCount)개의 무비박스 보관중"
     }
 }
 // MARK: -Configure-
@@ -77,15 +78,11 @@ private extension ProfileView {
     }
     
     private func configureView() {
+        isUserInteractionEnabled = true
         backgroundColor = .GroupedBackground
         layer.cornerRadius = Constant.defaultRadius
-        isUserInteractionEnabled = true
-        
-        guard let nickname = Nickname.get() else { return }
-        let likeList: [Int] = UserDefaultsManager.shared.getArray(.likeList) as? [Int] ?? []
         
         nicknameLabel.do {
-            $0.text = nickname.text
             $0.textColor = .Label
             $0.font = .systemFont(ofSize: Constant.headerSize, weight: .semibold)
         }
@@ -96,7 +93,6 @@ private extension ProfileView {
         }
         
         registerDateLabel.do {
-            $0.text = dateFormatter.string(from: nickname.date)
             $0.textColor = .Fill
             $0.font = .systemFont(ofSize: Constant.bodySize, weight: .light)
         }
@@ -105,7 +101,6 @@ private extension ProfileView {
             var configuration = UIButton.Configuration.bordered()
             configuration.baseBackgroundColor = .Tint.withAlphaComponent(0.3)
             configuration.baseForegroundColor = .Label
-            configuration.title = "\(likeList.count)개의 무비박스 보관중"
             
             $0.configuration = configuration
             $0.isUserInteractionEnabled = false

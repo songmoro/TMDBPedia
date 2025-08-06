@@ -11,11 +11,11 @@ import Then
 
 // MARK: -SettingsNicknameViewController-
 final class SettingsNicknameViewController: BaseViewController {
+    private var nickname = Nickname(text: "")
     private let nicknameLabel = UILabel()
     private let editButton = UIButton()
     private let underlineView = UIView()
     private let doneButton = UIButton()
-    private var dismissHandler: ((Nickname) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,30 +24,26 @@ final class SettingsNicknameViewController: BaseViewController {
 }
 // MARK: -Open-
 extension SettingsNicknameViewController {
-    public func bind(dismissHandler: @escaping (Nickname) -> Void) {
-        self.dismissHandler = dismissHandler
+    public func inputNickname(_ currentNickname: Nickname) {
+        handleEntryPoint(currentNickname)
     }
 }
 // MARK: -Configure-
 private extension SettingsNicknameViewController {
     private func configure() {
-        handleEntryPoint()
         configureSubview()
         configureLayout()
         configureView()
     }
     
-    private func handleEntryPoint() {
-        if let nickname = Nickname.get() {
-            nicknameLabel.text = nickname.text
-            doneButton.isHidden = true
-            
-            navigationItem.do {
-                $0.title = "닉네임 설정"
-                $0.backButtonTitle = ""
-                $0.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissButtonClicked))
-                $0.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(saveButtonClicked))
-            }
+    private func handleEntryPoint(_ nickname: Nickname) {
+        self.nickname = nickname
+        nicknameLabel.text = nickname.text
+        doneButton.isHidden = true
+        
+        navigationItem.do {
+            $0.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: self, action: #selector(dismissButtonClicked))
+            $0.rightBarButtonItem = UIBarButtonItem(title: "저장", style: .plain, target: self, action: #selector(saveButtonClicked))
         }
     }
     
@@ -128,9 +124,7 @@ private extension SettingsNicknameViewController {
 // MARK: -Nickname-
 private extension SettingsNicknameViewController {
     private func handleRegister() {
-        let text = nicknameLabel.text
-        
-        switch Nickname.validateNickname(text: text) {
+        switch nickname.validateNickname {
         case .success(let success):
             saveNickname(success)
             replaceRootViewController()
@@ -140,12 +134,9 @@ private extension SettingsNicknameViewController {
     }
     
     private func handleUpdate() {
-        let text = nicknameLabel.text
-        
-        switch Nickname.validateNickname(text: text) {
+        switch nickname.validateNickname {
         case .success(let success):
             saveNickname(success)
-            dismissHandler?(success)
             dismissButtonClicked()
         case .failure(let failure):
             showToast(failure.kind.description)
@@ -153,15 +144,7 @@ private extension SettingsNicknameViewController {
     }
     
     private func saveNickname(_ nickname: Nickname) {
-        UserDefaultsManager.shared.setObject(.nickname, to: nickname)
-    }
-    
-    private func updateNickname(_ newNickname: Nickname) {
-        let oldNickname: Nickname? = UserDefaultsManager.shared.getObject(.nickname)
-        guard var oldNickname else { return }
-        
-        oldNickname.text = newNickname.text
-        saveNickname(oldNickname)
+        UserDefaultsManager.shared.nickname = nickname
     }
     
     private func replaceRootViewController() {
@@ -203,15 +186,16 @@ private extension SettingsNicknameViewController {
     
     private func pushSettingsNicknameDetailViewController() {
         let vc = SettingsNicknameDetailViewController().then {
-            $0.inputNickname(nicknameLabel.text)
+            $0.inputNickname(nickname)
             $0.bindNicknameHandler(handler: handleNicknameHandler)
         }
         
         navigationController?.pushViewController(vc, animated: true)
     }
     
-    private func handleNicknameHandler(_ text: String?) {
-        nicknameLabel.text = text
+    private func handleNicknameHandler(_ nickname: Nickname) {
+        self.nickname = nickname
+        nicknameLabel.text = nickname.text
     }
 }
 // MARK: -

@@ -22,10 +22,6 @@ final class BackdropCell: BaseCollectionViewCell {
 // MARK: -Open-
 extension BackdropCell {
     public func input(_ item: String) {
-        handleInput(item)
-    }
-    
-    private func handleInput(_ item: String) {
         if let url = URL(string: APIURL.imageURL + item) {
             backdropImageView.kf.setImage(with: url)
         }
