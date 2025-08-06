@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -BackdropsCell-
-final class BackdropsCell: BaseTableViewCell {
+final class BackdropsCell: BaseTableViewCell, IsIdentifiable {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var backdrops = [BackdropsItem]()
     private let pageControl = UIPageControl()

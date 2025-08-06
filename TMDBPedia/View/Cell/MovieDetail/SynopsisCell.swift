@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -SynopsisCell-
-final class SynopsisCell: BaseTableViewCell {
+final class SynopsisCell: BaseTableViewCell, IsIdentifiable {
     private let synopsisLabel = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

@@ -10,6 +10,34 @@ import SnapKit
 import Then
 import Combine
 
+fileprivate enum MovieViewControllerItem: CaseIterable {
+    static var allCases: [MovieViewControllerItem] = [
+        .history(keywords: []),
+        .todayMovie
+    ]
+    
+    case history(keywords: [Keyword])
+    case todayMovie
+    
+    var height: CGFloat {
+        switch self {
+        case .history:
+            return CGFloat(Constant.textFieldHeight)
+        case .todayMovie:
+            return UIScreen.main.bounds.height * 0.4
+        }
+    }
+    
+    var dataSource: (UITableViewCell & IsIdentifiable).Type {
+        switch self {
+        case .history(let keywords):
+            return keywords.isEmpty ? EmptyHistoryCell.self : HistoryCell.self
+        case .todayMovie:
+            return TodayMovieCell.self
+        }
+    }
+}
+
 // MARK: -MovieViewController-
 final class MovieViewController: BaseViewController {
     private let profileView = ProfileView()
@@ -17,6 +45,7 @@ final class MovieViewController: BaseViewController {
     private var historyCell: HistoryCell?
     private var todayMovieCell: TodayMovieCell?
     
+    private var movieViewControllerItem = MovieViewControllerItem.allCases
     private var movieInfo = MovieResponse()
     
     private var cancellable = Set<AnyCancellable>()
@@ -37,13 +66,14 @@ private extension MovieViewController {
     private func bind() {
         UserDefaultsManager.shared.$keywords
             .replaceNil(with: [])
-            .handleEvents(receiveOutput: { _ in
-                self.tableView.reloadData()
-                self.historyCell?.needsReload()
-            })
             .map {
                 [Keyword]($0).sorted(by: { $0.date > $1.date })
             }
+            .handleEvents(receiveOutput: {
+                self.movieViewControllerItem[0] = .history(keywords: $0)
+                self.tableView.reloadData()
+                self.historyCell?.needsReload()
+            })
             .assign(to: \.keywords, on: self)
             .store(in: &cancellable)
         
@@ -163,7 +193,6 @@ extension MovieViewController {
             let newKeyword = Keyword(text: oldKeyword.text)
             
             UserDefaultsManager.shared.keywords?.update(with: newKeyword)
-//            UserDefaultsManager.shared.keywords?.update(with: <#T##Keyword#>) [indexPath.item] = keyword
             
             let vc = MovieSearchViewController().then {
                 $0.input(keyword: newKeyword)
@@ -215,10 +244,10 @@ private extension MovieViewController {
 extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     private func configureTableView() {
         tableView.do {
-            $0.delegate = self
-            $0.dataSource = self
             $0.separatorStyle = .none
             $0.isScrollEnabled = false
+            $0.delegate = self
+            $0.dataSource = self
             $0.register(EmptyHistoryCell.self)
             $0.register(HistoryCell.self)
             $0.register(TodayMovieCell.self)
@@ -230,49 +259,39 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return movieViewControllerItem.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell
+        let dataSource = movieViewControllerItem[indexPath.section].dataSource
+        let item = movieViewControllerItem[indexPath.section]
+        // MARK: BaseTableViewCell에 IsIdentifiable 채택은 하위 뷰의 identifier 또한 BaseTableViewCell로 만듬
+        let cell = tableView.dequeueReusableCell(dataSource, for: indexPath)
         
-        if indexPath.section == 0 {
-            if keywords.isEmpty {
-                historyCell = nil
-                cell = tableView.dequeueReusableCell(EmptyHistoryCell.self, for: indexPath)
-            }
-            else {
-                cell = tableView.dequeueReusableCell(HistoryCell.self, for: indexPath).then {
-                    $0.input(keywords)
-                }
-                
-                historyCell = cell as? HistoryCell
-            }
-        }
-        else {
-            cell = tableView.dequeueReusableCell(TodayMovieCell.self, for: indexPath).then {
-                $0.input(movieInfo.results)
-            }
-            
-            todayMovieCell = cell as? TodayMovieCell
+        switch (cell, item) {
+        case (is EmptyHistoryCell, _):
+            historyCell = nil
+        case let (cell as HistoryCell, .history(keywords)):
+            cell.input(keywords)
+        case let (cell as TodayMovieCell, .todayMovie):
+            break
+//            cell.input()
+        default: break
         }
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return CGFloat(Constant.textFieldHeight)
-        }
-        else {
-            return UIScreen.main.bounds.height * 0.4
-        }
+        movieViewControllerItem[indexPath.section].height
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let uiView = BaseView()
-        
-        if section == 0 {
+            
+        switch movieViewControllerItem[section] {
+        case .history:
+            // TODO: 뷰로 분리
             let headerLabel = UILabel().then {
                 $0.text = "최근검색어"
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)
@@ -292,8 +311,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
             button.snp.makeConstraints {
                 $0.trailing.equalToSuperview().inset(Constant.offsetFromHorizon)
             }
-        }
-        else {
+        case .todayMovie:
             let label = UILabel().then {
                 $0.text = "오늘의 영화"
                 $0.font = .systemFont(ofSize: Constant.headerSize, weight: .bold)

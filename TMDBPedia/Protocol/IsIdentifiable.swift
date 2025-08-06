@@ -17,30 +17,22 @@ extension IsIdentifiable {
     }
 }
 
-extension UITableViewCell: IsIdentifiable {
-    
-}
-
-extension UICollectionViewCell: IsIdentifiable {
-    
-}
-
 extension UITableView {
-    func register<T: UITableViewCell>(_ cellClass: T.Type) {
+    func register<T: UITableViewCell & IsIdentifiable>(_ cellClass: T.Type) {
         self.register(cellClass, forCellReuseIdentifier: cellClass.identifier)
     }
     
-    func dequeueReusableCell<T: UITableViewCell>(_ cellClass: T.Type, for indexPath: IndexPath) -> T {
-        self.dequeueReusableCell(withIdentifier: cellClass.identifier, for: indexPath) as! T
+    func dequeueReusableCell<T: UITableViewCell & IsIdentifiable>(_ cellClass: T.Type, for indexPath: IndexPath) -> T {
+        return self.dequeueReusableCell(withIdentifier: cellClass.identifier, for: indexPath) as! T
     }
 }
 
 extension UICollectionView {
-    func register<T: UICollectionViewCell>(_ cellClass: T.Type) {
+    func register<T: UICollectionViewCell & IsIdentifiable>(_ cellClass: T.Type) {
         self.register(cellClass, forCellWithReuseIdentifier: cellClass.identifier)
     }
     
-    func dequeueReusableCell<T: UICollectionViewCell>(_ cellClass: T.Type, for indexPath: IndexPath) -> T {
+    func dequeueReusableCell<T: UICollectionViewCell & IsIdentifiable>(_ cellClass: T.Type, for indexPath: IndexPath) -> T {
         self.dequeueReusableCell(withReuseIdentifier: cellClass.identifier, for: indexPath) as! T
     }
 }

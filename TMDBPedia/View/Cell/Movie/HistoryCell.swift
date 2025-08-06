@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 // MARK: -HistoryCell-
-final class HistoryCell: BaseTableViewCell {
+final class HistoryCell: BaseTableViewCell, IsIdentifiable {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
     private var keywords: [Keyword] = []
     
@@ -104,7 +104,7 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
 // MARK: -
 
 // MARK: -HistoryContentCell-
-final class HistoryContentCell: BaseCollectionViewCell {
+final class HistoryContentCell: BaseCollectionViewCell, IsIdentifiable {
     let keywordButton = WithIndexPathButton()
     private let keywordLabel = UILabel()
     let deleteButton = WithIndexPathButton()
