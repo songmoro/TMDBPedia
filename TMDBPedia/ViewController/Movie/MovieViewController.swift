@@ -91,13 +91,11 @@ private extension MovieViewController {
     private func bind() {
         UserDefaultsManager.shared.$keywords
             .replaceNil(with: [])
-            .map {
-                return [Keyword]($0).sorted(by: { $0.date > $1.date })
-            }
+            .map([Keyword].init)
+            .map { $0.sorted(by: { $0.date > $1.date }) }
             .sink {
                 self.movieViewControllerItem.inputKeywords($0)
                 self.tableView.reloadData()
-                self.historyCell?.needsReload()
             }
             .store(in: &cancellable)
         
@@ -182,19 +180,8 @@ private extension MovieViewController {
 extension MovieViewController {
     private func configureObserver() {
         NotificationCenter.default.do {
-            $0.addObserver(self, selector: #selector(needsUpdateKeywords), name: .forName(.removeKeyword), object: nil)
             $0.addObserver(self, selector: #selector(needsLikeAction), name: .forName(.likeAction), object: nil)
-            $0.addObserver(self, selector: #selector(needsPushMovieSearchViewController), name: .forName(.pushMovieSearchViewController), object: nil)
             $0.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .forName(.pushMovieDetailViewController), object: nil)
-        }
-    }
-    
-    @objc private func needsUpdateKeywords(_ notification: NSNotification) {
-        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let keywords = movieViewControllerItem.unsafeKeywords
-            let keyword = keywords[indexPath.item]
-            
-            UserDefaultsManager.shared.keywords?.remove(keyword)
         }
     }
     
@@ -211,22 +198,6 @@ extension MovieViewController {
             }
             
             profileView.inputLikeList(likeList.count)
-        }
-    }
-    
-    @objc private func needsPushMovieSearchViewController(_ notification: NSNotification) {
-        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let keywords = movieViewControllerItem.unsafeKeywords
-            let oldKeyword = keywords[indexPath.item]
-            let newKeyword = Keyword(text: oldKeyword.text)
-            
-            UserDefaultsManager.shared.keywords?.update(with: newKeyword)
-            
-            let vc = MovieSearchViewController().then {
-                $0.input(keyword: newKeyword)
-            }
-            
-            navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -288,18 +259,11 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let dataSource = movieViewControllerItem[indexPath.section].dataSource
+        
         // MARK: BaseTableViewCell에 IsIdentifiable 채택은 하위 뷰의 identifier 또한 BaseTableViewCell로 만듬
         let cell = tableView.dequeueReusableCell(dataSource, for: indexPath)
         
         switch cell {
-        case is EmptyHistoryCell:
-            historyCell = nil
-            
-        case let cell as HistoryCell:
-            let keywords = movieViewControllerItem.unsafeKeywords
-            cell.input(keywords)
-            historyCell = cell
-            
         case let cell as TodayMovieCell:
             let movieResponse = movieViewControllerItem.unsafeMovieResponse
             cell.input(movieResponse.results)
@@ -328,8 +292,65 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         return header
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        switch cell {
+        case let cell as HistoryCell:
+            cell.setCollectionView(delegate: self)
+        default:
+            break
+        }
+    }
+    
     @objc private func removeAllKeyword() {
         UserDefaultsManager.shared.keywords?.removeAll()
+    }
+}
+// MARK: CollectionView
+extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return movieViewControllerItem.unsafeKeywords.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(HistoryContentCell.self, for: indexPath)
+        let keyword = movieViewControllerItem.unsafeKeywords[indexPath.item]
+        
+        cell.input(keyword)
+        cell.keywordButton.do {
+            $0.update(indexPath)
+            $0.addTarget(self, action: #selector(needsPushMovieSearchViewController), for: .touchUpInside)
+        }
+        
+        cell.deleteButton.do {
+            $0.update(indexPath)
+            $0.addTarget(self, action: #selector(needsUpdateKeywords), for: .touchUpInside)
+        }
+        
+        return cell
+    }
+    
+    @objc private func needsPushMovieSearchViewController(_ sender: WithIndexPathButton) {
+        let indexPath = sender.indexPath
+        let keywords = movieViewControllerItem.unsafeKeywords
+        
+        let oldKeyword = keywords[indexPath.item]
+        let newKeyword = Keyword(text: oldKeyword.text)
+        
+        UserDefaultsManager.shared.keywords?.update(with: newKeyword)
+        
+        let vc = MovieSearchViewController().then {
+            $0.input(keyword: newKeyword)
+        }
+            
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func needsUpdateKeywords(_ sender: WithIndexPathButton) {
+        let indexPath = sender.indexPath
+        let keywords = movieViewControllerItem.unsafeKeywords
+        let keyword = keywords[indexPath.item]
+        
+        UserDefaultsManager.shared.keywords?.remove(keyword)
     }
 }
 // MARK: -

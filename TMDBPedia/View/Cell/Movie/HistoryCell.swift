@@ -12,7 +12,6 @@ import Then
 // MARK: -HistoryCell-
 final class HistoryCell: BaseTableViewCell, IsIdentifiable {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-    private var keywords: [Keyword] = []
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -21,11 +20,10 @@ final class HistoryCell: BaseTableViewCell, IsIdentifiable {
 }
 // MARK: -Open-
 extension HistoryCell {
-    public func input(_ keywords: [Keyword]) {
-        self.keywords = keywords
-    }
-    
-    public func needsReload() {
+    public func setCollectionView(delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
+        self.collectionView.delegate = delegate
+        self.collectionView.dataSource = delegate
+        
         collectionView.reloadData()
     }
 }
@@ -35,7 +33,6 @@ private extension HistoryCell {
         configureSubview()
         configureLayout()
         configureView()
-        configureCollectionView()
     }
     
     private func configureSubview() {
@@ -50,12 +47,7 @@ private extension HistoryCell {
     
     private func configureView() {
         backgroundColor = .Background
-        collectionView.backgroundColor = .Background
-    }
-}
-// MARK: -CollectionView-
-extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
-    private func configureCollectionView() {
+        
         collectionView.do {
             let layout = UICollectionViewFlowLayout().then {
                 $0.itemSize = CGSize(width: 120, height: 30)
@@ -64,41 +56,10 @@ extension HistoryCell: UICollectionViewDelegate, UICollectionViewDataSource {
                 $0.scrollDirection = .horizontal
             }
             
-            $0.delegate = self
-            $0.dataSource = self
+            $0.backgroundColor = .Background
             $0.register(HistoryContentCell.self)
             $0.collectionViewLayout = layout
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        keywords.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(HistoryContentCell.self, for: indexPath)
-        let keyword = keywords[indexPath.item]
-        
-        cell.input(keyword)
-        cell.keywordButton.do {
-            $0.update(indexPath)
-            $0.addTarget(self, action: #selector(postIndexPathForPushMovieSearchViewController), for: .touchUpInside)
-        }
-        
-        cell.deleteButton.do {
-            $0.update(indexPath)
-            $0.addTarget(self, action: #selector(postIndexPathForRemoveKeyword), for: .touchUpInside)
-        }
-        
-        return cell
-    }
-    
-    @objc private func postIndexPathForRemoveKeyword(_ sender: WithIndexPathButton) {
-        NotificationCenter.default.post(name: .forName(.removeKeyword), object: nil, userInfo: ["indexPath": sender.indexPath])
-    }
-    
-    @objc private func postIndexPathForPushMovieSearchViewController(_ sender: WithIndexPathButton) {
-        NotificationCenter.default.post(name: .forName(.pushMovieSearchViewController), object: nil, userInfo: ["indexPath": sender.indexPath])
     }
 }
 // MARK: -
