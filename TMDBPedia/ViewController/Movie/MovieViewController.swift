@@ -13,11 +13,15 @@ import Combine
 fileprivate enum MovieViewControllerItem: CaseIterable {
     static var allCases: [MovieViewControllerItem] = [
         .history(keywords: []),
-        .todayMovie
+        .todayMovie(movieResponse: MovieResponse())
     ]
     
+    private init() {
+        self = .history(keywords: [])
+    }
+    
     case history(keywords: [Keyword])
-    case todayMovie
+    case todayMovie(movieResponse: MovieResponse)
     
     var height: CGFloat {
         switch self {
@@ -38,6 +42,33 @@ fileprivate enum MovieViewControllerItem: CaseIterable {
     }
 }
 
+extension [MovieViewControllerItem] {
+    // TODO: 테이블 뷰 셀을 외부로 이동 작업 후 구조 다시 고민
+    mutating func inputKeywords(_ keywords: [Keyword]) {
+        self[0] = .history(keywords: keywords)
+    }
+    
+    mutating func inputMovieResponse(_ movieResponse: MovieResponse) {
+        self[1] = .todayMovie(movieResponse: movieResponse)
+    }
+    
+    var unsafeMovieResponse: MovieResponse {
+        if case let .todayMovie(movieResponse) = self[1] {
+            return movieResponse
+        }
+        
+        fatalError("응답이 존재하지 않음")
+    }
+    
+    var unsafeKeywords: [Keyword] {
+        if case let .history(keywords) = self[0] {
+            return keywords
+        }
+        
+        fatalError("키워드가 존재하지 않음")
+    }
+}
+
 // MARK: -MovieViewController-
 final class MovieViewController: BaseViewController {
     private let profileView = ProfileView()
@@ -46,7 +77,6 @@ final class MovieViewController: BaseViewController {
     private var todayMovieCell: TodayMovieCell?
     
     private var movieViewControllerItem = MovieViewControllerItem.allCases
-    private var movieInfo = MovieResponse()
     
     private var cancellable = Set<AnyCancellable>()
     private var nickname: Nickname = .init(text: "")
@@ -70,7 +100,7 @@ private extension MovieViewController {
                 [Keyword]($0).sorted(by: { $0.date > $1.date })
             }
             .handleEvents(receiveOutput: {
-                self.movieViewControllerItem[0] = .history(keywords: $0)
+                self.movieViewControllerItem.inputKeywords($0)
                 self.tableView.reloadData()
                 self.historyCell?.needsReload()
             })
@@ -174,7 +204,8 @@ extension MovieViewController {
     
     @objc private func needsLikeAction(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let item = movieInfo.results[indexPath.item]
+            let movieResponse = movieViewControllerItem.unsafeMovieResponse
+            let item = movieResponse.results[indexPath.item]
             
             if UserDefaultsManager.shared.likeList?.contains(item.id) ?? false {
                 UserDefaultsManager.shared.likeList?.removeAll(where: { $0 == item.id })
@@ -204,7 +235,8 @@ extension MovieViewController {
     
     @objc private func needsPushMovieDetailViewController(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let item = movieInfo.results[indexPath.item]
+            let movieResponse = movieViewControllerItem.unsafeMovieResponse
+            let item = movieResponse.results[indexPath.item]
             
             let vc = MovieDetailViewController().then {
                 $0.input(item)
@@ -229,13 +261,8 @@ private extension MovieViewController {
     }
     
     private func handleSuccess(_ response: MovieResponse) {
-        if response.results.count >= 20 {
-            let result = MovieResponse(results: Array(response.results[..<20]))
-            movieInfo = result
-        }
-        else {
-            movieInfo = response
-        }
+        let response = response.results.count >= 20 ? MovieResponse(results: Array(response.results[..<20])) : response
+        movieViewControllerItem.inputMovieResponse(response)
         
         tableView.reloadRows(at: [IndexPath(row: 0, section: 1)], with: .automatic)
     }
@@ -264,18 +291,21 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let dataSource = movieViewControllerItem[indexPath.section].dataSource
-        let item = movieViewControllerItem[indexPath.section]
         // MARK: BaseTableViewCell에 IsIdentifiable 채택은 하위 뷰의 identifier 또한 BaseTableViewCell로 만듬
         let cell = tableView.dequeueReusableCell(dataSource, for: indexPath)
         
-        switch (cell, item) {
-        case (is EmptyHistoryCell, _):
+        switch cell {
+        case is EmptyHistoryCell:
             historyCell = nil
-        case let (cell as HistoryCell, .history(keywords)):
+            
+        case let cell as HistoryCell:
+            let keywords = movieViewControllerItem.unsafeKeywords
             cell.input(keywords)
-        case let (cell as TodayMovieCell, .todayMovie):
-            break
-//            cell.input()
+            
+        case let cell as TodayMovieCell:
+            let movieResponse = movieViewControllerItem.unsafeMovieResponse
+            cell.input(movieResponse.results)
+            
         default: break
         }
         
