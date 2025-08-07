@@ -36,6 +36,15 @@ fileprivate enum MovieViewControllerItem: CaseIterable {
             return TodayMovieCell.self
         }
     }
+    
+    var collectionViewDataSource: (UICollectionViewCell & IsIdentifiable).Type {
+        switch self {
+        case .history(let keywords):
+            return HistoryContentCell.self
+        case .todayMovie(let movieResponse):
+            return TodayMovieContentCell.self
+        }
+    }
 }
 
 extension [MovieViewControllerItem] {
@@ -102,9 +111,8 @@ private extension MovieViewController {
         UserDefaultsManager.shared.$likeList
             .replaceNil(with: [])
             .handleEvents(receiveOutput: {
-                self.tableView.reloadData()
-                self.todayMovieCell?.needsReload()
                 self.profileView.inputLikeList($0.count)
+                self.tableView.reloadData()
             })
             .assign(to: \.likeList, on: self)
             .store(in: &cancellable)
@@ -123,7 +131,6 @@ private extension MovieViewController {
         configureLayout()
         configureView()
         configureTableView()
-        configureObserver()
     }
     
     private func configureSubview() {
@@ -176,44 +183,6 @@ private extension MovieViewController {
         present(navigationController, animated: true)
     }
 }
-// MARK: -NotificationCenter-
-extension MovieViewController {
-    private func configureObserver() {
-        NotificationCenter.default.do {
-            $0.addObserver(self, selector: #selector(needsLikeAction), name: .forName(.likeAction), object: nil)
-            $0.addObserver(self, selector: #selector(needsPushMovieDetailViewController), name: .forName(.pushMovieDetailViewController), object: nil)
-        }
-    }
-    
-    @objc private func needsLikeAction(_ notification: NSNotification) {
-        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let movieResponse = movieViewControllerItem.unsafeMovieResponse
-            let item = movieResponse.results[indexPath.item]
-            
-            if UserDefaultsManager.shared.likeList?.contains(item.id) ?? false {
-                UserDefaultsManager.shared.likeList?.removeAll(where: { $0 == item.id })
-            }
-            else {
-                UserDefaultsManager.shared.likeList?.append(item.id)
-            }
-            
-            profileView.inputLikeList(likeList.count)
-        }
-    }
-    
-    @objc private func needsPushMovieDetailViewController(_ notification: NSNotification) {
-        if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
-            let movieResponse = movieViewControllerItem.unsafeMovieResponse
-            let item = movieResponse.results[indexPath.item]
-            
-            let vc = MovieDetailViewController().then {
-                $0.input(item)
-            }
-            
-            navigationController?.pushViewController(vc, animated: true)
-        }
-    }
-}
 // MARK: -Network-
 private extension MovieViewController {
     private func callTodayMovieAPI() {
@@ -259,18 +228,8 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let dataSource = movieViewControllerItem[indexPath.section].dataSource
-        
         // MARK: BaseTableViewCell에 IsIdentifiable 채택은 하위 뷰의 identifier 또한 BaseTableViewCell로 만듬
         let cell = tableView.dequeueReusableCell(dataSource, for: indexPath)
-        
-        switch cell {
-        case let cell as TodayMovieCell:
-            let movieResponse = movieViewControllerItem.unsafeMovieResponse
-            cell.input(movieResponse.results)
-            todayMovieCell = cell
-            
-        default: break
-        }
         
         return cell
     }
@@ -295,7 +254,9 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch cell {
         case let cell as HistoryCell:
-            cell.setCollectionView(delegate: self)
+            cell.setCollectionView(sectionAt: indexPath.section, delegate: self)
+        case let cell as TodayMovieCell:
+            cell.setCollectionView(sectionAt: indexPath.section, delegate: self)
         default:
             break
         }
@@ -308,25 +269,81 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
 // MARK: CollectionView
 extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return movieViewControllerItem.unsafeKeywords.count
+        if collectionView.tag == 0 {
+            return movieViewControllerItem.unsafeKeywords.count
+        }
+        else if collectionView.tag == 1 {
+            return movieViewControllerItem.unsafeMovieResponse.results.count
+        }
+
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(HistoryContentCell.self, for: indexPath)
-        let keyword = movieViewControllerItem.unsafeKeywords[indexPath.item]
+        let dataSource = movieViewControllerItem[collectionView.tag].collectionViewDataSource
+        let cell = collectionView.dequeueReusableCell(dataSource, for: indexPath)
         
-        cell.input(keyword)
-        cell.keywordButton.do {
-            $0.update(indexPath)
-            $0.addTarget(self, action: #selector(needsPushMovieSearchViewController), for: .touchUpInside)
+        if collectionView.tag == 0, let cell = cell as? HistoryContentCell {
+            let item = movieViewControllerItem.unsafeKeywords[indexPath.item]
+            
+            cell.input(item)
+            cell.keywordButton.do {
+                $0.update(indexPath)
+                $0.addTarget(self, action: #selector(needsPushMovieSearchViewController), for: .touchUpInside)
+            }
+            
+            cell.deleteButton.do {
+                $0.update(indexPath)
+                $0.addTarget(self, action: #selector(needsUpdateKeywords), for: .touchUpInside)
+            }
+            
+            return cell
+        }
+        else if collectionView.tag == 1, let cell = cell as? TodayMovieContentCell {
+            let item = movieViewControllerItem.unsafeMovieResponse.results[indexPath.item]
+            
+            cell.input(item)
+            cell.likeButton.do {
+                $0.update(indexPath)
+                $0.addTarget(self, action: #selector(needsLikeAction), for: .touchUpInside)
+            }
+            
+            return cell
         }
         
-        cell.deleteButton.do {
-            $0.update(indexPath)
-            $0.addTarget(self, action: #selector(needsUpdateKeywords), for: .touchUpInside)
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.tag == 1 {
+            needsPushMovieDetailViewController(indexPath)
+        }
+    }
+    
+    private func needsPushMovieDetailViewController(_ indexPath: IndexPath) {
+        let movieResponse = movieViewControllerItem.unsafeMovieResponse
+        let item = movieResponse.results[indexPath.item]
+        
+        let vc = MovieDetailViewController().then {
+            $0.input(item)
         }
         
-        return cell
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func needsLikeAction(_ sender: WithIndexPathButton) {
+        let indexPath = sender.indexPath
+        let movieResponse = movieViewControllerItem.unsafeMovieResponse
+        let item = movieResponse.results[indexPath.item]
+        
+        if UserDefaultsManager.shared.likeList?.contains(item.id) ?? false {
+            UserDefaultsManager.shared.likeList?.removeAll(where: { $0 == item.id })
+        }
+        else {
+            UserDefaultsManager.shared.likeList?.append(item.id)
+        }
+        
+        profileView.inputLikeList(likeList.count)
     }
     
     @objc private func needsPushMovieSearchViewController(_ sender: WithIndexPathButton) {

@@ -20,10 +20,10 @@ final class HistoryCell: BaseTableViewCell, IsIdentifiable {
 }
 // MARK: -Open-
 extension HistoryCell {
-    public func setCollectionView(delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
-        self.collectionView.delegate = delegate
-        self.collectionView.dataSource = delegate
-        
+    public func setCollectionView(sectionAt tag: Int, delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
+        collectionView.tag = tag
+        collectionView.delegate = delegate
+        collectionView.dataSource = delegate
         collectionView.reloadData()
     }
 }
