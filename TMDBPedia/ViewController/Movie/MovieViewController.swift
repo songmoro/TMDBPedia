@@ -16,10 +16,6 @@ fileprivate enum MovieViewControllerItem: CaseIterable {
         .todayMovie(movieResponse: MovieResponse())
     ]
     
-    private init() {
-        self = .history(keywords: [])
-    }
-    
     case history(keywords: [Keyword])
     case todayMovie(movieResponse: MovieResponse)
     
@@ -80,7 +76,6 @@ final class MovieViewController: BaseViewController {
     
     private var cancellable = Set<AnyCancellable>()
     private var nickname: Nickname = .init(text: "")
-    private var keywords: [Keyword] = []
     private var likeList: [Int] = []
     
     override func viewDidLoad() {
@@ -97,14 +92,13 @@ private extension MovieViewController {
         UserDefaultsManager.shared.$keywords
             .replaceNil(with: [])
             .map {
-                [Keyword]($0).sorted(by: { $0.date > $1.date })
+                return [Keyword]($0).sorted(by: { $0.date > $1.date })
             }
-            .handleEvents(receiveOutput: {
+            .sink {
                 self.movieViewControllerItem.inputKeywords($0)
                 self.tableView.reloadData()
                 self.historyCell?.needsReload()
-            })
-            .assign(to: \.keywords, on: self)
+            }
             .store(in: &cancellable)
         
         UserDefaultsManager.shared.$likeList
@@ -197,7 +191,9 @@ extension MovieViewController {
     
     @objc private func needsUpdateKeywords(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
+            let keywords = movieViewControllerItem.unsafeKeywords
             let keyword = keywords[indexPath.item]
+            
             UserDefaultsManager.shared.keywords?.remove(keyword)
         }
     }
@@ -220,6 +216,7 @@ extension MovieViewController {
     
     @objc private func needsPushMovieSearchViewController(_ notification: NSNotification) {
         if let indexPath = notification.userInfo?["indexPath"] as? IndexPath {
+            let keywords = movieViewControllerItem.unsafeKeywords
             let oldKeyword = keywords[indexPath.item]
             let newKeyword = Keyword(text: oldKeyword.text)
             
@@ -301,10 +298,12 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
         case let cell as HistoryCell:
             let keywords = movieViewControllerItem.unsafeKeywords
             cell.input(keywords)
+            historyCell = cell
             
         case let cell as TodayMovieCell:
             let movieResponse = movieViewControllerItem.unsafeMovieResponse
             cell.input(movieResponse.results)
+            todayMovieCell = cell
             
         default: break
         }
