@@ -68,9 +68,9 @@ private extension HistoryCell {
 
 // MARK: -HistoryContentCell-
 final class HistoryContentCell: BaseCollectionViewCell, IsIdentifiable {
-    let keywordButton = WithIndexPathButton()
+    private let keywordButton = WithIndexPathButton()
     private let keywordLabel = UILabel()
-    let deleteButton = WithIndexPathButton()
+    private let deleteButton = WithIndexPathButton()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -81,6 +81,16 @@ final class HistoryContentCell: BaseCollectionViewCell, IsIdentifiable {
 extension HistoryContentCell {
     public func input(_ keyword: Keyword) {
         keywordLabel.text = keyword.text
+    }
+    
+    public func updateKeywordButton(_ indexPath: IndexPath, _ selector: Selector) {
+        keywordButton.indexPath = indexPath
+        keywordButton.addTarget(nil, action: selector, for: .touchUpInside)
+    }
+    
+    public func updateDeletaButton(_ indexPath: IndexPath, _ selector: Selector) {
+        deleteButton.indexPath = indexPath
+        deleteButton.addTarget(nil, action: selector, for: .touchUpInside)
     }
 }
 // MARK: -Configure-

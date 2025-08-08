@@ -288,15 +288,9 @@ extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSou
             let item = movieViewControllerItem.unsafeKeywords[indexPath.item]
             
             cell.input(item)
-            cell.keywordButton.do {
-                $0.update(indexPath)
-                $0.addTarget(self, action: #selector(needsPushMovieSearchViewController), for: .touchUpInside)
-            }
             
-            cell.deleteButton.do {
-                $0.update(indexPath)
-                $0.addTarget(self, action: #selector(needsUpdateKeywords), for: .touchUpInside)
-            }
+            cell.updateKeywordButton(indexPath, #selector(needsPushMovieSearchViewController))
+            cell.updateDeletaButton(indexPath, #selector(needsUpdateKeywords))
             
             return cell
         }
@@ -304,10 +298,7 @@ extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSou
             let item = movieViewControllerItem.unsafeMovieResponse.results[indexPath.item]
             
             cell.input(item)
-            cell.likeButton.do {
-                $0.update(indexPath)
-                $0.addTarget(self, action: #selector(needsLikeAction), for: .touchUpInside)
-            }
+            cell.updateButton(indexPath, #selector(needsLikeAction))
             
             return cell
         }

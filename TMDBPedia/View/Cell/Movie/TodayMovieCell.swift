@@ -74,7 +74,7 @@ private extension TodayMovieCell {
 final class TodayMovieContentCell: BaseCollectionViewCell, IsIdentifiable {
     private let posterImageView = UIImageView()
     private let titleLabel = UILabel()
-    let likeButton = WithIndexPathButton()
+    private let likeButton = WithIndexPathButton()
     private let plotLabel = UILabel()
     
     override init(frame: CGRect) {
@@ -94,6 +94,11 @@ extension TodayMovieContentCell {
         let isLiked = UserDefaultsManager.shared.likeList?.contains(where: { $0 == item.id }) ?? false
         likeButton.isSelected = isLiked
         plotLabel.text = item.overview
+    }
+    
+    public func updateButton(_ indexPath: IndexPath, _ selector: Selector) {
+        likeButton.indexPath = indexPath
+        likeButton.addTarget(nil, action: selector, for: .touchUpInside)
     }
 }
 // MARK: -Configure-
