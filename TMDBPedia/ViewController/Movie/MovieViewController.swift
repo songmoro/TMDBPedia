@@ -290,7 +290,7 @@ extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSou
 // MARK: -Action-
 extension MovieViewController {
     @objc private func searchButtonTapped() {
-        transition(MovieViewController(), .push)
+        transition(MovieSearchViewController(), .push)
     }
     
     @objc private func settingsNickname() {
