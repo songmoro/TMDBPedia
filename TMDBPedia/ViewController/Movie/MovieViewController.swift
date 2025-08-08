@@ -39,9 +39,9 @@ fileprivate enum MovieViewControllerItem: CaseIterable {
     
     var collectionViewDataSource: (UICollectionViewCell & IsIdentifiable).Type {
         switch self {
-        case .history(let keywords):
+        case .history:
             return HistoryContentCell.self
-        case .todayMovie(let movieResponse):
+        case .todayMovie:
             return TodayMovieContentCell.self
         }
     }
@@ -100,8 +100,7 @@ private extension MovieViewController {
     private func bind() {
         UserDefaultsManager.shared.$keywords
             .replaceNil(with: [])
-            .map([Keyword].init)
-            .map { $0.sorted(by: { $0.date > $1.date }) }
+            .map { $0.sorted(by: { $0.date > $1.date  }) }
             .sink {
                 self.movieViewControllerItem.inputKeywords($0)
                 self.tableView.reloadData()
@@ -252,11 +251,13 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let dataSource = movieViewControllerItem[indexPath.section].collectionViewDataSource
+        
         switch cell {
         case let cell as HistoryCell:
-            cell.setCollectionView(sectionAt: indexPath.section, delegate: self)
+            cell.setCollectionView(sectionAt: indexPath.section, cell: dataSource, delegate: self)
         case let cell as TodayMovieCell:
-            cell.setCollectionView(sectionAt: indexPath.section, delegate: self)
+            cell.setCollectionView(sectionAt: indexPath.section, cell: dataSource, delegate: self)
         default:
             break
         }

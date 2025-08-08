@@ -20,11 +20,14 @@ final class HistoryCell: BaseTableViewCell, IsIdentifiable {
 }
 // MARK: -Open-
 extension HistoryCell {
-    public func setCollectionView(sectionAt tag: Int, delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
-        collectionView.tag = tag
-        collectionView.delegate = delegate
-        collectionView.dataSource = delegate
-        collectionView.reloadData()
+    public func setCollectionView(sectionAt tag: Int, cell: (UICollectionViewCell & IsIdentifiable).Type, delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
+        collectionView.do {
+            $0.tag = tag
+            $0.delegate = delegate
+            $0.dataSource = delegate
+            $0.register(cell)
+            $0.reloadData()
+        }
     }
 }
 // MARK: -Configure-
@@ -57,7 +60,6 @@ private extension HistoryCell {
             }
             
             $0.backgroundColor = .Background
-            $0.register(HistoryContentCell.self)
             $0.collectionViewLayout = layout
         }
     }
