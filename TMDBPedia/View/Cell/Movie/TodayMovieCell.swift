@@ -21,11 +21,20 @@ final class TodayMovieCell: BaseTableViewCell, IsIdentifiable {
 }
 // MARK: -Open-
 extension TodayMovieCell {
-    public func setCollectionView(sectionAt tag: Int, cell: (UICollectionViewCell & IsIdentifiable).Type, delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
+    public func setCollectionView(sectionAt tag: Int, cell: (UICollectionViewCell & IsIdentifiable).Type, size: CGSize, delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
         collectionView.do {
             $0.tag = tag
             $0.delegate = delegate
             $0.dataSource = delegate
+            
+            let layout = UICollectionViewFlowLayout().then {
+                $0.itemSize = CGSize(width: size.width * 0.6, height: size.width * 0.8)
+                $0.minimumLineSpacing = CGFloat(Constant.offsetFromHorizon)
+                $0.minimumInteritemSpacing = 0
+                $0.scrollDirection = .horizontal
+            }
+            
+            $0.collectionViewLayout = layout
             $0.register(cell)
             $0.reloadData()
         }
@@ -55,16 +64,8 @@ private extension TodayMovieCell {
         contentView.backgroundColor = .Background
         
         collectionView.do {
-            let layout = UICollectionViewFlowLayout().then {
-                let bounds = UIScreen.main.bounds
-                $0.itemSize = CGSize(width: bounds.width * 0.6, height: bounds.height * 0.6)
-                $0.minimumLineSpacing = CGFloat(Constant.offsetFromHorizon)
-                $0.minimumInteritemSpacing = 0
-                $0.scrollDirection = .horizontal
-            }
-            
             $0.backgroundColor = .Background
-            $0.collectionViewLayout = layout
+            $0.showsHorizontalScrollIndicator = false
         }
     }
 }

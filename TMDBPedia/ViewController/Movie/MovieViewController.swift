@@ -168,19 +168,6 @@ private extension MovieViewController {
             $0.backgroundColor = .Background
         }
     }
-    
-    @objc private func searchButtonTapped() {
-        navigationController?.pushViewController(MovieSearchViewController(), animated: true)
-    }
-    
-    @objc private func settingsNickname() {
-        let settingsNicknameViewContoller = SettingsNicknameViewController().then {
-            $0.inputNickname(nickname)
-        }
-        
-        let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
-        present(navigationController, animated: true)
-    }
 }
 // MARK: -Network-
 private extension MovieViewController {
@@ -234,7 +221,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        movieViewControllerItem[indexPath.section].height
+        return movieViewControllerItem[indexPath.section].height
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -252,19 +239,15 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let dataSource = movieViewControllerItem[indexPath.section].collectionViewDataSource
-        
+        print(cell.bounds)
         switch cell {
         case let cell as HistoryCell:
             cell.setCollectionView(sectionAt: indexPath.section, cell: dataSource, delegate: self)
         case let cell as TodayMovieCell:
-            cell.setCollectionView(sectionAt: indexPath.section, cell: dataSource, delegate: self)
+            cell.setCollectionView(sectionAt: indexPath.section, cell: dataSource, size: cell.bounds.size, delegate: self)
         default:
             break
         }
-    }
-    
-    @objc private func removeAllKeyword() {
-        UserDefaultsManager.shared.keywords?.removeAll()
     }
 }
 // MARK: CollectionView
@@ -310,6 +293,25 @@ extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSou
         if collectionView.tag == 1 {
             needsPushMovieDetailViewController(indexPath)
         }
+    }
+}
+// MARK: -Action-
+extension MovieViewController {
+    @objc private func searchButtonTapped() {
+        navigationController?.pushViewController(MovieSearchViewController(), animated: true)
+    }
+    
+    @objc private func settingsNickname() {
+        let settingsNicknameViewContoller = SettingsNicknameViewController().then {
+            $0.inputNickname(nickname)
+        }
+        
+        let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
+        present(navigationController, animated: true)
+    }
+    
+    @objc private func removeAllKeyword() {
+        UserDefaultsManager.shared.keywords?.removeAll()
     }
     
     private func needsPushMovieDetailViewController(_ indexPath: IndexPath) {
