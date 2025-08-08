@@ -296,7 +296,7 @@ extension MovieViewController: UICollectionViewDelegate, UICollectionViewDataSou
 // MARK: -Action-
 extension MovieViewController {
     @objc private func searchButtonTapped() {
-        navigationController?.pushViewController(MovieSearchViewController(), animated: true)
+        transition(MovieViewController(), .push)
     }
     
     @objc private func settingsNickname() {
@@ -304,8 +304,7 @@ extension MovieViewController {
             $0.inputNickname(nickname)
         }
         
-        let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
-        present(navigationController, animated: true)
+        transition(settingsNicknameViewContoller, .presentNavigation)
     }
     
     @objc private func removeAllKeyword() {
@@ -320,7 +319,7 @@ extension MovieViewController {
             $0.input(item)
         }
         
-        navigationController?.pushViewController(vc, animated: true)
+        transition(vc, .push)
     }
     
     @objc private func needsLikeAction(_ sender: WithIndexPathButton) {
@@ -350,8 +349,8 @@ extension MovieViewController {
         let vc = MovieSearchViewController().then {
             $0.input(keyword: newKeyword)
         }
-            
-        navigationController?.pushViewController(vc, animated: true)
+        
+        transition(vc, .push)
     }
     
     @objc private func needsUpdateKeywords(_ sender: WithIndexPathButton) {

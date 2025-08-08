@@ -190,7 +190,7 @@ private extension SettingsNicknameViewController {
             $0.bindNicknameHandler(handler: handleNicknameHandler)
         }
         
-        navigationController?.pushViewController(vc, animated: true)
+        transition(vc, .push)
     }
     
     private func handleNicknameHandler(_ nickname: Nickname) {

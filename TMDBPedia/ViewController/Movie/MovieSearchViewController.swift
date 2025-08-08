@@ -205,7 +205,7 @@ extension MovieSearchViewController: UITableViewDelegate, UITableViewDataSource 
             $0.input(item)
         }
         
-        navigationController?.pushViewController(vc, animated: true)
+        transition(vc, .push)
     }
     
     @objc private func needsLikeAction(_ sender: WithIndexPathButton) {
