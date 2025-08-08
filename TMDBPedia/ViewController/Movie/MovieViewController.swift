@@ -78,8 +78,6 @@ extension [MovieViewControllerItem] {
 final class MovieViewController: BaseViewController {
     private let profileView = ProfileView()
     private let tableView = UITableView()
-    private var historyCell: HistoryCell?
-    private var todayMovieCell: TodayMovieCell?
     
     private var movieViewControllerItem = MovieViewControllerItem.allCases
     
@@ -239,7 +237,7 @@ extension MovieViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let dataSource = movieViewControllerItem[indexPath.section].collectionViewDataSource
-        print(cell.bounds)
+        
         switch cell {
         case let cell as HistoryCell:
             cell.setCollectionView(sectionAt: indexPath.section, cell: dataSource, delegate: self)
