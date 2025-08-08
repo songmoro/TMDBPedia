@@ -49,8 +49,6 @@ private extension HistoryCell {
     }
     
     private func configureView() {
-        backgroundColor = .Background
-        
         collectionView.do {
             let layout = UICollectionViewFlowLayout().then {
                 $0.itemSize = CGSize(width: 120, height: 30)

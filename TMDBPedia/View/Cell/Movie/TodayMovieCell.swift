@@ -60,11 +60,7 @@ private extension TodayMovieCell {
     }
     
     private func configureView() {
-        backgroundColor = .Background
-        contentView.backgroundColor = .Background
-        
         collectionView.do {
-            $0.backgroundColor = .Background
             $0.showsHorizontalScrollIndicator = false
         }
     }
@@ -138,8 +134,6 @@ private extension TodayMovieContentCell {
     }
     
     private func configureView() {
-        contentView.backgroundColor = .Background
-        
         posterImageView.do {
             $0.kf.indicatorType = .activity
             $0.clipsToBounds = true

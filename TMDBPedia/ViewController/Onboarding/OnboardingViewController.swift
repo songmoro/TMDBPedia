@@ -59,7 +59,6 @@ private extension OnboardingViewController {
     
     private func configureView() {
         navigationItem.backButtonTitle = ""
-        view.backgroundColor = .Background
         splashImageView.image = UIImage(named: "splash")
         
         titleLabel.do {

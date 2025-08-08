@@ -50,7 +50,6 @@ private extension SplashViewController {
     }
     
     private func configureView() {
-        view.backgroundColor = .Background
         splashImageView.image = UIImage(named: "splash")
         
         titleLabel.do {

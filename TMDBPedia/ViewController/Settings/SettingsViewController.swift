@@ -70,8 +70,6 @@ private extension SettingsViewController {
     
     private func configureView() {
         navigationItem.title = "설정"
-        view.backgroundColor = .Background
-        tableView.backgroundColor = .Background
         
         profileView.do {
             let tapGestrue = UITapGestureRecognizer(target: self, action: #selector(settingsNickname))
@@ -105,7 +103,6 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = UITableViewCell()
         cell.textLabel?.text = list[indexPath.row]
         cell.textLabel?.textColor = .Label
-        cell.backgroundColor = .Background
         
         return cell
     }

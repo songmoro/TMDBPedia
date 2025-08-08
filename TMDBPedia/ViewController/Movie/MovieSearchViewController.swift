@@ -81,8 +81,6 @@ private extension MovieSearchViewController {
             $0.title = "영화 검색"
         }
         
-        view.backgroundColor = .Background
-        
         searchBar.do {
             $0.searchBarStyle = .minimal
             $0.searchTextField.leftView?.tintColor = .Label
@@ -97,7 +95,6 @@ private extension MovieSearchViewController {
         }
         
         tableView.do {
-            $0.backgroundColor = .Background
             $0.keyboardDismissMode = .interactive
         }
     }

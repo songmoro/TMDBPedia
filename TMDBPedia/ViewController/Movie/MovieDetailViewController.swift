@@ -42,8 +42,6 @@ final class MovieDetailViewController: BaseViewController {
     }
     
     private func configureView() {
-        view.backgroundColor = .Background
-        tableView.backgroundColor = .Background
     }
 }
 // MARK: -Open-

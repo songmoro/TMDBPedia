@@ -77,7 +77,6 @@ private extension SettingsNicknameDetailViewController {
     
     private func configureView() {
         navigationItem.title = "닉네임 설정"
-        view.backgroundColor = .Background
         underlineView.backgroundColor = .Label
         
         nicknameTextField.do {

@@ -55,9 +55,6 @@ private extension BackdropsCell {
     }
     
     private func configureView() {
-        backgroundColor = .Background
-        collectionView.backgroundColor = .Background
-        
         pageControl.do {
             $0.currentPage = 0
             $0.numberOfPages = min(backdrops.count, 5)

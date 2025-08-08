@@ -6,30 +6,28 @@
 //
 
 import UIKit
-import Then
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let navigationBarAppearance = UINavigationBarAppearance()
+        let tabBarAppearance = UITabBarAppearance()
+        
+        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.Label]
+        [navigationBarAppearance, tabBarAppearance].set(\.backgroundColor, .Background)
+        
+        [
+            UICollectionViewCell.appearance(),
+            UICollectionView.appearance(),
+            UITableView.appearance(),
+            UITableViewCell.appearance()
+        ].set(\.backgroundColor, .Background)
+        
         UIView.appearance().tintColor = .Tint
         UILabel.appearance().textColor = .Label
         UITextField.appearance().keyboardAppearance = .dark
-        
-        UINavigationBarAppearance().then {
-            $0.backgroundColor = .Background
-            $0.titleTextAttributes = [.foregroundColor: UIColor.Label]
-        }
-        .do {
-            UINavigationBar.appearance().standardAppearance = $0
-        }
-        
-        
-        UITabBarAppearance().then {
-            $0.backgroundColor = .Background
-        }
-        .do {
-            UITabBar.appearance().standardAppearance = $0
-        }
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UITabBar.appearance().standardAppearance = tabBarAppearance
         
         return true
     }

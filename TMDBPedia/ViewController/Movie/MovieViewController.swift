@@ -155,15 +155,9 @@ private extension MovieViewController {
             $0.setRightBarButton(rightBarButton, animated: true)
         }
         
-        view.backgroundColor = .Background
-        
         profileView.do {
             let tapGestrue = UITapGestureRecognizer(target: self, action: #selector(settingsNickname))
             $0.addGestureRecognizer(tapGestrue)
-        }
-        
-        tableView.do {
-            $0.backgroundColor = .Background
         }
     }
 }
