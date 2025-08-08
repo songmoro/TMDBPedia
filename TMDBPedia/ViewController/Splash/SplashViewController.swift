@@ -29,7 +29,7 @@ private extension SplashViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(splashImageView, titleLabel, descriptionLabel)
+        [splashImageView, titleLabel, descriptionLabel].forEach(view.addSubview)
     }
     
     private func configureLayout() {

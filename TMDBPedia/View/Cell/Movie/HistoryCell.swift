@@ -102,7 +102,7 @@ private extension HistoryContentCell {
     }
     
     private func configureSubview() {
-        keywordButton.addSubviews(keywordLabel, deleteButton)
+        [keywordLabel, deleteButton].forEach(keywordButton.addSubview)
         contentView.addSubview(keywordButton)
     }
     

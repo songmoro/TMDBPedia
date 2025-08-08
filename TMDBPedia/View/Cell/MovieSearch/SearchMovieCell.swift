@@ -72,7 +72,7 @@ final class SearchMovieCell: BaseTableViewCell, IsIdentifiable {
     }
     
     private func configureSubview() {
-        contentView.addSubviews(posterImageView, titleLabel, dateLabel, genreStackView, likeButton)
+        [posterImageView, titleLabel, dateLabel, genreStackView, likeButton].forEach(contentView.addSubview)
     }
     
     private func configureLayout() {

@@ -48,7 +48,7 @@ private extension SettingsNicknameViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(nicknameLabel, editButton, underlineView, doneButton)
+        [nicknameLabel, editButton, underlineView, doneButton].forEach(view.addSubview)
     }
     
     private func configureLayout() {

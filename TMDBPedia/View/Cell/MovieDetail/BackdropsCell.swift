@@ -38,7 +38,7 @@ private extension BackdropsCell {
     }
     
     private func configureSubview() {
-        contentView.addSubviews(collectionView, pageControl)
+        [collectionView, pageControl].forEach(contentView.addSubview)
     }
     
     private func configureLayout() {

@@ -53,7 +53,7 @@ private extension SettingsNicknameDetailViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(nicknameTextField, underlineView, statusLabel)
+        [nicknameTextField, underlineView, statusLabel].forEach(view.addSubview)
     }
     
     private func configureLayout() {

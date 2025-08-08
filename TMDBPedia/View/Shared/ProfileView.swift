@@ -53,7 +53,7 @@ private extension ProfileView {
     }
     
     private func configureSubview() {
-        addSubviews(nicknameLabel, registerDateLabel, chevronImageView, storageButton)
+        [nicknameLabel, registerDateLabel, chevronImageView, storageButton].forEach(addSubview)
     }
     
     private func configureLayout() {

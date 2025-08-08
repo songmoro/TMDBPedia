@@ -48,7 +48,7 @@ private extension CastCell {
     }
     
     private func configureSubview() {
-        contentView.addSubviews(actorImageView, actorNameLabel, actorRoleLabel)
+        [actorImageView, actorNameLabel, actorRoleLabel].forEach(contentView.addSubview)
     }
     
     private func configureLayout() {

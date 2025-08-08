@@ -53,7 +53,7 @@ private extension SettingsViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(profileView, tableView)
+        [profileView, tableView].forEach(view.addSubview)
     }
     
     private func configureLayout() {

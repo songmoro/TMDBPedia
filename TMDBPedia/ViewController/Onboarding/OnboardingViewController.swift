@@ -30,7 +30,7 @@ private extension OnboardingViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(splashImageView, titleLabel, descriptionLabel, startButton)
+        [splashImageView, titleLabel, descriptionLabel, startButton].forEach(view.addSubview)
     }
     
     private func configureLayout() {

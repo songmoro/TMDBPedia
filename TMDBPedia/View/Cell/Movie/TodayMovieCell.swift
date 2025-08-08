@@ -111,7 +111,7 @@ private extension TodayMovieContentCell {
     }
     
     private func configureSubview() {
-        contentView.addSubviews(posterImageView, titleLabel, likeButton, plotLabel)
+        [posterImageView, titleLabel, likeButton, plotLabel].forEach(contentView.addSubview)
     }
     
     private func configureLayout() {

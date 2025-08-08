@@ -54,7 +54,7 @@ private extension MovieSearchViewController {
     }
     
     private func configureSubview() {
-        view.addSubviews(searchBar, tableView, emptyLabel)
+        [searchBar, tableView, emptyLabel].forEach(view.addSubview)
     }
     
     private func configureLayout() {
