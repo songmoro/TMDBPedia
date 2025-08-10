@@ -5,7 +5,6 @@
 //  Created by 송재훈 on 8/8/25.
 //
 
-
 public protocol Settable { }
 
 extension Array: Settable {

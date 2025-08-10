@@ -12,7 +12,6 @@ import Then
 // MARK: -BackdropsCell-
 final class BackdropsCell: BaseTableViewCell, IsIdentifiable {
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
-    private var backdrops = [BackdropsItem]()
     private let pageControl = UIPageControl()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -22,10 +21,28 @@ final class BackdropsCell: BaseTableViewCell, IsIdentifiable {
 }
 // MARK: -Open-
 extension BackdropsCell {
-    public func input(_ items: [BackdropsItem]) {
-        self.backdrops = items
-        pageControl.numberOfPages = min(backdrops.count, 5)
-        collectionView.reloadData()
+    public func setCollectionView(sectionAt tag: Int, cell: (UICollectionViewCell & IsIdentifiable).Type, size: CGSize, pages: Int, delegate: UICollectionViewDelegate & UICollectionViewDataSource) {
+        collectionView.do {
+            $0.tag = tag
+            $0.delegate = delegate
+            $0.dataSource = delegate
+            
+            let layout = UICollectionViewFlowLayout().then {
+                $0.itemSize = bounds.size
+                $0.minimumInteritemSpacing = 0
+                $0.minimumLineSpacing = 0
+                $0.scrollDirection = .horizontal
+            }
+            
+            $0.collectionViewLayout = layout
+            $0.register(cell)
+            $0.reloadData()
+        }
+        
+        pageControl.do {
+            $0.currentPage = 0
+            $0.numberOfPages = min(pages, 5)
+        }
     }
 }
 // MARK: -Configure-
@@ -34,7 +51,6 @@ private extension BackdropsCell {
         configureSubview()
         configureLayout()
         configureView()
-        configureCollectionView()
     }
     
     private func configureSubview() {
@@ -55,58 +71,14 @@ private extension BackdropsCell {
     }
     
     private func configureView() {
-        pageControl.do {
-            $0.currentPage = 0
-            $0.numberOfPages = min(backdrops.count, 5)
-        }
-    }
-}
-// MARK: -CollectionView-
-extension BackdropsCell: UICollectionViewDelegate, UICollectionViewDataSource, UIScrollViewDelegate {
-    private func configureCollectionView() {
         collectionView.do {
             $0.isPagingEnabled = true
-            $0.delegate = self
-            $0.dataSource = self
             $0.showsHorizontalScrollIndicator = false
-            $0.register(BackdropCell.self)
-        }
-    }
-    
-    override func layoutIfNeeded() {
-        super.layoutIfNeeded()
-        updateCollectionViewLayout()
-    }
-    
-    private func updateCollectionViewLayout() {
-        let layout = UICollectionViewFlowLayout().then {
-            $0.itemSize = bounds.size
-            $0.minimumInteritemSpacing = 0
-            $0.minimumLineSpacing = 0
-            $0.scrollDirection = .horizontal
         }
         
-        collectionView.collectionViewLayout = layout
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        min(backdrops.count, 5)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell: UICollectionViewCell
-        
-        cell = collectionView.dequeueReusableCell(BackdropCell.self, for: indexPath).then {
-            let item = backdrops[indexPath.item]
-            $0.input(item.file_path)
+        pageControl.do {
+            $0.currentPage = 0
         }
-        
-        return cell
-    }
-    
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        let index = Int(round(scrollView.contentOffset.x / scrollView.frame.size.width))
-        pageControl.currentPage = index
     }
 }
 // MARK: -
