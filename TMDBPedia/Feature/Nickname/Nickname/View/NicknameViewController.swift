@@ -101,9 +101,12 @@ final class NicknameViewController: BaseViewController {
     }
     
     @objc private func editButtonClicked() {
+        let nicknameDetailVM = NicknameDetailViewModel(nickname: viewModel.nickname)
+        
         let vc = NicknameDetailViewController()
-        vc.inputNickname(viewModel.nickname)
-        vc.bindNicknameHandler(handler: handleNicknameHandler)
+        vc.inputViewModel(nicknameDetailVM) { [weak self] in
+            self?.viewModel.nickname = $0
+        }
         
         transition(vc, .push)
     }
@@ -132,10 +135,6 @@ final class NicknameViewController: BaseViewController {
     
     private func replaceRootViewController() {
         tabBarController?.replaceToMovie()
-    }
-    
-    private func handleNicknameHandler(_ nickname: Nickname) {
-        viewModel.nickname = nickname
     }
 }
 // MARK: -Open-

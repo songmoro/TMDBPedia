@@ -7,10 +7,21 @@
 
 import UIKit
 import SnapKit
+import Combine
+
+final class NicknameDetailViewModel {
+    var nickname: Nickname
+    
+    init(nickname: Nickname) {
+        self.nickname = nickname
+    }
+}
 
 // MARK: -NicknameDetailViewController-
 final class NicknameDetailViewController: BaseViewController {
-    private var nickname = Nickname(text: "")
+    private var viewModel: NicknameDetailViewModel = .init(nickname: Nickname(text: ""))
+    private var onDismiss: ((Nickname) -> Void)?
+    
     private let nicknameTextField: UITextField = {
         let attributedString = NSAttributedString(string: "닉네임을 입력해주세요.", attributes: [.foregroundColor: UIColor.Label])
         let textField = UITextField()
@@ -19,7 +30,6 @@ final class NicknameDetailViewController: BaseViewController {
         
         return textField
     }()
-    private var nicknameHandler: ((Nickname) -> Void)?
     private let underlineView: UIView = {
         let view = UIView()
         view.backgroundColor = .Label
@@ -46,7 +56,7 @@ final class NicknameDetailViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        nicknameHandler?(nickname)
+        onDismiss?(viewModel.nickname)
     }
     
     private func configure() {
@@ -75,31 +85,24 @@ final class NicknameDetailViewController: BaseViewController {
     }
     
     @objc private func textFieldEditingChanged(_ sender: UITextField) {
-        handleNickname(text: sender.text)
-    }
-    
-    private func handleNickname(text: String?)  {
-        guard let text else { return }
-        self.nickname.text = text
+        guard let text = sender.text else { return }
+        viewModel.nickname.text = text
         
         do {
-            try nickname.validateNickname()
-            statusLabel.text = "사용할 수 있는 닉네임이에요"
+            try viewModel.nickname.validateNickname()
+            self.statusLabel.text = "사용할 수 있는 닉네임이에요"
         }
         catch {
-            statusLabel.text = error.kind.description
+            self.statusLabel.text = error.kind.description
         }
     }
 }
 // MARK: -Open-
 extension NicknameDetailViewController {
-    public func inputNickname(_ nickname: Nickname) {
-        self.nickname = nickname
-        nicknameTextField.text = nickname.text
-    }
-    
-    public func bindNicknameHandler(handler: @escaping (Nickname) -> Void) {
-        nicknameHandler = handler
+    public func inputViewModel(_ vm: NicknameDetailViewModel, onDismissHandler: @escaping (Nickname) -> Void) {
+        self.viewModel = vm
+        nicknameTextField.text = vm.nickname.text
+        onDismiss = onDismissHandler
     }
 }
 // MARK: -
