@@ -24,4 +24,39 @@ extension UIViewController {
             navigationController?.pushViewController(viewController, animated: true)
         }
     }
+    
+    final func showToast(_ message: String) {
+        let uiView: UIView = {
+            let view = UIView()
+            view.backgroundColor = .Label
+            view.layer.cornerRadius = Constant.defaultRadius
+            
+            return view
+        }()
+        let label: UILabel = {
+            let label = UILabel()
+            label.text = message
+            label.textColor = .Background
+            
+            return label
+        }()
+        
+        view.addSubview(uiView)
+        uiView.addSubview(label)
+        
+        uiView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview(\.safeAreaLayoutGuide).inset(Constant.offsetFromVertical)
+            $0.height.equalTo(label).multipliedBy(1.5)
+            $0.width.equalTo(label).multipliedBy(1.2)
+        }
+        
+        label.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            uiView.removeFromSuperview()
+        }
+    }
 }

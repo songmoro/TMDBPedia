@@ -35,10 +35,7 @@ final class OnboardingViewController: BaseViewController {
         var configuration = UIButton.Configuration.roundBordered()
         configuration.title = "시작하기"
         
-        let button = UIButton()
-        button.configuration = configuration
-        
-        return button
+        return UIButton(configuration: configuration)
     }()
     
     override func viewDidLoad() {
@@ -77,6 +74,6 @@ final class OnboardingViewController: BaseViewController {
     }
     
     @objc private func startButtonClicked() {
-        transition(SettingsNicknameViewController(), .push)
+        transition(NicknameViewController(), .push)
     }
 }

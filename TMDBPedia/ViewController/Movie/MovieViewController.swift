@@ -294,7 +294,7 @@ extension MovieViewController {
     }
     
     @objc private func settingsNickname() {
-        let settingsNicknameViewContoller = SettingsNicknameViewController().then {
+        let settingsNicknameViewContoller = NicknameViewController().then {
             $0.inputNickname(nickname)
         }
         

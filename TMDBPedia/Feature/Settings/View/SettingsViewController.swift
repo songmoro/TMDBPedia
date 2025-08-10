@@ -56,7 +56,7 @@ final class SettingsViewController: BaseViewController {
     }
     
     @objc private func settingsNickname() {
-        let settingsNicknameVC = SettingsNicknameViewController()
+        let settingsNicknameVC = NicknameViewController()
         settingsNicknameVC.inputNickname(viewModel.nickname)
         
         transition(settingsNicknameVC, .presentNavigation)
