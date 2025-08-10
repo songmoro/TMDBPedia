@@ -10,10 +10,37 @@ import SnapKit
 import Then
 
 final class OnboardingViewController: BaseViewController {
-    private let splashImageView = UIImageView()
-    private let titleLabel = UILabel()
-    private let descriptionLabel = UILabel()
-    private let startButton = UIButton()
+    private let splashImageView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = UIImage(named: "splash")
+        
+        return iv
+    }()
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Onboarding"
+        label.font = UIFont(descriptor: UIFontDescriptor().withSymbolicTraits([.traitBold, .traitItalic])!, size: Constant.largeTitleSize)
+        
+        return label
+    }()
+    private let descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.text = "당신만의 영화 세상,\nTMDBPedia를 시작해보세요."
+        label.font = .systemFont(ofSize: Constant.titleSize, weight: .light)
+        label.textAlignment = .center
+        label.numberOfLines = 2
+        
+       return label
+    }()
+    private let startButton: UIButton = {
+        var configuration = UIButton.Configuration.roundBordered()
+        configuration.title = "시작하기"
+        
+        let button = UIButton()
+        button.configuration = configuration
+        
+        return button
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,16 +51,10 @@ final class OnboardingViewController: BaseViewController {
 // MARK: Configure
 private extension OnboardingViewController {
     private func configure() {
-        configureSubview()
-        configureLayout()
-        configureView()
-    }
-    
-    private func configureSubview() {
+        navigationItem.backButtonTitle = ""
+        
         [splashImageView, titleLabel, descriptionLabel, startButton].forEach(view.addSubview)
-    }
-    
-    private func configureLayout() {
+        
         splashImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalToSuperview().multipliedBy(0.8)
@@ -55,35 +76,11 @@ private extension OnboardingViewController {
             $0.bottom.equalToSuperview(\.safeAreaLayoutGuide)
             $0.height.equalTo(Constant.textFieldHeight)
         }
-    }
-    
-    private func configureView() {
-        navigationItem.backButtonTitle = ""
-        splashImageView.image = UIImage(named: "splash")
         
-        titleLabel.do {
-            $0.text = "Onboarding"
-            $0.font = UIFont(descriptor: UIFontDescriptor().withSymbolicTraits([.traitBold, .traitItalic])!, size: Constant.largeTitleSize)
-        }
-        
-        descriptionLabel.do {
-            $0.text = "당신만의 영화 세상,\nTMDBPedia를 시작해보세요."
-            $0.font = .systemFont(ofSize: Constant.titleSize, weight: .light)
-            $0.textAlignment = .center
-            $0.numberOfLines = 2
-        }
-        
-        startButton.do {
-            var configuration = UIButton.Configuration.roundBordered()
-            configuration.title = "시작하기"
-            $0.configuration = configuration
-            
-            $0.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
-        }
+        startButton.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
     }
     
     @objc private func startButtonClicked() {
-        
         transition(SettingsNicknameViewController(), .push)
     }
 }
