@@ -56,12 +56,10 @@ final class SettingsViewController: BaseViewController {
     }
     
     @objc private func settingsNickname() {
-        let settingsNicknameViewContoller = SettingsNicknameViewController()
-        settingsNicknameViewContoller.inputNickname(viewModel.nickname)
+        let settingsNicknameVC = SettingsNicknameViewController()
+        settingsNicknameVC.inputNickname(viewModel.nickname)
         
-        let navigationController = UINavigationController(rootViewController: settingsNicknameViewContoller)
-        
-        present(navigationController, animated: true)
+        transition(settingsNicknameVC, .presentNavigation)
     }
 }
 // MARK: -TableView-
