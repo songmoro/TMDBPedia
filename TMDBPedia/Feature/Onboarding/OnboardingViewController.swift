@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import Then
 
 final class OnboardingViewController: BaseViewController {
     private let splashImageView: UIImageView = {
@@ -46,10 +45,7 @@ final class OnboardingViewController: BaseViewController {
         super.viewDidLoad()
         configure()
     }
-}
-
-// MARK: Configure
-private extension OnboardingViewController {
+    
     private func configure() {
         navigationItem.backButtonTitle = ""
         
