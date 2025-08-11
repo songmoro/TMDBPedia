@@ -54,7 +54,7 @@ extension UIControl {
         }
     }
     
-    func publsher(_ event: UIControl.Event) -> UIControl.EventPublisher {
+    func publisher(_ event: UIControl.Event) -> UIControl.EventPublisher {
         return EventPublisher(control: self, event: event)
     }
 }
